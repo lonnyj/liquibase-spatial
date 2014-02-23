@@ -1,4 +1,4 @@
-package liquibase.ext.spatial.generator;
+package liquibase.ext.spatial.sqlgenerator;
 
 import liquibase.database.Database;
 import liquibase.database.core.H2Database;

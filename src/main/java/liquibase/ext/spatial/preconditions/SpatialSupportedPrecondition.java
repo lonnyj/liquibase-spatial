@@ -18,8 +18,7 @@ public class SpatialSupportedPrecondition implements Precondition {
     * @see liquibase.precondition.Precondition#getName()
     */
    public String getName() {
-      // TODO Auto-generated method stub
-      return null;
+      return "spatialSupported";
    }
 
    /**
@@ -39,7 +38,8 @@ public class SpatialSupportedPrecondition implements Precondition {
    }
 
    /**
-    * @see liquibase.precondition.Precondition#check(liquibase.database.Database, liquibase.changelog.DatabaseChangeLog, liquibase.changelog.ChangeSet)
+    * @see liquibase.precondition.Precondition#check(liquibase.database.Database,
+    *      liquibase.changelog.DatabaseChangeLog, liquibase.changelog.ChangeSet)
     */
    public void check(Database database, DatabaseChangeLog changeLog,
          ChangeSet changeSet) throws PreconditionFailedException,
@@ -47,5 +47,4 @@ public class SpatialSupportedPrecondition implements Precondition {
       // TODO Auto-generated method stub
 
    }
-
 }

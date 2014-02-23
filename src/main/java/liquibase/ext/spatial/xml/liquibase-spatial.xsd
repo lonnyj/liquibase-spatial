@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
-targetNamespace="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-gravy" xmlns:tns="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-gravy" elementFormDefault="qualified">
-   <element name="autoIncrementSupported" />
-   <element name="sequencesSupported" />
-   <element name="tablespacesSupported" />
-</schema>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
+   xmlns:lb="http://www.liquibase.org/xml/ns/dbchangelog"
+   targetNamespace="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd"
+   elementFormDefault="qualified">
+   <xsd:import namespace="http://www.liquibase.org/xml/ns/dbchangelog"
+      schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd" />
+   <xsd:attributeGroup name="createSpatialIndex">
+      <xsd:attributeGroup ref="lb:tableNameAttribute" />
+      <xsd:attributeGroup ref="lb:indexName" />
+      <xsd:attribute name="tablespace" type="xsd:string" />
+   </xsd:attributeGroup>
+   <xsd:element name="spatialSupported" />
+   <xsd:element name="spatialIndexExists">
+      <xsd:complexType>
+         <xsd:attribute name="catalogName" type="xsd:string" />
+         <xsd:attribute name="schemaName" type="xsd:string" />
+         <xsd:attribute name="indexName" type="xsd:string" />
+         <xsd:attribute name="tableName" type="xsd:string" />
+         <xsd:attribute name="columnNames" type="xsd:string" />
+      </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="createSpatialIndex">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element ref="lb:column" maxOccurs="unbounded" />
+         </xsd:sequence>
+         <xsd:attributeGroup ref="createSpatialIndex" />
+      </xsd:complexType>
+   </xsd:element>
+</xsd:schema>

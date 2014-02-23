@@ -6,11 +6,14 @@
    <version>0.0.1-SNAPSHOT</version>
    <name>Liquibase Spatial</name>
    <description>Liquibase Spatial extends Liquibase to handle spatial types</description>
+   <properties>
+      <liquibase.version>3.1.1</liquibase.version>
+   </properties>
    <dependencies>
       <dependency>
          <groupId>org.liquibase</groupId>
          <artifactId>liquibase-core</artifactId>
-         <version>3.1.1</version>
+         <version>${liquibase.version}</version>
       </dependency>
       <dependency>
          <groupId>com.h2database</groupId>
@@ -40,14 +43,23 @@
    <build>
       <plugins>
          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+            </configuration>
+         </plugin>
+         <plugin>
             <artifactId>maven-jar-plugin</artifactId>
             <version>2.4</version>
             <configuration>
                <archive>
                   <manifestEntries>
                      <Liquibase-Package>liquibase.ext.spatial.change,
-                        liquibase.ext.spatial.generator,
+                        liquibase.ext.spatial.datatype,
                         liquibase.ext.spatial.preconditions,
+                        liquibase.ext.spatial.sqlgenerator,
                         liquibase.ext.spatial.statement</Liquibase-Package>
                   </manifestEntries>
                </archive>
@@ -68,7 +80,7 @@
          <plugin>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-maven-plugin</artifactId>
-            <version>3.1.1</version>
+            <version>${liquibase.version}</version>
             <configuration>
                <driver>org.h2.Driver</driver>
                <url>jdbc:h2:mem:</url>
@@ -82,9 +94,9 @@
             </dependencies>
             <executions>
                <execution>
-                  <id>Test AutoIncrementPrecondition</id>
+                  <id>Test Spatial</id>
                   <configuration>
-                     <changeLogFile>src/test/resources/AutoIncrementPrecondition.xml</changeLogFile>
+                     <changeLogFile>src/test/resources/integration-test.xml</changeLogFile>
                   </configuration>
                   <goals>
                      <goal>update</goal>

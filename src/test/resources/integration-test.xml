@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:spatial="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
+         http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial ../../main/java/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
+   <changeSet id="Create table" author="test">
+      <preConditions>
+         <spatial:spatialSupported />
+      </preConditions>
+      <createTable tableName="TEST">
+         <column name="ID" type="BIGINT">
+            <constraints nullable="false" primaryKey="true" />
+         </column>
+         <column name="GEOM" type="GEOMETRY">
+            <constraints nullable="false" />
+         </column>
+      </createTable>
+   </changeSet>
+
+   <changeSet id="Create spatial index" author="test">
+      <preConditions>
+         <tableExists tableName="TEST" />
+         <not>
+            <spatial:spatialIndexExists />
+         </not>
+      </preConditions>
+      <spatial:createSpatialIndex tableName="TEST"
+         indexName="TEST_GEOM_IDX">
+         <column name="GEOM" />
+      </spatial:createSpatialIndex>
+   </changeSet>
+
+   <changeSet id="Insert spatial index" author="test">
+      <preConditions>
+         <spatial:spatialIndexExists />
+      </preConditions>
+   </changeSet>
+</databaseChangeLog>

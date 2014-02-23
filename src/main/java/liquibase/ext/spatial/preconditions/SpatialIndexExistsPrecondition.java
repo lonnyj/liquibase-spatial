@@ -1,10 +1,137 @@
 package liquibase.ext.spatial.preconditions;
 
-import liquibase.precondition.core.IndexExistsPrecondition;
+import liquibase.changelog.ChangeSet;
+import liquibase.changelog.DatabaseChangeLog;
+import liquibase.database.Database;
+import liquibase.exception.PreconditionErrorException;
+import liquibase.exception.PreconditionFailedException;
+import liquibase.exception.ValidationErrors;
+import liquibase.exception.Warnings;
+import liquibase.precondition.Precondition;
+import liquibase.snapshot.SnapshotGeneratorFactory;
+import liquibase.structure.core.Column;
+import liquibase.structure.core.Index;
+import liquibase.structure.core.Schema;
+import liquibase.structure.core.Table;
+import liquibase.util.StringUtils;
 
 /**
  * The <code>SpatialIndexExistsPrecondition</code>....
  */
-public class SpatialIndexExistsPrecondition extends IndexExistsPrecondition {
+public class SpatialIndexExistsPrecondition implements Precondition {
+   private String catalogName;
+   private String schemaName;
+   private String tableName;
+   private String columnNames;
+   private String indexName;
 
+   public String getCatalogName() {
+      return catalogName;
+   }
+
+   public void setCatalogName(String catalogName) {
+      this.catalogName = catalogName;
+   }
+
+   public String getSchemaName() {
+      return schemaName;
+   }
+
+   public void setSchemaName(String schemaName) {
+      this.schemaName = schemaName;
+   }
+
+   public String getTableName() {
+      return tableName;
+   }
+
+   public void setTableName(String tableName) {
+      this.tableName = tableName;
+   }
+
+   public String getIndexName() {
+      return indexName;
+   }
+
+   public void setIndexName(String indexName) {
+      this.indexName = indexName;
+   }
+
+   public String getColumnNames() {
+      return columnNames;
+   }
+
+   public void setColumnNames(String columnNames) {
+      this.columnNames = columnNames;
+   }
+
+   @Override
+   public String getName() {
+      return "spatialIndexExists";
+   }
+
+   @Override
+   public Warnings warn(Database database) {
+      return new Warnings();
+   }
+
+   @Override
+   public ValidationErrors validate(Database database) {
+      ValidationErrors validationErrors = new ValidationErrors();
+      // TODO: This needs to take the database type into account.
+      if (getIndexName() == null && getTableName() == null
+            && getColumnNames() == null) {
+         validationErrors
+               .addError("indexName OR tableName and columnNames is required");
+      }
+      return validationErrors;
+   }
+
+   @Override
+   public void check(Database database, DatabaseChangeLog changeLog,
+         ChangeSet changeSet) throws PreconditionFailedException,
+         PreconditionErrorException {
+      try {
+         // TODO: This was only copied from IndexExistsPrecondition.
+         Schema schema = new Schema(getCatalogName(), getSchemaName());
+         Index example = new Index();
+         String tableName = StringUtils.trimToNull(getTableName());
+         if (tableName != null) {
+            example.setTable((Table) new Table().setName(
+                  database.correctObjectName(getTableName(), Table.class))
+                  .setSchema(schema));
+         }
+         example.setName(database
+               .correctObjectName(getIndexName(), Index.class));
+         if (StringUtils.trimToNull(getColumnNames()) != null) {
+            for (String column : getColumnNames().split("\\s*,\\s*")) {
+               example.getColumns().add(
+                     database.correctObjectName(column, Column.class));
+            }
+         }
+         if (!SnapshotGeneratorFactory.getInstance().has(example, database)) {
+            String name = "";
+
+            if (getIndexName() != null) {
+               name += database.escapeObjectName(getIndexName(), Index.class);
+            }
+
+            if (tableName != null) {
+               name += " on "
+                     + database.escapeObjectName(getTableName(), Table.class);
+
+               if (StringUtils.trimToNull(getColumnNames()) != null) {
+                  name += " columns " + getColumnNames();
+               }
+            }
+            throw new PreconditionFailedException("Index " + name
+                  + " does not exist", changeLog, this);
+         }
+      } catch (Exception e) {
+         if (e instanceof PreconditionFailedException) {
+            throw (((PreconditionFailedException) e));
+         }
+         throw new PreconditionErrorException(e, changeLog, this);
+      }
+   }
 }

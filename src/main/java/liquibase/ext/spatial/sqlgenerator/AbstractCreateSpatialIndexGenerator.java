@@ -1,4 +1,4 @@
-package liquibase.ext.spatial.generator;
+package liquibase.ext.spatial.sqlgenerator;
 
 import liquibase.ext.spatial.statement.CreateSpatialIndexStatement;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;

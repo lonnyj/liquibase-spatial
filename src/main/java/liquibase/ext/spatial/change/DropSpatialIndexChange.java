@@ -1,12 +1,15 @@
 package liquibase.ext.spatial.change;
 
 import liquibase.change.AbstractChange;
+import liquibase.change.ChangeMetaData;
+import liquibase.change.DatabaseChange;
 import liquibase.database.Database;
 import liquibase.statement.SqlStatement;
 
 /**
  * @author Lonny Jacobson
  */
+@DatabaseChange(name = "dropSpatialIndex", description = "Drops the spatial index on an existing column or set of columns.", priority = ChangeMetaData.PRIORITY_DEFAULT, appliesTo = "index")
 public class DropSpatialIndexChange extends AbstractChange {
 
    /**

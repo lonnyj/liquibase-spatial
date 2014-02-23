@@ -8,19 +8,21 @@ import liquibase.statement.core.CreateIndexStatement;
  */
 public class CreateSpatialIndexStatement extends CreateIndexStatement {
 
+   private String tableSpace;
+
    /**
     * @param indexName
     * @param tableCatalogName
     * @param tableSchemaName
     * @param tableName
-    * @param isUnique
-    * @param associatedWith
     * @param columns
+    * @param tableSpace
     */
    public CreateSpatialIndexStatement(String indexName,
          String tableCatalogName, String tableSchemaName, String tableName,
-         Boolean isUnique, String associatedWith, String[] columns) {
-      super(indexName, tableCatalogName, tableSchemaName, tableName, isUnique,
-            associatedWith, columns);
+         String[] columns, String tableSpace) {
+      super(indexName, tableCatalogName, tableSchemaName, tableName, false,
+            null, columns);
+      this.tableSpace = tableSpace;
    }
 }
