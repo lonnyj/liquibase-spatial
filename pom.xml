@@ -40,7 +40,10 @@
             <configuration>
                <archive>
                   <manifestEntries>
-                     <Liquibase-Package>liquibase.ext.spatial.preconditions</Liquibase-Package>
+                     <Liquibase-Package>liquibase.ext.spatial.change,
+                        liquibase.ext.spatial.generator,
+                        liquibase.ext.spatial.preconditions,
+                        liquibase.ext.spatial.statement</Liquibase-Package>
                   </manifestEntries>
                </archive>
             </configuration>
