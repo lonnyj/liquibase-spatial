@@ -3,7 +3,12 @@
    xmlns:spatial="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
-         http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial ../../main/java/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial src/main/resources/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
+   <changeSet id="Spatialize DB" author="test">
+      <sql dbms="h2">CREATE ALIAS InitGeoDB for "geodb.GeoDB.InitGeoDB"</sql>
+      <sql dbms="h2">CALL InitGeoDB()</sql>
+   </changeSet>
+
    <changeSet id="Create table" author="test">
       <preConditions>
          <spatial:spatialSupported />
@@ -22,7 +27,7 @@
       <preConditions>
          <tableExists tableName="TEST" />
          <not>
-            <spatial:spatialIndexExists />
+            <spatial:spatialIndexExists tableName="TEST" />
          </not>
       </preConditions>
       <spatial:createSpatialIndex tableName="TEST"
@@ -31,9 +36,21 @@
       </spatial:createSpatialIndex>
    </changeSet>
 
-   <changeSet id="Insert spatial index" author="test">
+   <changeSet id="Insert spatial data" author="test">
       <preConditions>
-         <spatial:spatialIndexExists />
+         <spatial:spatialIndexExists tableName="TEST" />
       </preConditions>
+      <insert tableName="TEST">
+         <column name="ID" value="1" />
+         <column name="GEOM" value="SRID=4326;POINT(-5 -5)" />
+      </insert>
+      <insert tableName="TEST">
+         <column name="ID" value="2" />
+         <column name="GEOM" value="SRID=4326;POINT(0 0)" />
+      </insert>
+      <insert tableName="TEST">
+         <column name="ID" value="3" />
+         <column name="GEOM" value="SRID=4326;POINT(5 5)" />
+      </insert>
    </changeSet>
 </databaseChangeLog>

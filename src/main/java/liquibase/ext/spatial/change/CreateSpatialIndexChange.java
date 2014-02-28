@@ -26,79 +26,120 @@ public class CreateSpatialIndexChange extends AbstractChange implements
    private String indexName;
    private String tablespace;
    private List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
+   private String geometryType;
+   private Integer srid;
 
    /**
     * Sets the database catalog name.
     * 
     * @param catalogName
     */
-   public void setCatalogName(String catalogName) {
+   public void setCatalogName(final String catalogName) {
       this.catalogName = catalogName;
    }
 
    @DatabaseChangeProperty(description = "Name of the catalog")
    public String getCatalogName() {
-      return catalogName;
+      return this.catalogName;
    }
 
    @DatabaseChangeProperty(mustEqualExisting = "index", description = "Name of the index to create")
    public String getIndexName() {
-      return indexName;
+      return this.indexName;
    }
 
-   public void setIndexName(String indexName) {
+   public void setIndexName(final String indexName) {
       this.indexName = indexName;
    }
 
    @DatabaseChangeProperty(mustEqualExisting = "index.schema")
    public String getSchemaName() {
-      return schemaName;
+      return this.schemaName;
    }
 
-   public void setSchemaName(String schemaName) {
+   public void setSchemaName(final String schemaName) {
       this.schemaName = schemaName;
    }
 
    @DatabaseChangeProperty(mustEqualExisting = "index.table", description = "Name of the table to add the index to", exampleValue = "person")
    public String getTableName() {
-      return tableName;
+      return this.tableName;
    }
 
-   public void setTableName(String tableName) {
+   public void setTableName(final String tableName) {
       this.tableName = tableName;
+   }
+
+   /**
+    * Returns the geometryType.
+    * 
+    * @return the geometryType.
+    */
+   public String getGeometryType() {
+      return this.geometryType;
+   }
+
+   /**
+    * Sets the geometryType.
+    * 
+    * @param geometryType
+    *           the geometryType.
+    */
+   public void setGeometryType(final String geometryType) {
+      this.geometryType = geometryType;
+   }
+
+   /**
+    * Returns the srid.
+    * 
+    * @return the srid.
+    */
+   public Integer getSrid() {
+      return this.srid;
+   }
+
+   /**
+    * Sets the srid.
+    * 
+    * @param srid
+    *           the srid.
+    */
+   public void setSrid(final Integer srid) {
+      this.srid = srid;
    }
 
    @Override
    @DatabaseChangeProperty(mustEqualExisting = "index.column", description = "Column(s) to add to the index", requiredForDatabase = "all")
    public List<ColumnConfig> getColumns() {
-      if (columns == null) {
+      if (this.columns == null) {
          return new ArrayList<ColumnConfig>();
       }
-      return columns;
+      return this.columns;
    }
 
    @Override
-   public void setColumns(List<ColumnConfig> columns) {
+   public void setColumns(final List<ColumnConfig> columns) {
       this.columns = columns;
    }
 
    @Override
-   public void addColumn(ColumnConfig column) {
-      columns.add(column);
+   public void addColumn(final ColumnConfig column) {
+      this.columns.add(column);
    }
 
    @DatabaseChangeProperty(description = "Tablepace to create the index in.")
    public String getTablespace() {
-      return tablespace;
+      return this.tablespace;
    }
 
-   public void setTablespace(String tablespace) {
+   public void setTablespace(final String tablespace) {
       this.tablespace = tablespace;
    }
 
    /**
     * @see liquibase.change.Change#getConfirmationMessage()
     */
+   @Override
    public String getConfirmationMessage() {
       // TODO Auto-generated method stub
       return null;
@@ -107,15 +148,16 @@ public class CreateSpatialIndexChange extends AbstractChange implements
    /**
     * @see liquibase.change.Change#generateStatements(liquibase.database.Database)
     */
-   public SqlStatement[] generateStatements(Database database) {
-      String[] columns = new String[this.columns.size()];
+   @Override
+   public SqlStatement[] generateStatements(final Database database) {
+      final String[] columns = new String[this.columns.size()];
       int ii = 0;
-      for (ColumnConfig columnConfig : this.columns) {
+      for (final ColumnConfig columnConfig : this.columns) {
          columns[ii++] = columnConfig.getName();
       }
-      CreateSpatialIndexStatement statement = new CreateSpatialIndexStatement(
-            getIndexName(), getCatalogName(), getSchemaName(), getTableName(),
-            columns, getTablespace());
+      final CreateSpatialIndexStatement statement = new CreateSpatialIndexStatement(getIndexName(),
+            getCatalogName(), getSchemaName(), getTableName(), columns, getTablespace(),
+            getGeometryType(), getSrid());
       return new SqlStatement[] { statement };
    }
 
