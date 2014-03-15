@@ -43,7 +43,7 @@ public class CreateSpatialIndexChange extends AbstractChange implements
       return this.catalogName;
    }
 
-   @DatabaseChangeProperty(mustEqualExisting = "index", description = "Name of the index to create")
+   @DatabaseChangeProperty(mustEqualExisting = "index", description = "Name of the index to create", requiredForDatabase = "mysql, oracle, postgresql")
    public String getIndexName() {
       return this.indexName;
    }
@@ -61,7 +61,7 @@ public class CreateSpatialIndexChange extends AbstractChange implements
       this.schemaName = schemaName;
    }
 
-   @DatabaseChangeProperty(mustEqualExisting = "index.table", description = "Name of the table to add the index to", exampleValue = "person")
+   @DatabaseChangeProperty(mustEqualExisting = "index.table", description = "Name of the table to add the index to", exampleValue = "person", requiredForDatabase = "all")
    public String getTableName() {
       return this.tableName;
    }
@@ -75,6 +75,7 @@ public class CreateSpatialIndexChange extends AbstractChange implements
     * 
     * @return the geometryType.
     */
+   @DatabaseChangeProperty(description = "The Well-Known Text geometry type", exampleValue = "POINT")
    public String getGeometryType() {
       return this.geometryType;
    }
@@ -94,6 +95,7 @@ public class CreateSpatialIndexChange extends AbstractChange implements
     * 
     * @return the srid.
     */
+   @DatabaseChangeProperty(description = "The Spatial Reference ID of the indexed data.  An EPSG SRID is assumed.", exampleValue = "4326", requiredForDatabase = "all")
    public Integer getSrid() {
       return this.srid;
    }

@@ -1,6 +1,7 @@
 package liquibase.ext.spatial.datatype;
 
 import liquibase.database.Database;
+import liquibase.database.core.DerbyDatabase;
 import liquibase.database.core.H2Database;
 import liquibase.database.core.OracleDatabase;
 import liquibase.datatype.DataTypeInfo;
@@ -20,12 +21,41 @@ import com.vividsolutions.jts.io.WKTReader;
 @DataTypeInfo(name = "geometry", aliases = { "com.vividsolutions.jts.geom.Geometry" }, minParameters = 0, maxParameters = 2, priority = LiquibaseDataType.PRIORITY_DEFAULT)
 public class GeometryType extends LiquibaseDataType {
    /**
+    * Returns the value geometry type parameter.
+    * 
+    * @return the geometry type or <code>null</code> if not present.
+    */
+   public String getGeometryType() {
+      String geometryType = null;
+      if (getParameters().length > 0 && getParameters()[0] != null) {
+         geometryType = getParameters()[0].toString();
+      }
+      return geometryType;
+   }
+
+   /**
+    * Returns the value SRID parameter.
+    * 
+    * @return the SRID or <code>null</code> if not present.
+    */
+   public Integer getSRID() {
+      Integer srid = null;
+      if (getParameters().length > 1 && getParameters()[1] != null) {
+         srid = Integer.valueOf(getParameters()[1].toString());
+      }
+      return srid;
+   }
+
+   /**
     * Creates the appropriate Geometry <code>DatabaseDataType</code>.
     */
    @Override
    public DatabaseDataType toDatabaseDataType(final Database database) {
       final DatabaseDataType databaseDataType;
-      if (database instanceof H2Database) {
+      if (database instanceof DerbyDatabase) {
+         // TODO: Make this configurable as BLOB may also be desired for very large geometries.
+         databaseDataType = new DatabaseDataType("VARCHAR(32672) FOR BIT DATA");
+      } else if (database instanceof H2Database) {
          // TODO: Make this configurable as BLOB may also be desired for very large geometries.
          databaseDataType = new DatabaseDataType("BINARY");
       } else if (database instanceof OracleDatabase) {

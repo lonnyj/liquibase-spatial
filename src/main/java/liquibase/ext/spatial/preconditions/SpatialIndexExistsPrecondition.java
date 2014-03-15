@@ -1,8 +1,5 @@
 package liquibase.ext.spatial.preconditions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.Database;
@@ -15,7 +12,6 @@ import liquibase.exception.Warnings;
 import liquibase.logging.LogFactory;
 import liquibase.logging.Logger;
 import liquibase.precondition.Precondition;
-import liquibase.precondition.core.ErrorPrecondition;
 import liquibase.snapshot.SnapshotGeneratorFactory;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.Column;
@@ -25,7 +21,8 @@ import liquibase.structure.core.Table;
 import liquibase.util.StringUtils;
 
 /**
- * The <code>SpatialIndexExistsPrecondition</code>....
+ * <code>SpatialIndexExistsPrecondition</code> determines if a spatial index exists on a specified
+ * table.
  */
 public class SpatialIndexExistsPrecondition implements Precondition {
    /** The Logger for this class. */
@@ -108,26 +105,9 @@ public class SpatialIndexExistsPrecondition implements Precondition {
    public void check(final Database database, final DatabaseChangeLog changeLog,
          final ChangeSet changeSet) throws PreconditionFailedException, PreconditionErrorException {
       try {
-         final Schema schema = new Schema(getCatalogName(), getSchemaName());
          final String tableName = StringUtils.trimToNull(getTableName());
 
-         // For H2, the index is actually another table.
-         final DatabaseObject example;
-         if (database instanceof DerbyDatabase || database instanceof H2Database) {
-
-            if (getTableName() == null) {
-               final List<ErrorPrecondition> erroredPreconditions = new ArrayList<ErrorPrecondition>();
-               erroredPreconditions.add(new ErrorPrecondition(new NullPointerException(
-                     "The tableName is null"), changeLog, this));
-               throw new PreconditionErrorException("tableName is required for "
-                     + database.getDatabaseProductName(), erroredPreconditions);
-            }
-            final String correctedTableName = database.correctObjectName(tableName + "_HATBOX",
-                  Table.class);
-            example = new Table().setName(correctedTableName).setSchema(schema);
-         } else {
-            example = getIndexExample(database, schema, tableName);
-         }
+         final DatabaseObject example = getExample(database, tableName);
          LOGGER.debug("Checking for the example " + example + " in " + database);
          if (!SnapshotGeneratorFactory.getInstance().has(example, database)) {
             LOGGER.debug(example + " was not found");
@@ -154,6 +134,32 @@ public class SpatialIndexExistsPrecondition implements Precondition {
          }
          throw new PreconditionErrorException(e, changeLog, this);
       }
+   }
+
+   /**
+    * Creates an example of the database object for which to check.
+    * 
+    * @param database
+    *           the database instance.
+    * @param schema
+    *           the table's schema.
+    * @param tableName
+    *           the table name of the index.
+    * @return the database object example.
+    */
+   public DatabaseObject getExample(final Database database, final String tableName) {
+      final Schema schema = new Schema(getCatalogName(), getSchemaName());
+      final DatabaseObject example;
+
+      // For GeoDB, the index is actually another table.
+      if (database instanceof DerbyDatabase || database instanceof H2Database) {
+         final String correctedTableName = database.correctObjectName(tableName + "_HATBOX",
+               Table.class);
+         example = new Table().setName(correctedTableName).setSchema(schema);
+      } else {
+         example = getIndexExample(database, schema, tableName);
+      }
+      return example;
    }
 
    /**

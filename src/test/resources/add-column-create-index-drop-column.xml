@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:spatial="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
+         http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial src/main/resources/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
+   <changeSet id="Spatialize DB" author="test">
+      <sql dbms="derby">create procedure InitGeoDB ()
+         language java
+         external
+         name 'geodb.GeoDB.InitGeoDBProc'
+         parameter style java
+         modifies
+         sql data;
+      </sql>
+      <sql dbms="h2">CREATE ALIAS InitGeoDB for "geodb.GeoDB.InitGeoDB"
+      </sql>
+      <sql dbms="derby, h2">CALL InitGeoDB()</sql>
+   </changeSet>
+
+   <changeSet id="Create table" author="test">
+      <createTable tableName="TEST">
+         <column name="ID" type="BIGINT">
+            <constraints nullable="false" primaryKey="true"
+               primaryKeyName="TEST_PK" />
+         </column>
+      </createTable>
+   </changeSet>
+
+   <changeSet id="Add geometry column" author="test">
+      <preConditions>
+         <spatial:spatialSupported />
+      </preConditions>
+      <addColumn tableName="TEST">
+         <column name="GEOM" type="GEOMETRY(POINT,4326)" />
+      </addColumn>
+   </changeSet>
+
+   <changeSet id="Add not null constraint to geometry column"
+      author="test">
+      <preConditions>
+         <columnExists tableName="TEST" columnName="GEOM" />
+      </preConditions>
+      <addNotNullConstraint tableName="TEST"
+         columnName="GEOM" columnDataType="GEOMETRY(POINT,4326)" />
+   </changeSet>
+
+   <changeSet id="Verify geometry_columns inserted" author="test">
+      <preConditions>
+         <sqlCheck expectedResult="1">
+            SELECT count(*)
+            FROM
+            geometry_columns
+            WHERE upper(f_table_schema) =
+            upper('${database.liquibaseSchemaName}')
+            AND
+            upper(f_table_name) = 'TEST'
+            AND upper(f_geometry_column)
+            =
+            'GEOM'
+         </sqlCheck>
+      </preConditions>
+   </changeSet>
+
+   <changeSet id="Create spatial index" author="test">
+      <preConditions>
+         <tableExists tableName="TEST" />
+         <not>
+            <spatial:spatialIndexExists
+               tableName="TEST" />
+         </not>
+      </preConditions>
+      <spatial:createSpatialIndex tableName="TEST"
+         indexName="TEST_GEOM_IDX" srid="4326">
+         <column name="GEOM" />
+      </spatial:createSpatialIndex>
+   </changeSet>
+
+   <changeSet id="Insert spatial data" author="test">
+      <preConditions>
+         <spatial:spatialIndexExists
+            tableName="TEST" />
+      </preConditions>
+      <insert tableName="TEST">
+         <column name="ID" valueNumeric="1" />
+         <column name="GEOM" value="SRID=4326;POINT(-5 -5)" />
+      </insert>
+      <insert tableName="TEST">
+         <column name="ID" valueNumeric="2" />
+         <column name="GEOM" value="SRID=4326;POINT(0 0)" />
+      </insert>
+      <insert tableName="TEST">
+         <column name="ID" valueNumeric="3" />
+         <column name="GEOM" value="SRID=4326;POINT(5 5)" />
+      </insert>
+   </changeSet>
+
+   <changeSet id="Drop geometry column" author="test">
+      <preConditions>
+         <columnExists tableName="TEST" columnName="GEOM" />
+      </preConditions>
+      <dropColumn tableName="TEST" columnName="GEOM" />
+   </changeSet>
+
+   <changeSet id="Verify spatial index dropped" author="test">
+      <preConditions>
+         <not>
+            <spatial:spatialIndexExists
+               tableName="TEST" />
+         </not>
+      </preConditions>
+   </changeSet>
+
+   <changeSet id="Verify geometry_columns deleted" author="test">
+      <preConditions>
+         <sqlCheck expectedResult="0">
+            SELECT count(*)
+            FROM
+            geometry_columns
+            WHERE upper(f_table_schema) =
+            upper('${database.liquibaseSchemaName}')
+            AND
+            upper(f_table_name) = 'TEST'
+            AND upper(f_geometry_column)
+            =
+            'GEOM'
+         </sqlCheck>
+      </preConditions>
+   </changeSet>
+</databaseChangeLog>
