@@ -7,8 +7,8 @@ import liquibase.database.Database;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
-import liquibase.sqlgenerator.core.InsertGenerator;
-import liquibase.statement.core.InsertStatement;
+import liquibase.sqlgenerator.core.UpdateGenerator;
+import liquibase.statement.core.UpdateStatement;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -18,14 +18,14 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  * @author Lonny
  */
-public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
+public abstract class AbstractSpatialUpdateGenerator extends UpdateGenerator {
    @Override
    public int getPriority() {
       return super.getPriority() + 1;
    }
 
    @Override
-   public ValidationErrors validate(final InsertStatement statement, final Database database,
+   public ValidationErrors validate(final UpdateStatement statement, final Database database,
          final SqlGeneratorChain sqlGeneratorChain) {
       return sqlGeneratorChain.validate(statement, database);
    }
@@ -34,9 +34,9 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
     * Find any fields that look like WKT or EWKT and replace them with the database-specific value.
     */
    @Override
-   public Sql[] generateSql(final InsertStatement statement, final Database database,
+   public Sql[] generateSql(final UpdateStatement statement, final Database database,
          final SqlGeneratorChain sqlGeneratorChain) {
-      for (final Entry<String, Object> entry : statement.getColumnValues().entrySet()) {
+      for (final Entry<String, Object> entry : statement.getNewColumnValues().entrySet()) {
          entry.setValue(handleColumnValue(database, entry.getValue()));
       }
       return super.generateSql(statement, database, sqlGeneratorChain);

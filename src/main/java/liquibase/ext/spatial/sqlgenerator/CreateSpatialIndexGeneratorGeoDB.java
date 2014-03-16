@@ -51,40 +51,25 @@ public class CreateSpatialIndexGeneratorGeoDB extends AbstractCreateSpatialIndex
       sql.append(schemaName).append(".CreateSpatialIndex(");
 
       // Add the schema name parameter.
-      sql.append("'").append(database.escapeStringForDatabase(schemaName)).append("'");
+      sql.append("'").append(schemaName).append("'");
       sql.append(", ");
 
       // Add the table name parameter.
       final String tableName = statement.getTableName();
-      sql.append("'").append(database.escapeStringForDatabase(tableName)).append("'");
+      sql.append("'").append(tableName).append("'");
       sql.append(", ");
 
       // Add the column name parameter.
-      final String columnName = database.escapeColumnName(catalogName, schemaName, tableName,
-            statement.getColumns()[0]);
+      final String columnName = statement.getColumns()[0];
       sql.append("'").append(columnName).append("'");
-      // spatializeSql.append(", ");
-      // final String geometryType = statement.getGeometryType();
-      // if (geometryType == null || "NULL".equalsIgnoreCase(geometryType)) {
-      // spatializeSql.append("NULL");
-      // } else {
-      // spatializeSql.append("'").append(database.escapeStringForDatabase(geometryType))
-      // .append("'");
-      // }
       sql.append(", ");
 
       // Add the SRID parameter.
-      final Integer srid = statement.getSrid();
-      if (srid == null) {
-         sql.append("NULL");
-      } else {
-         sql.append("'").append(srid).append("'");
-      }
-      // spatializeSql.append(", ").append("NULL"); // Use the default PK expose value.
-      // spatializeSql.append(", ").append("NULL"); // Use the default (49) number of entries per
-      // node.
+      final int srid = statement.getSrid() == null ? 4326 : statement.getSrid();
+      sql.append("'").append(srid).append("'");
       sql.append(')');
-      final Table hatboxTable = new Table().setName(tableName + "_HATBOX");
+      final Table hatboxTable = new Table().setName(database.correctObjectName(tableName
+            + "_HATBOX", Table.class));
       hatboxTable.setSchema(catalogName, schemaName);
       final UnparsedSql spatialize = new UnparsedSql(sql.toString(), hatboxTable);
 

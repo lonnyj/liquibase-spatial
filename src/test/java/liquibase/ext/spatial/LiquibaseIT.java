@@ -52,7 +52,7 @@ public abstract class LiquibaseIT {
    }
 
    /**
-    * Runs the integration tests.
+    * Tests Liquibase updating and rolling back the database.
     * 
     * @param changeLogFile
     *           the database change log to use in the {@link Liquibase#update(Contexts) update}.
@@ -62,13 +62,14 @@ public abstract class LiquibaseIT {
     *            if unable to get the database connection.
     */
    @Test(dataProvider = "databaseUrlProvider")
-   public void testLiquibase(final String changeLogFile) throws LiquibaseException, SQLException {
+   public void testLiquibaseUpdateTestingRollback(final String changeLogFile)
+         throws LiquibaseException, SQLException {
       final Connection connection = getConnection();
       final JdbcConnection jdbcConnection = new JdbcConnection(connection);
       try {
          final ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
          final Liquibase liquibase = new Liquibase(changeLogFile, resourceAccessor, jdbcConnection);
-         liquibase.update((Contexts) null);
+         liquibase.updateTestingRollback((Contexts) null);
          final List<ChangeSet> unrunChangeSets = liquibase.listUnrunChangeSets((Contexts) null);
          assertTrue(unrunChangeSets.isEmpty(), "All change sets should have run");
       } finally {

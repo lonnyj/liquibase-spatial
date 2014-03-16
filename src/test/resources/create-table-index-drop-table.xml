@@ -16,6 +16,10 @@
       <sql dbms="h2">CREATE ALIAS InitGeoDB for "geodb.GeoDB.InitGeoDB"
       </sql>
       <sql dbms="derby, h2">CALL InitGeoDB()</sql>
+      <rollback>
+         <sql dbms="derby">DROP PROCEDURE InitGeoDB</sql>
+         <sql dbms="h2">DROP ALIAS InitGeoDB</sql>
+      </rollback>
    </changeSet>
 
    <changeSet id="Create table" author="test">
@@ -77,6 +81,18 @@
          <column name="ID" valueNumeric="3" />
          <column name="GEOM" value="SRID=4326;POINT(5 5)" />
       </insert>
+      <rollback>
+         <!-- Hatbox/Derby don't like deleting everything from the table in one statement. -->
+         <delete tableName="TEST">
+            <where>ID = 3</where>
+         </delete>
+         <delete tableName="TEST">
+            <where>ID = 2</where>
+         </delete>
+         <delete tableName="TEST">
+            <where>ID = 1</where>
+         </delete>
+      </rollback>
    </changeSet>
 
    <changeSet id="Drop table" author="test">
@@ -84,6 +100,9 @@
          <tableExists tableName="TEST" />
       </preConditions>
       <dropTable tableName="TEST" />
+      <rollback changeSetId="Create table" changeSetAuthor="test" />
+      <rollback changeSetId="Create spatial index" changeSetAuthor="test" />
+      <rollback changeSetId="Insert spatial data" changeSetAuthor="test" />
    </changeSet>
 
    <changeSet id="Verify spatial index dropped" author="test">

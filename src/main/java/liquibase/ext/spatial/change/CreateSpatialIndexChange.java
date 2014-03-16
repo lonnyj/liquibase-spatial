@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import liquibase.change.AbstractChange;
+import liquibase.change.Change;
 import liquibase.change.ChangeMetaData;
 import liquibase.change.ChangeWithColumns;
 import liquibase.change.ColumnConfig;
@@ -161,6 +162,17 @@ public class CreateSpatialIndexChange extends AbstractChange implements
             getCatalogName(), getSchemaName(), getTableName(), columns, getTablespace(),
             getGeometryType(), getSrid());
       return new SqlStatement[] { statement };
+   }
+
+   @Override
+   protected Change[] createInverses() {
+      final DropSpatialIndexChange inverse = new DropSpatialIndexChange();
+      inverse.setCatalogName(getCatalogName());
+      inverse.setSchemaName(getSchemaName());
+      inverse.setTableName(getTableName());
+      inverse.setIndexName(getIndexName());
+
+      return new Change[] { inverse };
    }
 
    @Override

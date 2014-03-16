@@ -16,6 +16,10 @@
       <sql dbms="h2">CREATE ALIAS InitGeoDB for "geodb.GeoDB.InitGeoDB"
       </sql>
       <sql dbms="derby, h2">CALL InitGeoDB()</sql>
+      <rollback>
+         <sql dbms="derby">DROP PROCEDURE InitGeoDB</sql>
+         <sql dbms="h2">DROP ALIAS InitGeoDB</sql>
+      </rollback>
    </changeSet>
 
    <changeSet id="Create table" author="test">
@@ -36,15 +40,6 @@
       </addColumn>
    </changeSet>
 
-   <changeSet id="Add not null constraint to geometry column"
-      author="test">
-      <preConditions>
-         <columnExists tableName="TEST" columnName="GEOM" />
-      </preConditions>
-      <addNotNullConstraint tableName="TEST"
-         columnName="GEOM" columnDataType="GEOMETRY(POINT,4326)" />
-   </changeSet>
-
    <changeSet id="Verify geometry_columns inserted" author="test">
       <preConditions>
          <sqlCheck expectedResult="1">
@@ -60,6 +55,15 @@
             'GEOM'
          </sqlCheck>
       </preConditions>
+   </changeSet>
+
+   <changeSet id="Add not null constraint to geometry column"
+      author="test">
+      <preConditions>
+         <columnExists tableName="TEST" columnName="GEOM" />
+      </preConditions>
+      <addNotNullConstraint tableName="TEST"
+         columnName="GEOM" columnDataType="GEOMETRY(POINT,4326)" />
    </changeSet>
 
    <changeSet id="Create spatial index" author="test">
@@ -93,6 +97,9 @@
          <column name="ID" valueNumeric="3" />
          <column name="GEOM" value="SRID=4326;POINT(5 5)" />
       </insert>
+      <rollback>
+         <delete tableName="TEST" />
+      </rollback>
    </changeSet>
 
    <changeSet id="Drop geometry column" author="test">
@@ -100,6 +107,21 @@
          <columnExists tableName="TEST" columnName="GEOM" />
       </preConditions>
       <dropColumn tableName="TEST" columnName="GEOM" />
+      <rollback changeSetId="Add geometry column" changeSetAuthor="test" />
+      <rollback>
+         <update tableName="TEST">
+            <column name="GEOM" value="SRID=4326;POINT(-5 -5)" />
+            <where>ID = 1</where>
+         </update>
+         <update tableName="TEST">
+            <column name="GEOM" value="SRID=4326;POINT(0 0)" />
+            <where>ID = 2</where>
+         </update>
+         <update tableName="TEST">
+            <column name="GEOM" value="SRID=4326;POINT(5 5)" />
+            <where>ID = 3</where>
+         </update>
+      </rollback>
    </changeSet>
 
    <changeSet id="Verify spatial index dropped" author="test">

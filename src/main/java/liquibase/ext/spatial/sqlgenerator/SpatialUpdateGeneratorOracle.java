@@ -2,18 +2,18 @@ package liquibase.ext.spatial.sqlgenerator;
 
 import liquibase.database.Database;
 import liquibase.database.core.OracleDatabase;
-import liquibase.statement.core.InsertStatement;
+import liquibase.statement.core.UpdateStatement;
 
 /**
- * The <code>SpatialInsertGeneratorH2</code> generates the SQL for <code>INSERT</code>ing geometries
- * into Oracle.
+ * The <code>SpatialUpdateGeneratorH2</code> generates the SQL for <code>UPDATE</code>ing geometries
+ * in Oracle.
  */
-public class SpatialInsertGeneratorOracle extends AbstractSpatialInsertGenerator {
+public class SpatialUpdateGeneratorOracle extends AbstractSpatialUpdateGenerator {
    /**
-    * Verifies that the <code>InsertStatement</code> has WKT or EWKT.
+    * Verifies that the <code>UpdateStatement</code> has WKT or EWKT.
     */
    @Override
-   public boolean supports(final InsertStatement statement, final Database database) {
+   public boolean supports(final UpdateStatement statement, final Database database) {
       return database instanceof OracleDatabase;
    }
 
@@ -24,7 +24,7 @@ public class SpatialInsertGeneratorOracle extends AbstractSpatialInsertGenerator
     * @return the name of the function that converts WKT to a geometry.
     */
    @Override
-   protected String getGeomFromWktFunction() {
+   public String getGeomFromWktFunction() {
       return "SDO_GEOMETRY";
    }
 
