@@ -22,7 +22,17 @@ public class SpatialUpdateGeneratorGeoDB extends AbstractSpatialUpdateGenerator 
     * @return the name of the function that converts WKT to a geometry.
     */
    @Override
-   protected String getGeomFromWktFunction() {
+   public String getGeomFromWktFunction() {
       return "ST_GeomFromText";
+   }
+
+   /**
+    * Always returns <code>true</code> for GeoDB.
+    * 
+    * @see AbstractSpatialInsertGenerator#isSridRequiredInFunction(Database)
+    */
+   @Override
+   public boolean isSridRequiredInFunction(final Database database) {
+      return true;
    }
 }

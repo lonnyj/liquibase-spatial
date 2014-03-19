@@ -22,7 +22,7 @@ public class SpatialInsertGeneratorGeoDB extends AbstractSpatialInsertGenerator 
     * @return the name of the function that converts WKT to a geometry.
     */
    @Override
-   protected String getGeomFromWktFunction() {
+   public String getGeomFromWktFunction() {
       return "ST_GeomFromText";
    }
 
@@ -32,7 +32,7 @@ public class SpatialInsertGeneratorGeoDB extends AbstractSpatialInsertGenerator 
     * @see AbstractSpatialInsertGenerator#isSridRequiredInFunction(Database)
     */
    @Override
-   protected boolean isSridRequiredInFunction(final Database database) {
+   public boolean isSridRequiredInFunction(final Database database) {
       return true;
    }
 }

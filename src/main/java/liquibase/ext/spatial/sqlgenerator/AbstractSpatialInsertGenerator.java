@@ -1,7 +1,6 @@
 package liquibase.ext.spatial.sqlgenerator;
 
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
 
 import liquibase.database.Database;
 import liquibase.exception.ValidationErrors;
@@ -10,15 +9,14 @@ import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.InsertGenerator;
 import liquibase.statement.core.InsertStatement;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 /**
  * Implementations of <code>AbstractSpatialInsertGenerator</code> convert a Well-Known Text string
  * and EPSG SRID string to the database-specific geometry.
  * 
  * @author Lonny
  */
-public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
+public abstract class AbstractSpatialInsertGenerator extends InsertGenerator implements
+      WktInsertOrUpdateGenerator {
    @Override
    public int getPriority() {
       return super.getPriority() + 1;
@@ -58,14 +56,6 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
    }
 
    /**
-    * Returns the name of the function that converts Well-Known Text to a database-specific
-    * geometry.
-    * 
-    * @return the name of the function that converts WKT to a geometry.
-    */
-   protected abstract String getGeomFromWktFunction();
-
-   /**
     * Indicates if the SRID parameter is required in the function returned from
     * {@link #getGeomFromWktFunction()}.
     * 
@@ -74,7 +64,8 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
     * 
     * @return <code>true</code> if the SRID parameter is required in order to invoke the function.
     */
-   protected boolean isSridRequiredInFunction(final Database database) {
+   @Override
+   public boolean isSridRequiredInFunction(final Database database) {
       return false;
    }
 
@@ -90,25 +81,7 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
     * @return the new value.
     */
    protected Object handleColumnValue(final Object oldValue, final Database database) {
-      Object newValue = oldValue;
-      if (oldValue instanceof Geometry) {
-         final Geometry geometry = (Geometry) oldValue;
-         final String wkt = geometry.toText();
-         String sridString = null;
-         if (geometry.getSRID() > 0) {
-            sridString = String.valueOf(geometry.getSRID());
-         }
-         newValue = convertToFunction(wkt, sridString, database);
-      } else if (oldValue instanceof String) {
-         final String value = oldValue.toString().trim();
-         final Matcher matcher = WktConversionUtils.EWKT_PATTERN.matcher(value);
-         if (matcher.matches()) {
-            final String sridString = matcher.group(2);
-            final String wkt = matcher.group(3);
-            final String function = convertToFunction(wkt, sridString, database);
-            newValue = function;
-         }
-      }
+      final Object newValue = WktConversionUtils.handleColumnValue(oldValue, database, this);
       return newValue;
    }
 
@@ -121,16 +94,9 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
     *           the database instance.
     * @return the string that converts the WKT to a database-specific geometry.
     */
-   protected String convertToFunction(final String wkt, final String srid, final Database database) {
-      final String geomFromTextFunction = getGeomFromWktFunction();
-      String function = geomFromTextFunction + "('" + wkt + "'";
-      if (srid != null && !srid.equals("")) {
-         function += ", " + srid;
-      } else if (isSridRequiredInFunction(database)) {
-         throw new IllegalArgumentException("An SRID was not provided with '" + wkt
-               + "' but is required in call to '" + geomFromTextFunction + "'");
-      }
-      function += ")";
+   @Override
+   public String convertToFunction(final String wkt, final String srid, final Database database) {
+      final String function = WktConversionUtils.convertToFunction(wkt, srid, database, this);
       return function;
    }
 }

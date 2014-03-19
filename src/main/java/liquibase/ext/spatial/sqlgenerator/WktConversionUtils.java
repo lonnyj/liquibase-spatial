@@ -1,6 +1,11 @@
 package liquibase.ext.spatial.sqlgenerator;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import liquibase.database.Database;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 public class WktConversionUtils {
    /** The SRID regular expression. */
@@ -17,5 +22,65 @@ public class WktConversionUtils {
 
    /** Hide the default constructor. */
    private WktConversionUtils() {
+   }
+
+   /**
+    * If the old value is a geometry or a Well-Known Text, convert it to the appropriate new value.
+    * Otherwise, this method returns the old value.
+    * 
+    * @param oldValue
+    *           the old value.
+    * @param database
+    *           the database instance.
+    * 
+    * @return the new value.
+    */
+   public static Object handleColumnValue(final Object oldValue, final Database database,
+         final WktInsertOrUpdateGenerator generator) {
+      Object newValue = oldValue;
+      if (oldValue instanceof Geometry) {
+         final Geometry geometry = (Geometry) oldValue;
+         final String wkt = geometry.toText();
+         String sridString = null;
+         if (geometry.getSRID() > 0) {
+            sridString = String.valueOf(geometry.getSRID());
+         }
+         newValue = generator.convertToFunction(wkt, sridString, database);
+      } else if (oldValue instanceof String) {
+         final String value = oldValue.toString().trim();
+         final Matcher matcher = WktConversionUtils.EWKT_PATTERN.matcher(value);
+         if (matcher.matches()) {
+            final String sridString = matcher.group(2);
+            final String wkt = matcher.group(3);
+            final String function = generator.convertToFunction(wkt, sridString, database);
+            newValue = function;
+         }
+      }
+      return newValue;
+   }
+
+   /**
+    * Converts the given Well-Known Text and SRID to the appropriate function call for the database.
+    * 
+    * @param wkt
+    *           the Well-Known Text string.
+    * @param srid
+    *           the SRID string which may be an empty string.
+    * @param database
+    *           the database instance.
+    * @return the string that converts the WKT to a database-specific geometry.
+    */
+   public static String convertToFunction(final String wkt, final String srid,
+         final Database database, final WktInsertOrUpdateGenerator generator) {
+      final String geomFromTextFunction = generator.getGeomFromWktFunction();
+      String function = geomFromTextFunction + "('" + wkt + "'";
+      if (srid != null && !srid.equals("")) {
+         function += ", " + srid;
+      } else if (generator.isSridRequiredInFunction(database)) {
+         throw new IllegalArgumentException("An SRID was not provided with '" + wkt
+               + "' but is required in call to '" + geomFromTextFunction + "'");
+      }
+      function += ")";
+      return function;
    }
 }

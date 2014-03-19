@@ -21,7 +21,7 @@ public class SpatialUpdateGeneratorMySQL extends AbstractSpatialUpdateGenerator 
     * @return the name of the function that converts WKT to a geometry.
     */
    @Override
-   protected String getGeomFromWktFunction() {
+   public String getGeomFromWktFunction() {
       return "GeomFromText";
    }
 }

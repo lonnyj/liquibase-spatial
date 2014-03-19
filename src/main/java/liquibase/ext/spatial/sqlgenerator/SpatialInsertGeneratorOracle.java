@@ -24,7 +24,7 @@ public class SpatialInsertGeneratorOracle extends AbstractSpatialInsertGenerator
     * @return the name of the function that converts WKT to a geometry.
     */
    @Override
-   protected String getGeomFromWktFunction() {
+   public String getGeomFromWktFunction() {
       return "SDO_GEOMETRY";
    }
 
@@ -34,7 +34,7 @@ public class SpatialInsertGeneratorOracle extends AbstractSpatialInsertGenerator
     * @see AbstractSpatialInsertGenerator#isSridRequiredInFunction(Database)
     */
    @Override
-   protected boolean isSridRequiredInFunction(final Database database) {
+   public boolean isSridRequiredInFunction(final Database database) {
       return true;
    }
 
@@ -42,7 +42,7 @@ public class SpatialInsertGeneratorOracle extends AbstractSpatialInsertGenerator
     * Handles the Well-Known Text and SRID for Oracle.
     */
    @Override
-   protected String convertToFunction(final String wkt, final String srid, final Database database) {
+   public String convertToFunction(final String wkt, final String srid, final Database database) {
       final String oracleWkt;
 
       // Strings longer than 4000 characters need to be converted to CLOBs.
