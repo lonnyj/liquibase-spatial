@@ -29,10 +29,20 @@ public class SpatialInsertGeneratorOracle extends AbstractSpatialInsertGenerator
    }
 
    /**
+    * Always returns <code>true</code> for Oracle.
+    * 
+    * @see AbstractSpatialInsertGenerator#isSridRequiredInFunction(Database)
+    */
+   @Override
+   protected boolean isSridRequiredInFunction(final Database database) {
+      return true;
+   }
+
+   /**
     * Handles the Well-Known Text and SRID for Oracle.
     */
    @Override
-   protected String convertToFunction(final String wkt, final String srid) {
+   protected String convertToFunction(final String wkt, final String srid, final Database database) {
       final String oracleWkt;
 
       // Strings longer than 4000 characters need to be converted to CLOBs.
@@ -49,7 +59,13 @@ public class SpatialInsertGeneratorOracle extends AbstractSpatialInsertGenerator
       } else {
          oracleWkt = wkt;
       }
-      final String oracleSrid = "SDO_CS.MAP_EPSG_TO_ORACLE(" + srid + ")";
-      return super.convertToFunction(oracleWkt, oracleSrid);
+
+      final String oracleSrid;
+      if (srid != null && !srid.equals("")) {
+         oracleSrid = "SDO_CS.MAP_EPSG_TO_ORACLE(" + srid + ")";
+      } else {
+         oracleSrid = null;
+      }
+      return super.convertToFunction(oracleWkt, oracleSrid, database);
    }
 }

@@ -25,4 +25,14 @@ public class SpatialInsertGeneratorGeoDB extends AbstractSpatialInsertGenerator 
    protected String getGeomFromWktFunction() {
       return "ST_GeomFromText";
    }
+
+   /**
+    * Always returns <code>true</code> for GeoDB.
+    * 
+    * @see AbstractSpatialInsertGenerator#isSridRequiredInFunction(Database)
+    */
+   @Override
+   protected boolean isSridRequiredInFunction(final Database database) {
+      return true;
+   }
 }

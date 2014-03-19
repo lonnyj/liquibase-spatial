@@ -37,7 +37,7 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
    public Sql[] generateSql(final InsertStatement statement, final Database database,
          final SqlGeneratorChain sqlGeneratorChain) {
       for (final Entry<String, Object> entry : statement.getColumnValues().entrySet()) {
-         entry.setValue(handleColumnValue(database, entry.getValue()));
+         entry.setValue(handleColumnValue(entry.getValue(), database));
       }
       return super.generateSql(statement, database, sqlGeneratorChain);
    }
@@ -66,16 +66,30 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
    protected abstract String getGeomFromWktFunction();
 
    /**
-    * If the old value is a geometry or a Well-Known Text, convert it to the appropriate new value.
-    * Otherwise, this method returns the old value.
+    * Indicates if the SRID parameter is required in the function returned from
+    * {@link #getGeomFromWktFunction()}.
     * 
     * @param database
     *           the database instance.
+    * 
+    * @return <code>true</code> if the SRID parameter is required in order to invoke the function.
+    */
+   protected boolean isSridRequiredInFunction(final Database database) {
+      return false;
+   }
+
+   /**
+    * If the old value is a geometry or a Well-Known Text, convert it to the appropriate new value.
+    * Otherwise, this method returns the old value.
+    * 
     * @param oldValue
     *           the old value.
+    * @param database
+    *           the database instance.
+    * 
     * @return the new value.
     */
-   protected Object handleColumnValue(final Database database, final Object oldValue) {
+   protected Object handleColumnValue(final Object oldValue, final Database database) {
       Object newValue = oldValue;
       if (oldValue instanceof Geometry) {
          final Geometry geometry = (Geometry) oldValue;
@@ -84,14 +98,14 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
          if (geometry.getSRID() > 0) {
             sridString = String.valueOf(geometry.getSRID());
          }
-         newValue = convertToFunction(wkt, sridString);
+         newValue = convertToFunction(wkt, sridString, database);
       } else if (oldValue instanceof String) {
          final String value = oldValue.toString().trim();
          final Matcher matcher = WktConversionUtils.EWKT_PATTERN.matcher(value);
          if (matcher.matches()) {
             final String sridString = matcher.group(2);
             final String wkt = matcher.group(3);
-            final String function = convertToFunction(wkt, sridString);
+            final String function = convertToFunction(wkt, sridString, database);
             newValue = function;
          }
       }
@@ -103,13 +117,18 @@ public abstract class AbstractSpatialInsertGenerator extends InsertGenerator {
     *           the Well-Known Text string.
     * @param srid
     *           the SRID string which may be an empty string.
+    * @param database
+    *           the database instance.
     * @return the string that converts the WKT to a database-specific geometry.
     */
-   protected String convertToFunction(final String wkt, final String srid) {
+   protected String convertToFunction(final String wkt, final String srid, final Database database) {
       final String geomFromTextFunction = getGeomFromWktFunction();
       String function = geomFromTextFunction + "('" + wkt + "'";
       if (srid != null && !srid.equals("")) {
          function += ", " + srid;
+      } else if (isSridRequiredInFunction(database)) {
+         throw new IllegalArgumentException("An SRID was not provided with '" + wkt
+               + "' but is required in call to '" + geomFromTextFunction + "'");
       }
       function += ")";
       return function;
