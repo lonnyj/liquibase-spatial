@@ -48,7 +48,7 @@ public class WktConversionUtils {
          newValue = generator.convertToFunction(wkt, sridString, database);
       } else if (oldValue instanceof String) {
          final String value = oldValue.toString().trim();
-         final Matcher matcher = WktConversionUtils.EWKT_PATTERN.matcher(value);
+         final Matcher matcher = EWKT_PATTERN.matcher(value);
          if (matcher.matches()) {
             final String sridString = matcher.group(2);
             final String wkt = matcher.group(3);
@@ -72,6 +72,12 @@ public class WktConversionUtils {
     */
    public static String convertToFunction(final String wkt, final String srid,
          final Database database, final WktInsertOrUpdateGenerator generator) {
+      if (wkt == null || wkt.equals("")) {
+         throw new IllegalArgumentException("The Well-Known Text cannot be null or empty");
+      }
+      if (generator == null) {
+         throw new IllegalArgumentException("The generator cannot be null or empty");
+      }
       final String geomFromTextFunction = generator.getGeomFromWktFunction();
       String function = geomFromTextFunction + "('" + wkt + "'";
       if (srid != null && !srid.equals("")) {
