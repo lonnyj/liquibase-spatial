@@ -25,14 +25,15 @@ public class CreateSpatialIndexGeneratorGeoDB extends AbstractCreateSpatialIndex
    }
 
    /**
-    * @see liquibase.sqlgenerator.SqlGenerator#validate(liquibase.statement.SqlStatement,
-    *      liquibase.database.Database, liquibase.sqlgenerator.SqlGeneratorChain)
+    * {@inheritDoc} Also ensures that the SRID is populated.
     */
    @Override
    public ValidationErrors validate(final CreateSpatialIndexStatement statement,
          final Database database, final SqlGeneratorChain sqlGeneratorChain) {
-      // TODO Auto-generated method stub
-      return null;
+      final ValidationErrors validationErrors = super.validate(statement, database,
+            sqlGeneratorChain);
+      validationErrors.checkRequiredField("srid", statement.getSrid());
+      return validationErrors;
    }
 
    /**
@@ -65,7 +66,7 @@ public class CreateSpatialIndexGeneratorGeoDB extends AbstractCreateSpatialIndex
       sql.append(", ");
 
       // Add the SRID parameter.
-      final int srid = statement.getSrid() == null ? 4326 : statement.getSrid();
+      final int srid = statement.getSrid();
       sql.append("'").append(srid).append("'");
       sql.append(')');
       final Table hatboxTable = new Table().setName(database.correctObjectName(tableName
