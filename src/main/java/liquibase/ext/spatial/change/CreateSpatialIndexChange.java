@@ -14,6 +14,7 @@ import liquibase.database.Database;
 import liquibase.ext.spatial.statement.CreateSpatialIndexStatement;
 import liquibase.ext.spatial.xml.XmlConstants;
 import liquibase.statement.SqlStatement;
+import liquibase.util.StringUtils;
 
 /**
  * The <code>CreateSpatialIndexChange</code>....
@@ -139,18 +140,19 @@ public class CreateSpatialIndexChange extends AbstractChange implements
       this.tablespace = tablespace;
    }
 
-   /**
-    * @see liquibase.change.Change#getConfirmationMessage()
-    */
    @Override
    public String getConfirmationMessage() {
-      // TODO Auto-generated method stub
-      return null;
+      final StringBuilder message = new StringBuilder("Spatial index");
+      if (StringUtils.trimToNull(getIndexName()) != null) {
+         message.append(' ').append(getIndexName().trim());
+      }
+      message.append(" created");
+      if (StringUtils.trimToNull(getTableName()) != null) {
+         message.append(" on ").append(getTableName().trim());
+      }
+      return message.toString();
    }
 
-   /**
-    * @see liquibase.change.Change#generateStatements(liquibase.database.Database)
-    */
    @Override
    public SqlStatement[] generateStatements(final Database database) {
       final String[] columns = new String[this.columns.size()];

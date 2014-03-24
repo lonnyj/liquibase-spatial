@@ -15,10 +15,6 @@ import liquibase.structure.core.Table;
  * Apache Derby and H2.
  */
 public class CreateSpatialIndexGeneratorGeoDB extends AbstractCreateSpatialIndexGenerator {
-   /**
-    * @see liquibase.sqlgenerator.core.AbstractSqlGenerator#supports(liquibase.statement.SqlStatement,
-    *      liquibase.database.Database)
-    */
    @Override
    public boolean supports(final CreateSpatialIndexStatement statement, final Database database) {
       return database instanceof DerbyDatabase || database instanceof H2Database;

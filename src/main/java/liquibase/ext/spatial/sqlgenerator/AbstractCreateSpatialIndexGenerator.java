@@ -15,7 +15,6 @@ import liquibase.structure.core.Table;
  */
 public abstract class AbstractCreateSpatialIndexGenerator extends
       AbstractSqlGenerator<CreateSpatialIndexStatement> {
-
    /**
     * Ensures that the table name and columns are populated.
     * 

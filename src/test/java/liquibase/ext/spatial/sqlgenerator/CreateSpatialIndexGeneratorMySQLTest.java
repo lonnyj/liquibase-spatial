@@ -3,6 +3,7 @@ package liquibase.ext.spatial.sqlgenerator;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 import liquibase.database.Database;
+import liquibase.database.core.H2Database;
 import liquibase.database.core.MySQLDatabase;
 import liquibase.ext.spatial.statement.CreateSpatialIndexStatement;
 import liquibase.sql.Sql;
@@ -15,6 +16,25 @@ import org.testng.annotations.Test;
  * <code>CreateSpatialIndexGeneratorMySQLTest</code> tests {@link CreateSpatialIndexGeneratorMySQL}.
  */
 public class CreateSpatialIndexGeneratorMySQLTest {
+
+   /**
+    * Tests {@link CreateSpatialIndexGeneratorMySQL#supports(CreateSpatialIndexStatement, Database)}
+    */
+   @Test
+   public void testSupports() {
+      final CreateSpatialIndexGeneratorMySQL generator = new CreateSpatialIndexGeneratorMySQL();
+      final CreateSpatialIndexStatement statement = mock(CreateSpatialIndexStatement.class);
+      assertTrue(generator.supports(statement, new MySQLDatabase()));
+      assertFalse(generator.supports(statement, new H2Database()));
+   }
+
+   /**
+    * Tests
+    * {@link CreateSpatialIndexGeneratorMySQL#generateSql(CreateSpatialIndexStatement, Database, SqlGeneratorChain)}
+    * with a variety of inputs.
+    * 
+    * @param statement
+    */
    @Test(dataProvider = "generateSqlTestData")
    public void testGenerateSql(final CreateSpatialIndexStatement statement) {
       final CreateSpatialIndexGeneratorMySQL generator = new CreateSpatialIndexGeneratorMySQL();
@@ -24,9 +44,13 @@ public class CreateSpatialIndexGeneratorMySQLTest {
       assertNotNull(result);
       assertEquals(result.length, 1);
       final String sql = result[0].toSql();
-      final String pattern = "(?i)CREATE SPATIAL INDEX " + statement.getIndexName()
-            + " ON ([a-zA-Z0-9]+[.])?" + statement.getTableName() + "\\("
-            + statement.getColumns()[0] + "\\)";
+      String pattern = "(?i)CREATE SPATIAL INDEX " + statement.getIndexName() + " ON ";
+      if (statement.getTableCatalogName() != null) {
+         pattern += statement.getTableCatalogName() + '.';
+      } else if (statement.getTableSchemaName() != null) {
+         pattern += statement.getTableSchemaName() + '.';
+      }
+      pattern += statement.getTableName() + "\\(" + statement.getColumns()[0] + "\\)";
       assertTrue(sql.matches(pattern), "'" + sql + "' does not match the pattern '" + pattern + "'");
       assertNotNull(result[0].getAffectedDatabaseObjects());
       assertTrue(result[0].getAffectedDatabaseObjects().size() > 1, result[0]
@@ -36,7 +60,7 @@ public class CreateSpatialIndexGeneratorMySQLTest {
    /**
     * Generates test data for {@link #testGenerateSql(Integer, String)}.
     * 
-    * @return
+    * @return the test data.
     */
    @DataProvider
    public Object[][] generateSqlTestData() {
