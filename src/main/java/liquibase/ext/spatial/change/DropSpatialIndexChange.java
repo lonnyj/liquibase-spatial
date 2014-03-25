@@ -1,13 +1,21 @@
 package liquibase.ext.spatial.change;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import liquibase.change.AbstractChange;
 import liquibase.change.ChangeMetaData;
 import liquibase.change.DatabaseChange;
 import liquibase.change.DatabaseChangeProperty;
 import liquibase.database.Database;
+import liquibase.database.core.DerbyDatabase;
+import liquibase.database.core.H2Database;
+import liquibase.database.core.MySQLDatabase;
+import liquibase.database.core.PostgresDatabase;
 import liquibase.ext.spatial.statement.DropSpatialIndexStatement;
 import liquibase.ext.spatial.xml.XmlConstants;
 import liquibase.statement.SqlStatement;
+import liquibase.statement.core.DropIndexStatement;
 import liquibase.util.StringUtils;
 
 /**
@@ -77,12 +85,27 @@ public class DropSpatialIndexChange extends AbstractChange {
    }
 
    /**
-    * @see liquibase.change.Change#generateStatements(liquibase.database.Database)
+    * Generates a {@link DropSpatialIndexStatement} followed by a {@link DropIndexStatement}, if
+    * applicable. The first statement allows extra clean-up when dropping an index. The second
+    * statement leverages the normal <code>DROP INDEX</code> logic.
     */
    @Override
    public SqlStatement[] generateStatements(final Database database) {
-      final DropSpatialIndexStatement drop = new DropSpatialIndexStatement(this.indexName,
-            this.catalogName, this.schemaName, this.tableName);
-      return new SqlStatement[] { drop };
+      final Collection<SqlStatement> statements = new ArrayList<SqlStatement>();
+      // MySQL and PostgreSQL only need the normal DROP INDEX statement.
+      if (!(database instanceof MySQLDatabase) && !(database instanceof PostgresDatabase)) {
+         final DropSpatialIndexStatement dropSpatialIndex = new DropSpatialIndexStatement(
+               this.indexName, this.catalogName, this.schemaName, this.tableName);
+         statements.add(dropSpatialIndex);
+      }
+
+      // GeoDB doesn't use a tradition index structure so don't issue the normal DROP INDEX
+      // statement.
+      if (!(database instanceof DerbyDatabase) && !(database instanceof H2Database)) {
+         final DropIndexStatement dropIndex = new DropIndexStatement(this.indexName,
+               this.catalogName, this.schemaName, this.tableName, null);
+         statements.add(dropIndex);
+      }
+      return statements.toArray(new SqlStatement[statements.size()]);
    }
 }
