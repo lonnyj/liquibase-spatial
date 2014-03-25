@@ -29,11 +29,15 @@ public class DropSpatialIndexGeneratorGeoDB extends AbstractSqlGenerator<DropSpa
       return database instanceof DerbyDatabase || database instanceof H2Database;
    }
 
+   /**
+    * Ensures that the table name is populated.
+    */
    @Override
    public ValidationErrors validate(final DropSpatialIndexStatement statement,
          final Database database, final SqlGeneratorChain sqlGeneratorChain) {
-      // TODO Auto-generated method stub
-      return null;
+      final ValidationErrors validationErrors = new ValidationErrors();
+      validationErrors.checkRequiredField("tableName", statement.getTableName());
+      return validationErrors;
    }
 
    @Override
