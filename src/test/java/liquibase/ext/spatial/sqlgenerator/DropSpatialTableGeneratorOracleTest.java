@@ -29,12 +29,9 @@ public class DropSpatialTableGeneratorOracleTest {
 
    /**
     * Tests
-    * {@link DropSpatialTableGeneratorOracle#generateSql(CreateSpatialIndexStatement, Database, SqlGeneratorChain)}
-    * with a variety of inputs.
-    * 
-    * @param statement
+    * {@link DropSpatialTableGeneratorOracle#generateSql(DropTableStatement, Database, SqlGeneratorChain)}
     */
-   @Test(dataProvider = "generateSqlTestData")
+   @Test
    public void testGenerateSql() {
       final DropSpatialTableGeneratorOracle generator = new DropSpatialTableGeneratorOracle();
       final Database database = new OracleDatabase();
@@ -53,7 +50,7 @@ public class DropSpatialTableGeneratorOracleTest {
       assertTrue(deleteSql.matches(deletePattern), "'" + deleteSql
             + "' does not match the pattern '" + deletePattern + "'");
       assertNotNull(result[0].getAffectedDatabaseObjects());
-      assertTrue(result[0].getAffectedDatabaseObjects().size() > 1, result[0]
+      assertTrue(result[0].getAffectedDatabaseObjects().size() >= 1, result[0]
             .getAffectedDatabaseObjects().toString());
    }
 }
