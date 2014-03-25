@@ -87,8 +87,8 @@ public class CreateSpatialIndexGeneratorOracleTest {
       deletePattern += "'";
       assertTrue(deleteSql.matches(deletePattern), "'" + deleteSql
             + "' does not match the pattern '" + deletePattern + "'");
-      assertNotNull(result[2].getAffectedDatabaseObjects());
-      assertTrue(result[2].getAffectedDatabaseObjects().size() > 1, result[0]
+      assertNotNull(result[0].getAffectedDatabaseObjects());
+      assertTrue(result[0].getAffectedDatabaseObjects().size() >= 1, result[0]
             .getAffectedDatabaseObjects().toString());
 
       // Verify the INSERT statement.
@@ -96,8 +96,8 @@ public class CreateSpatialIndexGeneratorOracleTest {
       final String insertPattern = "(?i)INSERT INTO user_sdo_geom_metadata \\(.*\\) VALUES \\(.*\\)";
       assertTrue(insertSql.matches(insertPattern), "'" + insertSql
             + "' does not match the pattern '" + insertPattern + "'");
-      assertNotNull(result[2].getAffectedDatabaseObjects());
-      assertTrue(result[2].getAffectedDatabaseObjects().size() > 1, result[0]
+      assertNotNull(result[1].getAffectedDatabaseObjects());
+      assertTrue(result[1].getAffectedDatabaseObjects().size() >= 1, result[0]
             .getAffectedDatabaseObjects().toString());
 
       // Verify the CREATE INDEX statement.
