@@ -9,10 +9,9 @@ import liquibase.exception.PreconditionErrorException;
 import liquibase.exception.PreconditionFailedException;
 import liquibase.exception.ValidationErrors;
 import liquibase.exception.Warnings;
-import liquibase.logging.LogFactory;
-import liquibase.logging.Logger;
 import liquibase.precondition.Precondition;
-import liquibase.snapshot.SnapshotGeneratorFactory;
+import liquibase.precondition.core.IndexExistsPrecondition;
+import liquibase.precondition.core.TableExistsPrecondition;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.Column;
 import liquibase.structure.core.Index;
@@ -25,9 +24,6 @@ import liquibase.util.StringUtils;
  * table.
  */
 public class SpatialIndexExistsPrecondition implements Precondition {
-   /** The Logger for this class. */
-   private static final Logger LOGGER = LogFactory.getInstance().getLog(
-         SpatialIndexExistsPrecondition.class.getSimpleName());
    private String catalogName;
    private String schemaName;
    private String tableName;
@@ -86,17 +82,21 @@ public class SpatialIndexExistsPrecondition implements Precondition {
 
    @Override
    public ValidationErrors validate(final Database database) {
-      final ValidationErrors validationErrors = new ValidationErrors();
+      final ValidationErrors validationErrors;
 
       if ((database instanceof DerbyDatabase || database instanceof H2Database)
             && getTableName() == null) {
+         validationErrors = new ValidationErrors();
          validationErrors
                .addError("tableName is required for " + database.getDatabaseProductName());
-      }
-
-      // TODO: This needs to take the database type into account.
-      if (getIndexName() == null && getTableName() == null && getColumnNames() == null) {
-         validationErrors.addError("indexName OR tableName and columnNames is required");
+      } else {
+         final IndexExistsPrecondition precondition = new IndexExistsPrecondition();
+         precondition.setCatalogName(getCatalogName());
+         precondition.setSchemaName(getSchemaName());
+         precondition.setTableName(getTableName());
+         precondition.setIndexName(getIndexName());
+         precondition.setColumnNames(getColumnNames());
+         validationErrors = precondition.validate(database);
       }
       return validationErrors;
    }
@@ -104,36 +104,41 @@ public class SpatialIndexExistsPrecondition implements Precondition {
    @Override
    public void check(final Database database, final DatabaseChangeLog changeLog,
          final ChangeSet changeSet) throws PreconditionFailedException, PreconditionErrorException {
-      try {
-         final String tableName = StringUtils.trimToNull(getTableName());
-
-         final DatabaseObject example = getExample(database, tableName);
-         LOGGER.debug("Checking for the example " + example + " in " + database);
-         if (!SnapshotGeneratorFactory.getInstance().has(example, database)) {
-            LOGGER.debug(example + " was not found");
-            String name = "";
-
-            if (getIndexName() != null) {
-               name += database.escapeObjectName(getIndexName(), Index.class);
-            }
-
-            if (tableName != null) {
-               name += " on " + database.escapeObjectName(getTableName(), Table.class);
-
-               if (StringUtils.trimToNull(getColumnNames()) != null) {
-                  name += " columns " + getColumnNames();
-               }
-            }
-            throw new PreconditionFailedException("Index " + name + " does not exist", changeLog,
-                  this);
-         }
-         LOGGER.debug(example + " was found");
-      } catch (final Exception e) {
-         if (e instanceof PreconditionFailedException) {
-            throw (((PreconditionFailedException) e));
-         }
-         throw new PreconditionErrorException(e, changeLog, this);
+      Precondition delegatedPrecondition;
+      if (database instanceof DerbyDatabase || database instanceof H2Database) {
+         final TableExistsPrecondition precondition = new TableExistsPrecondition();
+         precondition.setCatalogName(getCatalogName());
+         precondition.setSchemaName(getSchemaName());
+         final String tableName = getHatboxTableName();
+         precondition.setTableName(tableName);
+         delegatedPrecondition = precondition;
+      } else {
+         final IndexExistsPrecondition precondition = new IndexExistsPrecondition();
+         precondition.setCatalogName(getCatalogName());
+         precondition.setSchemaName(getSchemaName());
+         precondition.setTableName(getTableName());
+         precondition.setIndexName(getIndexName());
+         precondition.setColumnNames(getColumnNames());
+         delegatedPrecondition = precondition;
       }
+      delegatedPrecondition.check(database, changeLog, changeSet);
+   }
+
+   /**
+    * Generates the table name containing the Hatbox index.
+    * 
+    * @return the Hatbox table name.
+    */
+   protected String getHatboxTableName() {
+      final String tableName;
+      if (!StringUtils.hasLowerCase(getTableName())) {
+         tableName = getTableName() + "_HATBOX";
+      } else if (!StringUtils.hasUpperCase(getTableName())) {
+         tableName = getTableName() + "_hatbox";
+      } else {
+         tableName = getTableName() + "_HATBOX";
+      }
+      return tableName;
    }
 
    /**
@@ -141,8 +146,6 @@ public class SpatialIndexExistsPrecondition implements Precondition {
     * 
     * @param database
     *           the database instance.
-    * @param schema
-    *           the table's schema.
     * @param tableName
     *           the table name of the index.
     * @return the database object example.
@@ -151,9 +154,9 @@ public class SpatialIndexExistsPrecondition implements Precondition {
       final Schema schema = new Schema(getCatalogName(), getSchemaName());
       final DatabaseObject example;
 
-      // For GeoDB, the index is actually another table.
+      // For GeoDB, the index is another table.
       if (database instanceof DerbyDatabase || database instanceof H2Database) {
-         final String correctedTableName = database.correctObjectName(tableName + "_HATBOX",
+         final String correctedTableName = database.correctObjectName(getHatboxTableName(),
                Table.class);
          example = new Table().setName(correctedTableName).setSchema(schema);
       } else {
@@ -163,27 +166,15 @@ public class SpatialIndexExistsPrecondition implements Precondition {
    }
 
    /**
+    * Generates the {@link Index} example (taken from {@link IndexExistsPrecondition}).
+    * 
     * @param database
+    *           the database instance.
     * @param schema
+    *           the schema instance.
     * @param tableName
-    * @return
-    */
-   protected DatabaseObject getHatboxTableExample(final Database database, final Schema schema,
-         final String tableName) {
-      final DatabaseObject example;
-      final Table table = new Table();
-      table.setName(database.correctObjectName(tableName + "_HATBOX", Table.class)).setSchema(null,
-            "PUBLIC");
-      // TODO: schema);
-      example = table;
-      return example;
-   }
-
-   /**
-    * @param database
-    * @param schema
-    * @param tableName
-    * @return
+    *           the table name of the index.
+    * @return the index example.
     */
    protected Index getIndexExample(final Database database, final Schema schema,
          final String tableName) {
