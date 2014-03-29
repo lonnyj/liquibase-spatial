@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.3.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd">
+   <body>
+      <menu name="Overview">
+         <item name="Introduction" href="index.html" />
+         <item name="Supported Databases" href="supported-databases.html" />
+      </menu>
+      <menu name="Preconditions">
+         <item name="Spatial Index Exists" href="spatial-index-exists.html"/>
+         <item name="Spatial Supported" href="spatial-supported.html"/>
+      </menu>
+      <menu name="Changes">
+         <item name="Create Spatial Table" href="create-spatial-table.html"/>
+         <item name="Drop Spatial Table" href="drop-spatial-table.html"/>
+         <item name="Create Spatial Index" href="create-spatial-index.html"/>
+         <item name="Drop Spatial Index" href="drop-spatial-index.html"/>
+         <item name="Add Spatial Column" href="add-spatial-column.html"/>
+         <item name="Drop Spatial Column" href="drop-spatial-column.html"/>
+         <item name="Insert and Load Data" href="insert-and-load-data.html"/>
+      </menu>
+      <menu ref="reports" inherit="top" />
+   </body>
+   <skin>
+      <groupId>org.apache.maven.skins</groupId>
+      <artifactId>maven-fluido-skin</artifactId>
+      <version>1.3.0</version>
+   </skin>
+</project>
+	

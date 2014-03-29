@@ -1,0 +1,35 @@
+Liquibase Spatial
+-----------------
+Liquibase Spatial is an extension to Liquibase to handle spatial types.
+
+In order to use this extension, you must have <code>liquibase-spatial-${project.version}.jar</code>
+in your classpath. For XML change logs, add the <code>spatial</code> namespace.
+
+```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:spatial="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
+   http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial 
+      http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial.xsd">
+</databaseChangeLog>
+```
+
+Using the preconditions or changes requires prefixing the elements with <code>spatial:</code>.
+
+```XML
+   <changeSet id="1" author="bob">
+      <preConditions>
+         <not>
+            <spatial:spatialIndexExists
+               tableName="SPATIAL_TABLE" columnNames="GEOM" />
+         </not>
+      </preConditions>
+      <spatial:createSpatialIndex tableName="SPATIAL_TABLE"
+         indexName="SPATIAL_TABLE_GEOM_IDX" srid="4326">
+         <column name="GEOM" />
+      </spatial:createSpatialIndex>
+   </changeSet>
+```
