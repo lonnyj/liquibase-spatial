@@ -8,10 +8,62 @@
 
    <name>Liquibase Spatial</name>
    <description>Liquibase Spatial extends Liquibase to handle spatial types</description>
+   <url>http://lonnyj.github.com/liquibase-spatial</url>
+   <inceptionYear>2014</inceptionYear>
+
+   <licenses>
+      <license>
+         <name>The Apache Software License, Version 2.0</name>
+         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+         <distribution>manual</distribution>
+         <comments>A business-friendly OSS license</comments>
+      </license>
+   </licenses>
+
+   <developers>
+      <developer>
+         <id>lonnyj</id>
+         <name>Lonny Jacobson</name>
+         <roles>
+            <role>Java Developer</role>
+         </roles>
+         <timezone>-7</timezone>
+      </developer>
+   </developers>
+
+   <scm>
+      <connection>scm:git:https://${repository.domain}/${repository.user}/${repository.name}.git</connection>
+      <developerConnection>scm:git:https://${repository.domain}/${repository.user}/${repository.name}.git</developerConnection>
+      <tag>HEAD</tag>
+      <url>https://${repository.domain}/${repository.user}/${repository.name}</url>
+   </scm>
+
+   <issueManagement>
+      <system>GitHub</system>
+      <url>${issueLinkUrl}</url>
+   </issueManagement>
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+      <!-- GitHub Properties -->
+      <issueLinkUrl>https://github.com/${repository.user}/${repository.name}/issues</issueLinkUrl>
+      <github.global.server>github</github.global.server>
+      <repository.domain>github.com</repository.domain>
+      <repository.user>lonnyj</repository.user>
+      <repository.name>${project.artifactId}</repository.name>
+
+      <!-- Plugin Versions -->
+      <build-helper-maven-plugin.version>1.8</build-helper-maven-plugin.version>
+      <maven-changelog-plugin.version>2.2</maven-changelog-plugin.version>
+      <maven-changes-plugin.version>2.9</maven-changes-plugin.version>
+      <maven-failsafe-plugin.version>${maven-surefire-plugin.version}</maven-failsafe-plugin.version>
+      <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+      <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+      <versions-maven-plugin.version>2.1</versions-maven-plugin.version>
+
+      <!-- Dependency Versions -->
       <geodb.version>0.8</geodb.version>
       <liquibase.version>3.1.1</liquibase.version>
    </properties>
@@ -37,12 +89,6 @@
          <groupId>net.sourceforge.hatbox</groupId>
          <artifactId>hatbox</artifactId>
          <version>1.0.b9</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.derby</groupId>
-         <artifactId>derby</artifactId>
-         <version>10.8.2.2</version>
          <scope>test</scope>
       </dependency>
       <dependency>
@@ -73,6 +119,14 @@
    </repositories>
 
    <build>
+      <pluginManagement>
+         <plugins>
+            <plugin>
+               <artifactId>maven-failsafe-plugin</artifactId>
+               <version>${maven-failsafe-plugin.version}</version>
+            </plugin>
+         </plugins>
+      </pluginManagement>
       <plugins>
          <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -81,6 +135,23 @@
                <source>1.6</source>
                <target>1.6</target>
             </configuration>
+         </plugin>
+         <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>H2 Integration Test</id>
+                  <goals>
+                     <goal>integration-test</goal>
+                     <goal>verify</goal>
+                  </goals>
+                  <configuration>
+                     <includes>
+                        <include>**/*H2IT*</include>
+                     </includes>
+                  </configuration>
+               </execution>
+            </executions>
          </plugin>
          <plugin>
             <artifactId>maven-jar-plugin</artifactId>
@@ -95,23 +166,6 @@
                         liquibase.ext.spatial.statement</Liquibase-Package>
                   </manifestEntries>
                </archive>
-            </configuration>
-         </plugin>
-         <plugin>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <version>2.16</version>
-            <executions>
-               <execution>
-                  <goals>
-                     <goal>integration-test</goal>
-                     <goal>verify</goal>
-                  </goals>
-               </execution>
-            </executions>
-            <configuration>
-               <excludes>
-                  <exclude>**/*Derby*</exclude>
-               </excludes>
             </configuration>
          </plugin>
          <plugin>
@@ -135,4 +189,116 @@
          </plugin>
       </plugins>
    </build>
+
+   <reporting>
+      <plugins>
+         <plugin>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <version>3.2</version>
+         </plugin>
+         <plugin>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>2.7</version>
+         </plugin>
+         <plugin>
+            <artifactId>maven-changelog-plugin</artifactId>
+            <version>${maven-changelog-plugin.version}</version>
+         </plugin>
+         <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin.version}</version>
+         </plugin>
+         <plugin>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>2.3</version>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>taglist-maven-plugin</artifactId>
+            <version>2.4</version>
+         </plugin>
+         <plugin>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.6</version>
+         </plugin>
+         <plugin>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>3.0.1</version>
+            <configuration>
+               <rulesets>
+                  <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+                  <ruleset>/rulesets/java/basic.xml</ruleset>
+                  <rulesets>${basedir}/rulesets/custom.xml</rulesets>
+               </rulesets>
+            </configuration>
+         </plugin>
+         <plugin>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.10</version>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>2.5.2</version>
+            <configuration>
+               <effort>Max</effort>
+               <onlyAnalyze>liquibase.ext.spatial</onlyAnalyze>
+            </configuration>
+         </plugin>
+         <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.8</version>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>versions-maven-plugin</artifactId>
+            <version>${versions-maven-plugin.version}</version>
+         </plugin>
+      </plugins>
+   </reporting>
+
+   <profiles>
+      <profile>
+         <id>derby</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-failsafe-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>Derby Integration Test</id>
+                        <goals>
+                           <goal>integration-test</goal>
+                           <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                           <includes>
+                              <include>**/*DerbyIT*</include>
+                           </includes>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+
+         <properties>
+            <geodb.version>0.9-SNAPSHOT</geodb.version>
+         </properties>
+
+         <dependencies>
+            <dependency>
+               <groupId>org.apache.derby</groupId>
+               <artifactId>derby</artifactId>
+               <version>10.8.2.2</version>
+               <scope>test</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+   </profiles>
 </project>
