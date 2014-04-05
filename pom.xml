@@ -12,6 +12,7 @@
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <geodb.version>0.8</geodb.version>
       <liquibase.version>3.1.1</liquibase.version>
    </properties>
 
@@ -53,7 +54,7 @@
       <dependency>
          <groupId>org.opengeo</groupId>
          <artifactId>geodb</artifactId>
-         <version>0.9-SNAPSHOT</version>
+         <version>${geodb.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
@@ -107,6 +108,11 @@
                   </goals>
                </execution>
             </executions>
+            <configuration>
+               <excludes>
+                  <exclude>**/*Derby*</exclude>
+               </excludes>
+            </configuration>
          </plugin>
          <plugin>
             <groupId>com.google.code.sortpom</groupId>
