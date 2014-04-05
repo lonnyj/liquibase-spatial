@@ -12,7 +12,7 @@ The table below lists the supported databases and their specific requirements:
    <tr>
       <td>Apache Derby</td>
       <td>10.8.2.2+</td>
-      <td><a href="https://github.com/jdeolive/geodb">GeoDB</a>, 
+      <td><a href="https://github.com/jdeolive/geodb">GeoDB</a><sup>1</sup>, 
       <a href="http://hatbox.sourceforge.net">Hatbox</a> and 
       <a href="http://tsusiatsoftware.net/jts/main.html">JTS</a> in the classpath</td>
    </tr>
@@ -39,3 +39,5 @@ The table below lists the supported databases and their specific requirements:
       <td>Requires <a href="http://postgis.net">PostGIS</a> 2.0+</td>
    </tr>
 </table>
+<hr/>
+1. I am in the process of contributing Derby support to GeoDB.  Please refer to my <a href="https://github.com/lonnyj/geodb">fork</a> until it has been accepted.
