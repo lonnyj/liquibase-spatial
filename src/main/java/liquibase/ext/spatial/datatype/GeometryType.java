@@ -4,6 +4,7 @@ import liquibase.database.Database;
 import liquibase.database.core.DerbyDatabase;
 import liquibase.database.core.H2Database;
 import liquibase.database.core.OracleDatabase;
+import liquibase.database.core.PostgresDatabase;
 import liquibase.datatype.DataTypeInfo;
 import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
@@ -53,13 +54,14 @@ public class GeometryType extends LiquibaseDataType {
    public DatabaseDataType toDatabaseDataType(final Database database) {
       final DatabaseDataType databaseDataType;
       if (database instanceof DerbyDatabase) {
-         // TODO: Make this configurable as BLOB may also be desired for very large geometries.
          databaseDataType = new DatabaseDataType("VARCHAR(32672) FOR BIT DATA");
       } else if (database instanceof H2Database) {
          // TODO: Make this configurable as BLOB may also be desired for very large geometries.
          databaseDataType = new DatabaseDataType("BINARY");
       } else if (database instanceof OracleDatabase) {
          databaseDataType = new DatabaseDataType("SDO_GEOMETRY");
+      } else if (database instanceof PostgresDatabase) {
+         databaseDataType = new DatabaseDataType(getName(), getParameters());
       } else {
          databaseDataType = new DatabaseDataType("GEOMETRY");
       }
