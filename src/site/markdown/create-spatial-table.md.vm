@@ -1,7 +1,8 @@
-Change: 'createSpatialTable'
+Change: 'Create Spatial Table'
 ------------------------------------
 
-TODO: Enter a description
+To create a spatially-enabled table, the built-in <code>&lt;createTable></code>
+tag is used but the column type is <code>Geometry</code>.
 
 Available Attributes
 --------------------
