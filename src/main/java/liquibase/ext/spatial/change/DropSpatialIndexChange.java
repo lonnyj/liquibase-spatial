@@ -23,12 +23,17 @@ import liquibase.util.StringUtils;
  */
 @DatabaseChange(name = "dropSpatialIndex", description = "Drops the spatial index on an existing column or set of columns.", priority = ChangeMetaData.PRIORITY_DEFAULT, appliesTo = "index")
 public class DropSpatialIndexChange extends AbstractChange {
+   /** The name of the catalog. */
+   private String catalogName;
 
+   /** The name of the schema. */
    private String schemaName;
-   private String indexName;
+
+   /** The name of the indexed table. */
    private String tableName;
 
-   private String catalogName;
+   /** The name of the index to drop. */
+   private String indexName;
 
    @DatabaseChangeProperty(mustEqualExisting = "index.schema")
    public String getSchemaName() {
