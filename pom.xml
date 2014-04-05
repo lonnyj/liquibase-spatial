@@ -2,9 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
+   <parent>
+      <artifactId>oss-parent</artifactId>
+      <groupId>org.sonatype.oss</groupId>
+      <version>9</version>
+   </parent>
+
    <groupId>org.liquibase.ext</groupId>
    <artifactId>liquibase-spatial</artifactId>
-   <version>0.6.0-SNAPSHOT</version>
+   <version>1.0.0-SNAPSHOT</version>
 
    <name>Liquibase Spatial</name>
    <description>Liquibase Spatial extends Liquibase to handle spatial types</description>
@@ -299,6 +305,57 @@
                <scope>test</scope>
             </dependency>
          </dependencies>
+      </profile>
+      <profile>
+         <id>github</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>com.github.github</groupId>
+                  <artifactId>site-maven-plugin</artifactId>
+                  <version>0.9</version>
+                  <executions>
+                     <execution>
+                        <phase>site</phase>
+                        <goals>
+                           <goal>site</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+                  <configuration>
+                     <message>Creating site for ${project.version}</message>
+                     <server>github</server>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+
+         <distributionManagement>
+            <site>
+               <id>github</id>
+               <name>GitHub</name>
+               <url>http://lonnyj.github.com/${project.artifactId}</url>
+            </site>
+         </distributionManagement>
+         <reporting>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-changes-plugin</artifactId>
+                  <version>${maven-changes-plugin.version}</version>
+                  <reportSets>
+                     <reportSet>
+                        <reports>
+                           <report>github-report</report>
+                        </reports>
+                     </reportSet>
+                  </reportSets>
+                  <configuration>
+                     <githubAPIScheme>https</githubAPIScheme>
+                     <githubAPIPort>443</githubAPIPort>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </reporting>
       </profile>
    </profiles>
 </project>
