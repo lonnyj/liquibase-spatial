@@ -80,7 +80,7 @@ public class AddSpatialColumnGeneratorGeoDBTest {
             + database.getDefaultSchemaName() + "', 'TEST', 'COLUMN', 4327, 'Point', 2)");
 
       final AddColumnStatement complete = new AddColumnStatement(null,
-            database.getDefaultSchemaName(), "TEST", "COLUMN", "Geometry", null);
+            database.getDefaultSchemaName(), "TEST", "COLUMN", "Geometry(Geometry,4326)", null);
       final Sql completeExpected = new UnparsedSql("CALL AddGeometryColumn('"
             + database.getDefaultSchemaName() + "', 'TEST', 'COLUMN', 4326, 'Geometry', 2)");
 

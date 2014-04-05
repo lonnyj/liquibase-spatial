@@ -18,6 +18,7 @@ import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.sqlgenerator.core.DropColumnGenerator;
 import liquibase.statement.core.AddColumnStatement;
+import liquibase.util.StringUtils;
 
 /**
  * <code>AddSpatialColumnGeneratorGeoDB</code> ... <code>DropSpatialColumnGeneratorGeoDB</code> is a
@@ -47,7 +48,22 @@ public class AddSpatialColumnGeneratorGeoDB extends AbstractSqlGenerator<AddColu
    @Override
    public ValidationErrors validate(final AddColumnStatement statement, final Database database,
          final SqlGeneratorChain sqlGeneratorChain) {
-      return sqlGeneratorChain.validate(statement, database);
+      final ValidationErrors errors = new ValidationErrors();
+      final LiquibaseDataType dataType = DataTypeFactory.getInstance().fromDescription(
+            statement.getColumnType());
+
+      // Ensure that the SRID parameter is provided.
+      if (dataType instanceof GeometryType) {
+         final GeometryType geometryType = (GeometryType) dataType;
+         if (geometryType.getSRID() == null) {
+            errors.addError("The SRID parameter is required on the geometry type");
+         }
+      }
+      final ValidationErrors chainErrors = sqlGeneratorChain.validate(statement, database);
+      if (chainErrors != null) {
+         errors.addAll(chainErrors);
+      }
+      return errors;
    }
 
    @Override
@@ -76,9 +92,9 @@ public class AddSpatialColumnGeneratorGeoDB extends AbstractSqlGenerator<AddColu
          final String tableName = statement.getTableName();
          final String columnName = statement.getColumnName();
 
-         final int srid = geometryType.getSRID() == null ? 4326 : geometryType.getSRID();
-         final String geomType = geometryType.getGeometryType() == null ? "'Geometry'" : "'"
-               + database.escapeStringForDatabase(geometryType.getGeometryType()) + "'";
+         final int srid = geometryType.getSRID();
+         final String geomType = StringUtils.trimToNull(geometryType.getGeometryType()) == null ? "'Geometry'"
+               : "'" + database.escapeStringForDatabase(geometryType.getGeometryType()) + "'";
          final String sql = "CALL AddGeometryColumn('" + schemaName + "', '" + tableName + "', '"
                + columnName + "', " + srid + ", " + geomType + ", 2)";
          final Sql addGeometryColumn = new UnparsedSql(sql);
