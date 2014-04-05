@@ -16,18 +16,17 @@ import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
-import liquibase.sqlgenerator.core.DropColumnGenerator;
 import liquibase.statement.core.AddColumnStatement;
 import liquibase.util.StringUtils;
 
 /**
- * <code>AddSpatialColumnGeneratorGeoDB</code> ... <code>DropSpatialColumnGeneratorGeoDB</code> is a
- * {@link DropColumnGenerator} that specializes in GeoDB. If the column to be dropped is the
- * geometry column, the <code>DropGeometryColumn</code> is invoked instead of performing the typical
- * <code>ALTER TABLE</code> statement. Otherwise, the next SQL generator in the chain is invoked to
- * handle the request.
+ * <code>AddGeometryColumnGeneratorGeoDB</code> is a SQL generator that specializes in GeoDB.
+ * Regardless of the column type, the next SQL generator in the chain is invoked to handle the
+ * normal column addition. If the column to be added has a geometry type, the
+ * <code>AddGeometryColumn</code> stored procedure is invoked to ensure that the necessary metadata
+ * is created in the database.
  */
-public class AddSpatialColumnGeneratorGeoDB extends AbstractSqlGenerator<AddColumnStatement> {
+public class AddGeometryColumnGeneratorGeoDB extends AbstractSqlGenerator<AddColumnStatement> {
    /**
     * @see liquibase.sqlgenerator.core.AbstractSqlGenerator#supports(liquibase.statement.SqlStatement,
     *      liquibase.database.Database)

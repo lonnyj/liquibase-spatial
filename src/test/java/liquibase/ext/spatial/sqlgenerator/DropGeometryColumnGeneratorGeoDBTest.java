@@ -24,11 +24,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * <code>DropSpatialColumnGeneratorGeoDBTest</code> tests {@link DropSpatialColumnGeneratorGeoDB}.
+ * <code>DropGeometryColumnGeneratorGeoDBTest</code> tests {@link DropGeometryColumnGeneratorGeoDB}.
  */
-public class DropSpatialColumnGeneratorGeoDBTest {
+public class DropGeometryColumnGeneratorGeoDBTest {
    /**
-    * Tests {@link DropSpatialColumnGeneratorGeoDB#supports(DropColumnStatement, Database)}.
+    * Tests {@link DropGeometryColumnGeneratorGeoDB#supports(DropColumnStatement, Database)}.
     * 
     * @param statement
     *           the add column statement.
@@ -40,7 +40,7 @@ public class DropSpatialColumnGeneratorGeoDBTest {
    @Test(dataProvider = "supportsTestData")
    public void testSupports(final DropColumnStatement statement, final Database database,
          final boolean expected) {
-      final DropSpatialColumnGeneratorGeoDB generator = new DropSpatialColumnGeneratorGeoDB();
+      final DropGeometryColumnGeneratorGeoDB generator = new DropGeometryColumnGeneratorGeoDB();
       final boolean result = generator.supports(statement, database);
       assertEquals(result, expected);
    }
@@ -61,7 +61,7 @@ public class DropSpatialColumnGeneratorGeoDBTest {
    @Test(dataProvider = "generateSqlTestData")
    public void testGenerateSql(final DropColumnStatement statement, final Database database,
          final Sql[] expected) throws DatabaseException {
-      final DropSpatialColumnGeneratorGeoDB generator = new DropSpatialColumnGeneratorGeoDB();
+      final DropGeometryColumnGeneratorGeoDB generator = new DropGeometryColumnGeneratorGeoDB();
       final SqlGeneratorChain sqlGeneratorChain = mock(SqlGeneratorChain.class);
       when(sqlGeneratorChain.generateSql(statement, database)).thenReturn(new Sql[0]);
       final Sql[] result = generator.generateSql(statement, database, sqlGeneratorChain);

@@ -15,11 +15,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * <code>AddSpatialColumnGeneratorGeoDBTest</code> tests {@link AddSpatialColumnGeneratorGeoDB}.
+ * <code>AddGeometryColumnGeneratorGeoDBTest</code> tests {@link AddGeometryColumnGeneratorGeoDB}.
  */
-public class AddSpatialColumnGeneratorGeoDBTest {
+public class AddGeometryColumnGeneratorGeoDBTest {
    /**
-    * Tests {@link AddSpatialColumnGeneratorGeoDB#supports(AddColumnStatement, Database)}.
+    * Tests {@link AddGeometryColumnGeneratorGeoDB#supports(AddColumnStatement, Database)}.
     * 
     * @param statement
     *           the add column statement.
@@ -31,7 +31,7 @@ public class AddSpatialColumnGeneratorGeoDBTest {
    @Test(dataProvider = "supportsTestData")
    public void testSupports(final AddColumnStatement statement, final Database database,
          final boolean expected) {
-      final AddSpatialColumnGeneratorGeoDB generator = new AddSpatialColumnGeneratorGeoDB();
+      final AddGeometryColumnGeneratorGeoDB generator = new AddGeometryColumnGeneratorGeoDB();
       final boolean result = generator.supports(statement, database);
       assertEquals(result, expected);
    }
@@ -53,7 +53,7 @@ public class AddSpatialColumnGeneratorGeoDBTest {
    @Test(dataProvider = "generateSqlTestData")
    public void testGenerateSql(final AddColumnStatement statement, final Database database,
          final Sql[] expected) {
-      final AddSpatialColumnGeneratorGeoDB generator = new AddSpatialColumnGeneratorGeoDB();
+      final AddGeometryColumnGeneratorGeoDB generator = new AddGeometryColumnGeneratorGeoDB();
       final SqlGeneratorChain sqlGeneratorChain = mock(SqlGeneratorChain.class);
       when(sqlGeneratorChain.generateSql(statement, database)).thenReturn(new Sql[0]);
       final Sql[] result = generator.generateSql(statement, database, sqlGeneratorChain);

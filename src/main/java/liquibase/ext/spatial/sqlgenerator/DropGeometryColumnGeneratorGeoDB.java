@@ -18,13 +18,13 @@ import liquibase.statement.core.DropColumnStatement;
 import liquibase.structure.core.Column;
 
 /**
- * <code>DropSpatialColumnGeneratorGeoDB</code> is a {@link DropColumnGenerator} that specializes in
- * GeoDB. If there exists an index on the column, <code>DropSpatialIndex</code> is invoked first. If
- * the column to be dropped is the geometry column, the <code>DropGeometryColumn</code> procedure is
- * invoked instead of performing the typical <code>ALTER TABLE</code> statement. Otherwise, the next
- * SQL generator in the chain is invoked to handle the request.
+ * <code>DropGeometryColumnGeneratorGeoDB</code> is a {@link DropColumnGenerator} that specializes
+ * in GeoDB. If there exists an index on the column, <code>DropSpatialIndex</code> is invoked first.
+ * If the column to be dropped is the geometry column, the <code>DropGeometryColumn</code> procedure
+ * is invoked instead of performing the typical <code>ALTER TABLE</code> statement. Otherwise, the
+ * next SQL generator in the chain is invoked to handle the request.
  */
-public class DropSpatialColumnGeneratorGeoDB extends DropColumnGenerator {
+public class DropGeometryColumnGeneratorGeoDB extends DropColumnGenerator {
    /**
     * @see liquibase.sqlgenerator.core.AbstractSqlGenerator#supports(liquibase.statement.SqlStatement,
     *      liquibase.database.Database)
@@ -58,10 +58,10 @@ public class DropSpatialColumnGeneratorGeoDB extends DropColumnGenerator {
       }
       final String tableName = statement.getTableName();
       final String columnName = statement.getColumnName();
-      final boolean isSpatialColumn = GeometryColumnsUtils.isGeometryColumn(database, schemaName,
+      final boolean isGeometryColumn = GeometryColumnsUtils.isGeometryColumn(database, schemaName,
             tableName, columnName);
       final List<Sql> list = new ArrayList<Sql>();
-      if (isSpatialColumn) {
+      if (isGeometryColumn) {
          dropSpatialIndexIfExists(statement.getCatalogName(), schemaName, tableName, database, list);
          final String sql = "CALL DropGeometryColumn('" + schemaName + "', '" + tableName + "', '"
                + columnName + "')";
