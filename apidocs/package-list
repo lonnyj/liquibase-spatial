@@ -1,0 +1,8 @@
+liquibase.ext.spatial
+liquibase.ext.spatial.change
+liquibase.ext.spatial.datatype
+liquibase.ext.spatial.preconditions
+liquibase.ext.spatial.sqlgenerator
+liquibase.ext.spatial.statement
+liquibase.ext.spatial.utils
+liquibase.ext.spatial.xml

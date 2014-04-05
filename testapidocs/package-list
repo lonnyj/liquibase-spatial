@@ -1,0 +1,2 @@
+liquibase.ext.spatial
+liquibase.ext.spatial.sqlgenerator
