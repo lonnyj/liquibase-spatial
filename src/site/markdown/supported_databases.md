@@ -10,9 +10,9 @@ The table below lists the supported databases and their specific requirements:
       <th>Remarks</th>
    </tr>
    <tr>
-      <td>Apache Derby</td>
+      <td>Apache Derby<sup>1</sup></td>
       <td>10.8.2.2+</td>
-      <td><a href="https://github.com/jdeolive/geodb">GeoDB</a><sup>1</sup>, 
+      <td>Requires <a href="https://github.com/jdeolive/geodb">GeoDB</a>, 
       <a href="http://hatbox.sourceforge.net">Hatbox</a> and 
       <a href="http://tsusiatsoftware.net/jts/main.html">JTS</a> in the classpath</td>
    </tr>

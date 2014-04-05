@@ -3,9 +3,7 @@ Precondition: 'Spatial Index Exists'
 
 This precondition passes if the specified spatial index exists in the database.
 
-Available Attributes
---------------------
-
+<h3>Available Attributes</h3>
 <table>
    <tr>
       <th>Attribute</th>
@@ -29,6 +27,7 @@ Available Attributes
    </tr>
 </table>
 
+<h3>Example</h3>
 ```XML
 <preConditions>
    <spatial:spatialIndexExists tableName="SPATIAL_TABLE" columnNames="GEOMETRY_COLUMN" />

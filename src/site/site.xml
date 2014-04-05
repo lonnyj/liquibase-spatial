@@ -5,20 +5,24 @@
    <body>
       <menu name="Overview">
          <item name="Introduction" href="index.html" />
-         <item name="Supported Databases" href="supported-databases.html" />
+         <item name="Supported Databases" href="supported_databases.html" />
       </menu>
       <menu name="Preconditions">
-         <item name="Spatial Index Exists" href="spatial-index-exists.html"/>
-         <item name="Spatial Supported" href="spatial-supported.html"/>
+         <item name="Spatial Index Exists" href="spatial_index_exists.html"/>
+         <item name="Spatial Supported" href="spatial_supported.html"/>
+      </menu>
+      <menu name="Data Type">
+         <item name="Geometry" href="geometry_data_type.html"/>
+      </menu>
+      <menu name="Extended Changes">
+         <item name="Added Column" href="add_column.html"/>
+         <item name="Create Table" href="create_table.html"/>
+         <item name="Insert" href="insert.html"/>
+         <item name="Load Data" href="load_data.html"/>
       </menu>
       <menu name="Changes">
-         <item name="Create Spatial Table" href="create-spatial-table.html"/>
-         <item name="Drop Spatial Table" href="drop-spatial-table.html"/>
-         <item name="Create Spatial Index" href="create-spatial-index.html"/>
-         <item name="Drop Spatial Index" href="drop-spatial-index.html"/>
-         <item name="Add Spatial Column" href="add-spatial-column.html"/>
-         <item name="Drop Spatial Column" href="drop-spatial-column.html"/>
-         <item name="Insert and Load Data" href="insert-and-load-data.html"/>
+         <item name="Create Spatial Index" href="create_spatial_index.html"/>
+         <item name="Drop Spatial Index" href="drop_spatial_index.html"/>
       </menu>
       <menu ref="reports" inherit="top" />
    </body>
