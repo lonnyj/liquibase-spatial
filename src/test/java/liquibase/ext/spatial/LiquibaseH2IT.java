@@ -16,13 +16,13 @@ public class LiquibaseH2IT extends LiquibaseIT {
    }
 
    @BeforeMethod
-   public void beforeClass() throws SQLException {
+   public void beforeMethod() throws SQLException {
       DeleteDbFiles.execute("target", getDatabaseName(), true);
       getConnection().close();
    }
 
    @AfterMethod
-   public void afterClass() throws SQLException {
+   public void afterMethod() throws SQLException {
       DeleteDbFiles.execute("target", getDatabaseName(), true);
    }
 }
