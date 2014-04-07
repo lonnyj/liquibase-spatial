@@ -97,9 +97,6 @@
       </preConditions>
    </changeSet>
 
-   <!-- database.defaultCatalogName -->
-   <!-- database.defaultSchemaName -->
-   <!-- database.liquibaseSchemaName -->
    <changeSet id="Query spatial data" author="test" dbms="h2">
       <preConditions>
          <rowCount tableName="TEST" expectedRows="3" />
