@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<title>DropSpatialColumnGeneratorGeoDBTest xref</title>
+<title>DropGeometryColumnGeneratorGeoDBTest xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
 </head>
 <body>
-<div id="overview"><a href="../../../../../testapidocs/liquibase/ext/spatial/sqlgenerator/DropSpatialColumnGeneratorGeoDBTest.html">View Javadoc</a></div><pre>
+<div id="overview"><a href="../../../../../testapidocs/liquibase/ext/spatial/sqlgenerator/DropGeometryColumnGeneratorGeoDBTest.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> liquibase.ext.spatial.sqlgenerator;
 <a class="jxr_linenumber" name="2" href="#2">2</a>   
@@ -34,11 +34,11 @@
 <a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="25" href="#25">25</a>  
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment"> * &lt;code&gt;DropSpatialColumnGeneratorGeoDBTest&lt;/code&gt; tests {@link DropSpatialColumnGeneratorGeoDB}.</em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment"> * &lt;code&gt;DropGeometryColumnGeneratorGeoDBTest&lt;/code&gt; tests {@link DropGeometryColumnGeneratorGeoDB}.</em>
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/DropSpatialColumnGeneratorGeoDBTest.html">DropSpatialColumnGeneratorGeoDBTest</a> {
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/DropGeometryColumnGeneratorGeoDBTest.html">DropGeometryColumnGeneratorGeoDBTest</a> {
 <a class="jxr_linenumber" name="30" href="#30">30</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment">    * Tests {@link DropSpatialColumnGeneratorGeoDB#supports(DropColumnStatement, Database)}.</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment">    * Tests {@link DropGeometryColumnGeneratorGeoDB#supports(DropColumnStatement, Database)}.</em>
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment">    * </em>
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment">    * @param statement</em>
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment">    *           the add column statement.</em>
@@ -50,7 +50,7 @@
 <a class="jxr_linenumber" name="40" href="#40">40</a>     @Test(dataProvider = <span class="jxr_string">"supportsTestData"</span>)
 <a class="jxr_linenumber" name="41" href="#41">41</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSupports(<strong class="jxr_keyword">final</strong> DropColumnStatement statement, <strong class="jxr_keyword">final</strong> Database database,
 <a class="jxr_linenumber" name="42" href="#42">42</a>           <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> expected) {
-<a class="jxr_linenumber" name="43" href="#43">43</a>        <strong class="jxr_keyword">final</strong> DropSpatialColumnGeneratorGeoDB generator = <strong class="jxr_keyword">new</strong> DropSpatialColumnGeneratorGeoDB();
+<a class="jxr_linenumber" name="43" href="#43">43</a>        <strong class="jxr_keyword">final</strong> DropGeometryColumnGeneratorGeoDB generator = <strong class="jxr_keyword">new</strong> DropGeometryColumnGeneratorGeoDB();
 <a class="jxr_linenumber" name="44" href="#44">44</a>        <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> result = generator.supports(statement, database);
 <a class="jxr_linenumber" name="45" href="#45">45</a>        assertEquals(result, expected);
 <a class="jxr_linenumber" name="46" href="#46">46</a>     }
@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="61" href="#61">61</a>     @Test(dataProvider = <span class="jxr_string">"generateSqlTestData"</span>)
 <a class="jxr_linenumber" name="62" href="#62">62</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGenerateSql(<strong class="jxr_keyword">final</strong> DropColumnStatement statement, <strong class="jxr_keyword">final</strong> Database database,
 <a class="jxr_linenumber" name="63" href="#63">63</a>           <strong class="jxr_keyword">final</strong> Sql[] expected) <strong class="jxr_keyword">throws</strong> DatabaseException {
-<a class="jxr_linenumber" name="64" href="#64">64</a>        <strong class="jxr_keyword">final</strong> DropSpatialColumnGeneratorGeoDB generator = <strong class="jxr_keyword">new</strong> DropSpatialColumnGeneratorGeoDB();
+<a class="jxr_linenumber" name="64" href="#64">64</a>        <strong class="jxr_keyword">final</strong> DropGeometryColumnGeneratorGeoDB generator = <strong class="jxr_keyword">new</strong> DropGeometryColumnGeneratorGeoDB();
 <a class="jxr_linenumber" name="65" href="#65">65</a>        <strong class="jxr_keyword">final</strong> SqlGeneratorChain sqlGeneratorChain = mock(SqlGeneratorChain.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="66" href="#66">66</a>        when(sqlGeneratorChain.generateSql(statement, database)).thenReturn(<strong class="jxr_keyword">new</strong> Sql[0]);
 <a class="jxr_linenumber" name="67" href="#67">67</a>        <strong class="jxr_keyword">final</strong> Sql[] result = generator.generateSql(statement, database, sqlGeneratorChain);

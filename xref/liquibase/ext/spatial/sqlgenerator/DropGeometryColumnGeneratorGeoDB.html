@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<title>DropSpatialColumnGeneratorGeoDB xref</title>
+<title>DropGeometryColumnGeneratorGeoDB xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
 </head>
 <body>
-<div id="overview"><a href="../../../../../apidocs/liquibase/ext/spatial/sqlgenerator/DropSpatialColumnGeneratorGeoDB.html">View Javadoc</a></div><pre>
+<div id="overview"><a href="../../../../../apidocs/liquibase/ext/spatial/sqlgenerator/DropGeometryColumnGeneratorGeoDB.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> liquibase.ext.spatial.sqlgenerator;
 <a class="jxr_linenumber" name="2" href="#2">2</a>   
@@ -28,13 +28,13 @@
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> liquibase.structure.core.Column;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> * &lt;code&gt;DropSpatialColumnGeneratorGeoDB&lt;/code&gt; is a {@link DropColumnGenerator} that specializes in</em>
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment"> * GeoDB. If there exists an index on the column, &lt;code&gt;DropSpatialIndex&lt;/code&gt; is invoked first. If</em>
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment"> * the column to be dropped is the geometry column, the &lt;code&gt;DropGeometryColumn&lt;/code&gt; procedure is</em>
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment"> * invoked instead of performing the typical &lt;code&gt;ALTER TABLE&lt;/code&gt; statement. Otherwise, the next</em>
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment"> * SQL generator in the chain is invoked to handle the request.</em>
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> * &lt;code&gt;DropGeometryColumnGeneratorGeoDB&lt;/code&gt; is a {@link DropColumnGenerator} that specializes</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment"> * in GeoDB. If there exists an index on the column, &lt;code&gt;DropSpatialIndex&lt;/code&gt; is invoked first.</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment"> * If the column to be dropped is the geometry column, the &lt;code&gt;DropGeometryColumn&lt;/code&gt; procedure</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment"> * is invoked instead of performing the typical &lt;code&gt;ALTER TABLE&lt;/code&gt; statement. Otherwise, the</em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment"> * next SQL generator in the chain is invoked to handle the request.</em>
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/DropSpatialColumnGeneratorGeoDB.html">DropSpatialColumnGeneratorGeoDB</a> <strong class="jxr_keyword">extends</strong> DropColumnGenerator {
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/DropGeometryColumnGeneratorGeoDB.html">DropGeometryColumnGeneratorGeoDB</a> <strong class="jxr_keyword">extends</strong> DropColumnGenerator {
 <a class="jxr_linenumber" name="28" href="#28">28</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">    * @see liquibase.sqlgenerator.core.AbstractSqlGenerator#supports(liquibase.statement.SqlStatement,</em>
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">    *      liquibase.database.Database)</em>
@@ -68,10 +68,10 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>        }
 <a class="jxr_linenumber" name="59" href="#59">59</a>        <strong class="jxr_keyword">final</strong> String tableName = statement.getTableName();
 <a class="jxr_linenumber" name="60" href="#60">60</a>        <strong class="jxr_keyword">final</strong> String columnName = statement.getColumnName();
-<a class="jxr_linenumber" name="61" href="#61">61</a>        <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isSpatialColumn = GeometryColumnsUtils.isGeometryColumn(database, schemaName,
+<a class="jxr_linenumber" name="61" href="#61">61</a>        <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isGeometryColumn = GeometryColumnsUtils.isGeometryColumn(database, schemaName,
 <a class="jxr_linenumber" name="62" href="#62">62</a>              tableName, columnName);
 <a class="jxr_linenumber" name="63" href="#63">63</a>        <strong class="jxr_keyword">final</strong> List&lt;Sql&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;Sql&gt;();
-<a class="jxr_linenumber" name="64" href="#64">64</a>        <strong class="jxr_keyword">if</strong> (isSpatialColumn) {
+<a class="jxr_linenumber" name="64" href="#64">64</a>        <strong class="jxr_keyword">if</strong> (isGeometryColumn) {
 <a class="jxr_linenumber" name="65" href="#65">65</a>           dropSpatialIndexIfExists(statement.getCatalogName(), schemaName, tableName, database, list);
 <a class="jxr_linenumber" name="66" href="#66">66</a>           <strong class="jxr_keyword">final</strong> String sql = <span class="jxr_string">"CALL DropGeometryColumn('"</span> + schemaName + <span class="jxr_string">"', '"</span> + tableName + <span class="jxr_string">"', '"</span>
 <a class="jxr_linenumber" name="67" href="#67">67</a>                 + columnName + <span class="jxr_string">"')"</span>;

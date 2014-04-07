@@ -9,7 +9,7 @@
     <copyright>&#169;2014</copyright>
     <item>
       <title>File: 36,
-             Errors: 759,
+             Errors: 757,
              Warnings: 0,
              Infos: 0
       </title>
@@ -43,20 +43,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://lonnyj.github.com/liquibase-spatial/checkstyle.html#liquibase.ext.spatial.sqlgenerator.DropSpatialColumnGeneratorGeoDB.java">liquibase/ext/spatial/sqlgenerator/DropSpatialColumnGeneratorGeoDB.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  29
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://lonnyj.github.com/liquibase-spatial/checkstyle.html#liquibase.ext.spatial.sqlgenerator.SpatialInsertGeneratorOracle.java">liquibase/ext/spatial/sqlgenerator/SpatialInsertGeneratorOracle.java</a>
                 </td>
                 <td>
@@ -81,6 +67,20 @@
                 </td>
                 <td>
                   1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://lonnyj.github.com/liquibase-spatial/checkstyle.html#liquibase.ext.spatial.sqlgenerator.DropGeometryColumnGeneratorGeoDB.java">liquibase/ext/spatial/sqlgenerator/DropGeometryColumnGeneratorGeoDB.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  29
                 </td>
               </tr>
                           <tr>
@@ -193,6 +193,20 @@
                 </td>
                 <td>
                   11
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://lonnyj.github.com/liquibase-spatial/checkstyle.html#liquibase.ext.spatial.sqlgenerator.AddGeometryColumnGeneratorGeoDB.java">liquibase/ext/spatial/sqlgenerator/AddGeometryColumnGeneratorGeoDB.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  29
                 </td>
               </tr>
                           <tr>
@@ -333,20 +347,6 @@
                 </td>
                 <td>
                   1
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://lonnyj.github.com/liquibase-spatial/checkstyle.html#liquibase.ext.spatial.sqlgenerator.AddSpatialColumnGeneratorGeoDB.java">liquibase/ext/spatial/sqlgenerator/AddSpatialColumnGeneratorGeoDB.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  31
                 </td>
               </tr>
                           <tr>
