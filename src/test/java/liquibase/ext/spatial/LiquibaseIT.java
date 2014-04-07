@@ -82,6 +82,7 @@ public abstract class LiquibaseIT {
    @BeforeMethod
    @AfterMethod
    public void cleanUpDatabase() throws SQLException {
+      System.out.println("Cleaning up the database");
       Connection connection = null;
       try {
          connection = getConnection();
@@ -90,6 +91,7 @@ public abstract class LiquibaseIT {
          Statement statement = connection.createStatement();
          try {
             statement.execute("DROP TABLE TEST");
+         } catch (final Exception ignore) {
          } finally {
             statement.close();
          }
@@ -98,6 +100,16 @@ public abstract class LiquibaseIT {
          statement = connection.createStatement();
          try {
             statement.execute("DROP TABLE DATABASECHANGELOG");
+         } catch (final Exception ignore) {
+         } finally {
+            statement.close();
+         }
+
+         // Drop the DATABASECHANGELOGLOCK table.
+         statement = connection.createStatement();
+         try {
+            statement.execute("DROP TABLE DATABASECHANGELOGLOCK");
+         } catch (final Exception ignore) {
          } finally {
             statement.close();
          }
