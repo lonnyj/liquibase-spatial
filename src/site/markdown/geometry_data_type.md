@@ -6,28 +6,31 @@ To create a spatially-enabled table, use the built-in <code>&lt;createTable></co
 "Geometry".
 
 <h3>Available Parameters</h3>
-The geometry type may have the following parameters which mimics the format used by the PostGIS 2 
-<a href="http://boundlessgeo.com/2012/03/postgis-2-0-new-features-typmod/">typmod</a>.  While the
-parameters are not necessarily required for your database, for the greatest portability, the 
-parameters should always be provided.
+The geometry type may have the following parameters that mimic the format used by the PostGIS 2 
+<a href="http://boundlessgeo.com/2012/03/postgis-2-0-new-features-typmod/">typmod</a>.
 <table>
    <tr>
       <th>Parameter</th>
       <th>Description</th>
       <th>Required For</th>
+      <th>Supports</th>
    </tr>
    <tr>
       <td>Geometry Type</td>
       <td>The geometry type of the data in the column (e.g. Geometry, Point, MultiLineString, 
       Polygon, GeometryCollection, etc).</td>
       <td></td>
+      <td>derby, h2, postgresql</td>
    </tr>
    <tr>
       <td>SRID</td>
       <td>The Spatial Reference ID of the data in the column.</td>
       <td>derby, h2</td>
+      <td>derby, h2, postgresql</td>
    </tr>
 </table>
+As a Best Practice, the parameters should always be provided and match those in
+<a href="create_spatial_index.html"><code>&lt;createSpatialIndex></code></a>.
 
 <h3>Example</h3>
 ```XML

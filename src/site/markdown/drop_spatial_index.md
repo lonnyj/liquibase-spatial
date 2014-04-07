@@ -24,19 +24,18 @@ Drops an existing spatial index.
       <td>all</td>
    </tr>
    <tr>
-      <td>tableName<sup>1</sup></td>
+      <td>tableName</td>
       <td>The name of the indexed table.</td>
-      <td>h2, derby</td>
+      <td>h2, derby, mysql</td>
       <td>all</td>
    </tr>
    <tr>
-      <td>indexName<sup>1</sup></td>
+      <td>indexName</td>
       <td>The name of the index to drop.</td>
       <td>mysql, oracle, postgresql</td>
       <td>mysql, oracle, postgresql</td>
    </tr>
 </table>
-1. For the greatest portability, always provide the attribute.
 
 <h3>Example</h3>
 ```XML
