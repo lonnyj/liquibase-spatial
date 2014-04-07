@@ -3,7 +3,9 @@ package liquibase.ext.spatial;
 import static org.testng.Assert.*;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import liquibase.Contexts;
@@ -15,6 +17,8 @@ import liquibase.logging.LogFactory;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -34,13 +38,76 @@ public abstract class LiquibaseIT {
    }
 
    /**
+    * Returns the database connection URL.
+    * 
+    * @return the connection URL.
+    */
+   protected abstract String getUrl();
+
+   /**
+    * Returns the login user name.
+    * 
+    * @return the user name.
+    */
+   protected String getUserName() {
+      return null;
+   }
+
+   /**
+    * Returns the login password.
+    * 
+    * @return the password.
+    */
+   protected String getPassword() {
+      return null;
+   }
+
+   /**
     * Returns the database connection to the current database.
     * 
     * @return the database connection.
     * @throws SQLException
     *            if unable to get the current database connection.
     */
-   protected abstract Connection getConnection() throws SQLException;
+   protected final Connection getConnection() throws SQLException {
+      final String url = getUrl();
+      final String username = getUserName();
+      final String password = getPassword();
+      if (username != null) {
+         return DriverManager.getConnection(url, username, password);
+      }
+      return DriverManager.getConnection(url);
+   }
+
+   @BeforeMethod
+   @AfterMethod
+   public void cleanUpDatabase() throws SQLException {
+      Connection connection = null;
+      try {
+         connection = getConnection();
+
+         // Drop the TEST table.
+         Statement statement = connection.createStatement();
+         try {
+            statement.execute("DROP TABLE TEST");
+         } finally {
+            statement.close();
+         }
+
+         // Drop the DATABASECHANGELOG table.
+         statement = connection.createStatement();
+         try {
+            statement.execute("DROP TABLE DATABASECHANGELOG");
+         } finally {
+            statement.close();
+         }
+      } catch (final Exception ignore) {
+      } finally {
+         if (connection != null) {
+            connection.close();
+         }
+      }
+   }
 
    /**
     * Initialization for each test.
