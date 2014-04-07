@@ -131,9 +131,7 @@ public class SpatialIndexExistsPrecondition implements Precondition {
     */
    protected String getHatboxTableName() {
       final String tableName;
-      if (!StringUtils.hasLowerCase(getTableName())) {
-         tableName = getTableName() + "_HATBOX";
-      } else if (!StringUtils.hasUpperCase(getTableName())) {
+      if (!StringUtils.hasUpperCase(getTableName())) {
          tableName = getTableName() + "_hatbox";
       } else {
          tableName = getTableName() + "_HATBOX";
