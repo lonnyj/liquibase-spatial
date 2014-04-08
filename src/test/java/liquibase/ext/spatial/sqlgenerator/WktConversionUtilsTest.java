@@ -49,13 +49,22 @@ public class WktConversionUtilsTest {
     */
    @DataProvider
    public Object[][] convertToFunctionTestData() {
-      final String wkt = "POINT(0 0)";
+      final String wkt1 = "POINT(0 0)";
+      final String wkt2 = "POINT (0 0)";
+      final String wkt3 = " POINT (0 0)";
+      final String wkt4 = " POINT ( 0 0 ) ";
       final String function = "ST_GeomFromText";
       return new Object[][] {
-            new Object[] { wkt, null, function, false, function + "('" + wkt + "')" },
-            new Object[] { wkt, "", function, false, function + "('" + wkt + "')" },
-            new Object[] { wkt, "4326", function, false, function + "('" + wkt + "', 4326)" },
-            new Object[] { wkt, "4326", function, true, function + "('" + wkt + "', 4326)" }, };
+            new Object[] { wkt1, null, function, false, function + "('" + wkt1 + "')" },
+            new Object[] { wkt2, null, function, false, function + "('" + wkt2 + "')" },
+            new Object[] { wkt3, null, function, false, function + "('" + wkt3 + "')" },
+            new Object[] { wkt4, null, function, false, function + "('" + wkt4 + "')" },
+            new Object[] { wkt1, "", function, false, function + "('" + wkt1 + "')" },
+            new Object[] { wkt1, "4326", function, false, function + "('" + wkt1 + "', 4326)" },
+            new Object[] { wkt1, "4326", function, true, function + "('" + wkt1 + "', 4326)" },
+            new Object[] { wkt2, "4326", function, true, function + "('" + wkt2 + "', 4326)" },
+            new Object[] { wkt3, "4326", function, true, function + "('" + wkt3 + "', 4326)" },
+            new Object[] { wkt4, "4326", function, true, function + "('" + wkt4 + "', 4326)" }, };
    }
 
    /**
