@@ -19,43 +19,42 @@
 <a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> liquibase.sql.Sql;
 <a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> liquibase.sql.UnparsedSql;
 <a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> liquibase.sqlgenerator.SqlGeneratorChain;
-<a class="jxr_linenumber" name="12" href="#12">12</a>  
-<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * &lt;code&gt;CreateSpatialIndexGeneratorMySQL&lt;/code&gt; generates the SQL for creating a spatial index in</em>
-<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * MySQL.</em>
-<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/CreateSpatialIndexGeneratorPostgreSQL.html">CreateSpatialIndexGeneratorPostgreSQL</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/AbstractCreateSpatialIndexGenerator.html">AbstractCreateSpatialIndexGenerator</a> {
-<a class="jxr_linenumber" name="18" href="#18">18</a>     @Override
-<a class="jxr_linenumber" name="19" href="#19">19</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> supports(<strong class="jxr_keyword">final</strong> <a href="../../../../liquibase/ext/spatial/statement/CreateSpatialIndexStatement.html">CreateSpatialIndexStatement</a> statement, <strong class="jxr_keyword">final</strong> Database database) {
-<a class="jxr_linenumber" name="20" href="#20">20</a>        <strong class="jxr_keyword">return</strong> database instanceof PostgresDatabase;
-<a class="jxr_linenumber" name="21" href="#21">21</a>     }
-<a class="jxr_linenumber" name="22" href="#22">22</a>  
-<a class="jxr_linenumber" name="23" href="#23">23</a>     @Override
-<a class="jxr_linenumber" name="24" href="#24">24</a>     <strong class="jxr_keyword">public</strong> Sql[] generateSql(<strong class="jxr_keyword">final</strong> <a href="../../../../liquibase/ext/spatial/statement/CreateSpatialIndexStatement.html">CreateSpatialIndexStatement</a> statement, <strong class="jxr_keyword">final</strong> Database database,
-<a class="jxr_linenumber" name="25" href="#25">25</a>           <strong class="jxr_keyword">final</strong> SqlGeneratorChain sqlGeneratorChain) {
-<a class="jxr_linenumber" name="26" href="#26">26</a>        <strong class="jxr_keyword">final</strong> StringBuilder sql = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="27" href="#27">27</a>        sql.append(<span class="jxr_string">"CREATE INDEX "</span>);
-<a class="jxr_linenumber" name="28" href="#28">28</a>        <strong class="jxr_keyword">final</strong> String indexSchema = statement.getTableSchemaName();
-<a class="jxr_linenumber" name="29" href="#29">29</a>        sql.append(database.escapeIndexName(statement.getTableCatalogName(), indexSchema,
-<a class="jxr_linenumber" name="30" href="#30">30</a>              statement.getIndexName()));
-<a class="jxr_linenumber" name="31" href="#31">31</a>        sql.append(<span class="jxr_string">" ON "</span>);
-<a class="jxr_linenumber" name="32" href="#32">32</a>        sql.append(database.escapeTableName(statement.getTableCatalogName(),
-<a class="jxr_linenumber" name="33" href="#33">33</a>              statement.getTableSchemaName(), statement.getTableName()));
-<a class="jxr_linenumber" name="34" href="#34">34</a>        sql.append(<span class="jxr_string">" USING GIST "</span>).append(<span class="jxr_string">"("</span>);
-<a class="jxr_linenumber" name="35" href="#35">35</a>        <strong class="jxr_keyword">final</strong> Iterator&lt;String&gt; iterator = Arrays.asList(statement.getColumns()).iterator();
-<a class="jxr_linenumber" name="36" href="#36">36</a>        <strong class="jxr_keyword">while</strong> (iterator.hasNext()) {
-<a class="jxr_linenumber" name="37" href="#37">37</a>           <strong class="jxr_keyword">final</strong> String column = iterator.next();
-<a class="jxr_linenumber" name="38" href="#38">38</a>           sql.append(database.escapeColumnName(statement.getTableCatalogName(),
-<a class="jxr_linenumber" name="39" href="#39">39</a>                 statement.getTableSchemaName(), statement.getTableName(), column));
-<a class="jxr_linenumber" name="40" href="#40">40</a>           <strong class="jxr_keyword">if</strong> (iterator.hasNext()) {
-<a class="jxr_linenumber" name="41" href="#41">41</a>              sql.append(<span class="jxr_string">", "</span>);
-<a class="jxr_linenumber" name="42" href="#42">42</a>           }
-<a class="jxr_linenumber" name="43" href="#43">43</a>        }
-<a class="jxr_linenumber" name="44" href="#44">44</a>        sql.append(<span class="jxr_string">")"</span>);
-<a class="jxr_linenumber" name="45" href="#45">45</a>        <strong class="jxr_keyword">final</strong> Sql createIndex = <strong class="jxr_keyword">new</strong> UnparsedSql(sql.toString(), getAffectedIndex(statement));
-<a class="jxr_linenumber" name="46" href="#46">46</a>        <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Sql[] { createIndex };
-<a class="jxr_linenumber" name="47" href="#47">47</a>     }
-<a class="jxr_linenumber" name="48" href="#48">48</a>  }
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> liquibase.structure.core.Index;
+<a class="jxr_linenumber" name="13" href="#13">13</a>  
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * &lt;code&gt;CreateSpatialIndexGeneratorMySQL&lt;/code&gt; generates the SQL for creating a spatial index in</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> * MySQL.</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/CreateSpatialIndexGeneratorPostgreSQL.html">CreateSpatialIndexGeneratorPostgreSQL</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/AbstractCreateSpatialIndexGenerator.html">AbstractCreateSpatialIndexGenerator</a> {
+<a class="jxr_linenumber" name="19" href="#19">19</a>     @Override
+<a class="jxr_linenumber" name="20" href="#20">20</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> supports(<strong class="jxr_keyword">final</strong> <a href="../../../../liquibase/ext/spatial/statement/CreateSpatialIndexStatement.html">CreateSpatialIndexStatement</a> statement, <strong class="jxr_keyword">final</strong> Database database) {
+<a class="jxr_linenumber" name="21" href="#21">21</a>        <strong class="jxr_keyword">return</strong> database instanceof PostgresDatabase;
+<a class="jxr_linenumber" name="22" href="#22">22</a>     }
+<a class="jxr_linenumber" name="23" href="#23">23</a>  
+<a class="jxr_linenumber" name="24" href="#24">24</a>     @Override
+<a class="jxr_linenumber" name="25" href="#25">25</a>     <strong class="jxr_keyword">public</strong> Sql[] generateSql(<strong class="jxr_keyword">final</strong> <a href="../../../../liquibase/ext/spatial/statement/CreateSpatialIndexStatement.html">CreateSpatialIndexStatement</a> statement, <strong class="jxr_keyword">final</strong> Database database,
+<a class="jxr_linenumber" name="26" href="#26">26</a>           <strong class="jxr_keyword">final</strong> SqlGeneratorChain sqlGeneratorChain) {
+<a class="jxr_linenumber" name="27" href="#27">27</a>        <strong class="jxr_keyword">final</strong> StringBuilder sql = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="28" href="#28">28</a>        sql.append(<span class="jxr_string">"CREATE INDEX "</span>);
+<a class="jxr_linenumber" name="29" href="#29">29</a>        sql.append(database.escapeObjectName(statement.getIndexName(), Index.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="30" href="#30">30</a>        sql.append(<span class="jxr_string">" ON "</span>);
+<a class="jxr_linenumber" name="31" href="#31">31</a>        sql.append(database.escapeTableName(statement.getTableCatalogName(),
+<a class="jxr_linenumber" name="32" href="#32">32</a>              statement.getTableSchemaName(), statement.getTableName()));
+<a class="jxr_linenumber" name="33" href="#33">33</a>        sql.append(<span class="jxr_string">" USING GIST "</span>).append(<span class="jxr_string">"("</span>);
+<a class="jxr_linenumber" name="34" href="#34">34</a>        <strong class="jxr_keyword">final</strong> Iterator&lt;String&gt; iterator = Arrays.asList(statement.getColumns()).iterator();
+<a class="jxr_linenumber" name="35" href="#35">35</a>        <strong class="jxr_keyword">while</strong> (iterator.hasNext()) {
+<a class="jxr_linenumber" name="36" href="#36">36</a>           <strong class="jxr_keyword">final</strong> String column = iterator.next();
+<a class="jxr_linenumber" name="37" href="#37">37</a>           sql.append(database.escapeColumnName(statement.getTableCatalogName(),
+<a class="jxr_linenumber" name="38" href="#38">38</a>                 statement.getTableSchemaName(), statement.getTableName(), column));
+<a class="jxr_linenumber" name="39" href="#39">39</a>           <strong class="jxr_keyword">if</strong> (iterator.hasNext()) {
+<a class="jxr_linenumber" name="40" href="#40">40</a>              sql.append(<span class="jxr_string">", "</span>);
+<a class="jxr_linenumber" name="41" href="#41">41</a>           }
+<a class="jxr_linenumber" name="42" href="#42">42</a>        }
+<a class="jxr_linenumber" name="43" href="#43">43</a>        sql.append(<span class="jxr_string">")"</span>);
+<a class="jxr_linenumber" name="44" href="#44">44</a>        <strong class="jxr_keyword">final</strong> Sql createIndex = <strong class="jxr_keyword">new</strong> UnparsedSql(sql.toString(), getAffectedIndex(statement));
+<a class="jxr_linenumber" name="45" href="#45">45</a>        <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Sql[] { createIndex };
+<a class="jxr_linenumber" name="46" href="#46">46</a>     }
+<a class="jxr_linenumber" name="47" href="#47">47</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

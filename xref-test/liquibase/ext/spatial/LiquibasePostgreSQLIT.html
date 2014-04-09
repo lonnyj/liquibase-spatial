@@ -10,37 +10,56 @@
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> liquibase.ext.spatial;
 <a class="jxr_linenumber" name="2" href="#2">2</a>   
-<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_javadoccomment"> * &lt;code&gt;LiquibasePostgreSQLIT&lt;/code&gt; is an integration test of Liquibase with PostgreSQL.</em>
-<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../liquibase/ext/spatial/LiquibasePostgreSQLIT.html">LiquibasePostgreSQLIT</a> <strong class="jxr_keyword">extends</strong> <a href="../../../liquibase/ext/spatial/LiquibaseIT.html">LiquibaseIT</a> {
-<a class="jxr_linenumber" name="7" href="#7">7</a>      @Override
-<a class="jxr_linenumber" name="8" href="#8">8</a>      <strong class="jxr_keyword">protected</strong> String getUrl() {
-<a class="jxr_linenumber" name="9" href="#9">9</a>         <strong class="jxr_keyword">final</strong> String url = System.getProperty(<span class="jxr_string">"postgresql.url"</span>);
-<a class="jxr_linenumber" name="10" href="#10">10</a>        <strong class="jxr_keyword">if</strong> (url == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="11" href="#11">11</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The property 'postgresql.url' must be defined"</span>);
-<a class="jxr_linenumber" name="12" href="#12">12</a>        }
-<a class="jxr_linenumber" name="13" href="#13">13</a>        <strong class="jxr_keyword">return</strong> url;
-<a class="jxr_linenumber" name="14" href="#14">14</a>     }
-<a class="jxr_linenumber" name="15" href="#15">15</a>  
-<a class="jxr_linenumber" name="16" href="#16">16</a>     @Override
-<a class="jxr_linenumber" name="17" href="#17">17</a>     <strong class="jxr_keyword">protected</strong> String getUserName() {
-<a class="jxr_linenumber" name="18" href="#18">18</a>        <strong class="jxr_keyword">final</strong> String username = System.getProperty(<span class="jxr_string">"postgresql.username"</span>);
-<a class="jxr_linenumber" name="19" href="#19">19</a>        <strong class="jxr_keyword">if</strong> (username == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="20" href="#20">20</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The property 'postgresql.username' must be defined"</span>);
-<a class="jxr_linenumber" name="21" href="#21">21</a>        }
-<a class="jxr_linenumber" name="22" href="#22">22</a>        <strong class="jxr_keyword">return</strong> username;
-<a class="jxr_linenumber" name="23" href="#23">23</a>     }
-<a class="jxr_linenumber" name="24" href="#24">24</a>  
-<a class="jxr_linenumber" name="25" href="#25">25</a>     @Override
-<a class="jxr_linenumber" name="26" href="#26">26</a>     <strong class="jxr_keyword">protected</strong> String getPassword() {
-<a class="jxr_linenumber" name="27" href="#27">27</a>        <strong class="jxr_keyword">final</strong> String password = System.getProperty(<span class="jxr_string">"postgresql.password"</span>);
-<a class="jxr_linenumber" name="28" href="#28">28</a>        <strong class="jxr_keyword">if</strong> (password == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="29" href="#29">29</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The property 'postgresql.password' must be defined"</span>);
-<a class="jxr_linenumber" name="30" href="#30">30</a>        }
-<a class="jxr_linenumber" name="31" href="#31">31</a>        <strong class="jxr_keyword">return</strong> password;
-<a class="jxr_linenumber" name="32" href="#32">32</a>     }
-<a class="jxr_linenumber" name="33" href="#33">33</a>  }
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> liquibase.Liquibase;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> liquibase.database.DatabaseConnection;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> liquibase.exception.LiquibaseException;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> liquibase.resource.ResourceAccessor;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_javadoccomment"> * &lt;code&gt;LiquibasePostgreSQLIT&lt;/code&gt; is an integration test of Liquibase with PostgreSQL.</em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../liquibase/ext/spatial/LiquibasePostgreSQLIT.html">LiquibasePostgreSQLIT</a> <strong class="jxr_keyword">extends</strong> <a href="../../../liquibase/ext/spatial/LiquibaseIT.html">LiquibaseIT</a> {
+<a class="jxr_linenumber" name="12" href="#12">12</a>     @Override
+<a class="jxr_linenumber" name="13" href="#13">13</a>     <strong class="jxr_keyword">protected</strong> String getUrl() {
+<a class="jxr_linenumber" name="14" href="#14">14</a>        <strong class="jxr_keyword">final</strong> String url = System.getProperty(<span class="jxr_string">"postgresql.url"</span>);
+<a class="jxr_linenumber" name="15" href="#15">15</a>        <strong class="jxr_keyword">if</strong> (url == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="16" href="#16">16</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The property 'postgresql.url' must be defined"</span>);
+<a class="jxr_linenumber" name="17" href="#17">17</a>        }
+<a class="jxr_linenumber" name="18" href="#18">18</a>        <strong class="jxr_keyword">return</strong> url;
+<a class="jxr_linenumber" name="19" href="#19">19</a>     }
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>     @Override
+<a class="jxr_linenumber" name="22" href="#22">22</a>     <strong class="jxr_keyword">protected</strong> String getUserName() {
+<a class="jxr_linenumber" name="23" href="#23">23</a>        <strong class="jxr_keyword">final</strong> String username = System.getProperty(<span class="jxr_string">"postgresql.username"</span>);
+<a class="jxr_linenumber" name="24" href="#24">24</a>        <strong class="jxr_keyword">if</strong> (username == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="25" href="#25">25</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The property 'postgresql.username' must be defined"</span>);
+<a class="jxr_linenumber" name="26" href="#26">26</a>        }
+<a class="jxr_linenumber" name="27" href="#27">27</a>        <strong class="jxr_keyword">return</strong> username;
+<a class="jxr_linenumber" name="28" href="#28">28</a>     }
+<a class="jxr_linenumber" name="29" href="#29">29</a>  
+<a class="jxr_linenumber" name="30" href="#30">30</a>     @Override
+<a class="jxr_linenumber" name="31" href="#31">31</a>     <strong class="jxr_keyword">protected</strong> String getPassword() {
+<a class="jxr_linenumber" name="32" href="#32">32</a>        <strong class="jxr_keyword">final</strong> String password = System.getProperty(<span class="jxr_string">"postgresql.password"</span>);
+<a class="jxr_linenumber" name="33" href="#33">33</a>        <strong class="jxr_keyword">if</strong> (password == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="34" href="#34">34</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The property 'postgresql.password' must be defined"</span>);
+<a class="jxr_linenumber" name="35" href="#35">35</a>        }
+<a class="jxr_linenumber" name="36" href="#36">36</a>        <strong class="jxr_keyword">return</strong> password;
+<a class="jxr_linenumber" name="37" href="#37">37</a>     }
+<a class="jxr_linenumber" name="38" href="#38">38</a>  
+<a class="jxr_linenumber" name="39" href="#39">39</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">    * @see liquibase.ext.spatial.LiquibaseIT#createLiquibase(java.lang.String,</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">    *      liquibase.resource.ResourceAccessor, liquibase.database.DatabaseConnection)</em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">    */</em>
+<a class="jxr_linenumber" name="43" href="#43">43</a>     @Override
+<a class="jxr_linenumber" name="44" href="#44">44</a>     <strong class="jxr_keyword">protected</strong> Liquibase createLiquibase(<strong class="jxr_keyword">final</strong> String changeLogFile,
+<a class="jxr_linenumber" name="45" href="#45">45</a>           <strong class="jxr_keyword">final</strong> ResourceAccessor resourceAccessor, <strong class="jxr_keyword">final</strong> DatabaseConnection databaseConnection)
+<a class="jxr_linenumber" name="46" href="#46">46</a>           <strong class="jxr_keyword">throws</strong> LiquibaseException {
+<a class="jxr_linenumber" name="47" href="#47">47</a>        <strong class="jxr_keyword">final</strong> Liquibase liquibase = <strong class="jxr_keyword">super</strong>.createLiquibase(changeLogFile, resourceAccessor,
+<a class="jxr_linenumber" name="48" href="#48">48</a>              databaseConnection);
+<a class="jxr_linenumber" name="49" href="#49">49</a>        liquibase.getDatabase().setDefaultSchemaName(getUserName());
+<a class="jxr_linenumber" name="50" href="#50">50</a>        <strong class="jxr_keyword">return</strong> liquibase;
+<a class="jxr_linenumber" name="51" href="#51">51</a>     }
+<a class="jxr_linenumber" name="52" href="#52">52</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

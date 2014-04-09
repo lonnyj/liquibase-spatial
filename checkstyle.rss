@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2014</copyright>
     <item>
-      <title>File: 36,
-             Errors: 757,
+      <title>File: 37,
+             Errors: 759,
              Warnings: 0,
              Infos: 0
       </title>
@@ -52,7 +52,7 @@
                   0
                 </td>
                 <td>
-                  29
+                  18
                 </td>
               </tr>
                           <tr>
@@ -122,7 +122,7 @@
                   0
                 </td>
                 <td>
-                  24
+                  22
                 </td>
               </tr>
                           <tr>
@@ -221,6 +221,20 @@
                 </td>
                 <td>
                   29
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://lonnyj.github.com/liquibase-spatial/checkstyle.html#liquibase.ext.spatial.sqlgenerator.OracleSpatialUtils.java">liquibase/ext/spatial/sqlgenerator/OracleSpatialUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  22
                 </td>
               </tr>
                           <tr>
@@ -360,7 +374,7 @@
                   0
                 </td>
                 <td>
-                  26
+                  18
                 </td>
               </tr>
                           <tr>
@@ -430,7 +444,7 @@
                   0
                 </td>
                 <td>
-                  36
+                  37
                 </td>
               </tr>
                           <tr>

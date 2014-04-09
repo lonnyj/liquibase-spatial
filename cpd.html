@@ -404,45 +404,7 @@
       final String function = WktConversionUtils.convertToFunction(wkt, srid, database, this);
       return function;
    }
-}</pre></div></td></tr></table>
-<table border="0" class="table table-striped">
-<tr class="a">
-<th>File</th>
-<th>Line</th></tr>
-<tr class="b">
-<td>liquibase\ext\spatial\sqlgenerator\SpatialInsertGeneratorOracle.java</td>
-<td><a href="./xref/liquibase/ext/spatial/sqlgenerator/SpatialInsertGeneratorOracle.html#43">43</a></td></tr>
-<tr class="a">
-<td>liquibase\ext\spatial\sqlgenerator\SpatialUpdateGeneratorOracle.java</td>
-<td><a href="./xref/liquibase/ext/spatial/sqlgenerator/SpatialUpdateGeneratorOracle.html#39">39</a></td></tr>
-<tr class="b"><td colspan='2'>
-<div>
-<pre>   }
-
-   /**
-    * Handles the Well-Known Text and SRID for Oracle.
-    */
-   @Override
-   public String convertToFunction(final String wkt, final String srid, final Database database) {
-      final String oracleWkt;
-
-      // Strings longer than 4000 characters need to be converted to CLOBs.
-      if (wkt.length() &gt; 4000) {
-         int index = 4000;
-         final StringBuilder clobs = new StringBuilder(&quot;TO_CLOB('&quot;).append(wkt.substring(0, index))
-               .append(&quot;')&quot;);
-         while (index &lt; wkt.length()) {
-            final int endIndex = Math.min(index + 4000, wkt.length());
-            clobs.append(&quot; || TO_CLOB('&quot;).append(wkt.substring(index, endIndex)).append(&quot;')&quot;);
-            index = endIndex;
-         }
-         oracleWkt = clobs.toString();
-      } else {
-         oracleWkt = wkt;
-      }
-
-      final String oracleSrid;
-      if (srid != null &amp;&amp; !srid.equals(&quot;&quot;)) {</pre></div></td></tr></table></div>
+}</pre></div></td></tr></table></div>
                   </div>
             </div>
           </div>
