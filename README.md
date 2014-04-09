@@ -1,7 +1,8 @@
-liquibase-spatial
-=================
+Liquibase Spatial
+-----------------
 
-Liquibase Spatial extends Liquibase to handle spatial types.
+Liquibase Spatial extends Liquibase to handle spatial types.  It requires Liquibase 3.1.1
+or newer.
 
 In order to use this extension, you must have <code>liquibase-spatial-1.0.0.jar</code>
 in your classpath. For XML change logs, define the <code>spatial</code> namespace.
