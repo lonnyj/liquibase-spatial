@@ -131,6 +131,10 @@
                <artifactId>maven-failsafe-plugin</artifactId>
                <version>${maven-failsafe-plugin.version}</version>
             </plugin>
+            <plugin>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <version>${maven-surefire-plugin.version}</version>
+            </plugin>
          </plugins>
       </pluginManagement>
       <plugins>
@@ -173,6 +177,30 @@
                   </manifestEntries>
                </archive>
             </configuration>
+         </plugin>
+         <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.6</version>
+            <executions>
+               <execution>
+                  <id>Copy the XSD</id>
+                  <phase>verify</phase>
+                  <goals>
+                     <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                     <outputDirectory>${project.build.directory}/site</outputDirectory>
+                     <resources>
+                        <resource>
+                           <directory>${project.build.outputDirectory}/liquibase/ext/spatial/xml</directory>
+                           <includes>
+                              <include>*.xsd</include>
+                           </includes>
+                        </resource>
+                     </resources>
+                  </configuration>
+               </execution>
+            </executions>
          </plugin>
          <plugin>
             <groupId>com.google.code.sortpom</groupId>
