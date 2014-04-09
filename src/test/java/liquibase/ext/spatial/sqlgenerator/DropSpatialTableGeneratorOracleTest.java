@@ -6,6 +6,7 @@ import liquibase.database.Database;
 import liquibase.database.core.H2Database;
 import liquibase.database.core.OracleDatabase;
 import liquibase.ext.spatial.statement.CreateSpatialIndexStatement;
+import liquibase.sql.SingleLineComment;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.core.DropTableStatement;
@@ -38,9 +39,12 @@ public class DropSpatialTableGeneratorOracleTest {
       final SqlGeneratorChain sqlGeneratorChain = mock(SqlGeneratorChain.class);
       final DropTableStatement statement = new DropTableStatement("catalog_name", "schema_name",
             "table_name", true);
+      final Sql comment = new SingleLineComment("No-op", "--");
+      when(sqlGeneratorChain.generateSql(statement, database)).thenReturn(new Sql[] { comment });
       final Sql[] result = generator.generateSql(statement, database, sqlGeneratorChain);
       assertNotNull(result);
-      assertEquals(result.length, 1);
+      assertEquals(result.length, 2);
+      assertEquals(result[1], comment);
 
       // Verify the DELETE statement.
       final String deleteSql = result[0].toSql();

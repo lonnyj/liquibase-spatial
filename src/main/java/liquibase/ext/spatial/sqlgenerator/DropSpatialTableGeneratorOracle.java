@@ -1,5 +1,9 @@
 package liquibase.ext.spatial.sqlgenerator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import liquibase.database.Database;
 import liquibase.database.core.OracleDatabase;
 import liquibase.exception.ValidationErrors;
@@ -42,6 +46,11 @@ public class DropSpatialTableGeneratorOracle extends AbstractSqlGenerator<DropTa
       sql.append("'");
       final UnparsedSql deleteMetadata = new UnparsedSql(sql.toString(),
             new View().setName("user_sdo_geom_metadata"));
-      return new Sql[] { deleteMetadata };
+
+      // First delete the record then perform the standard behavior.
+      final List<Sql> list = new ArrayList<Sql>();
+      list.add(deleteMetadata);
+      list.addAll(Arrays.asList(sqlGeneratorChain.generateSql(statement, database)));
+      return list.toArray(new Sql[list.size()]);
    }
 }
