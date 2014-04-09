@@ -60,6 +60,7 @@ public class SpatialSupportedPrecondition implements Precondition {
          precondition.check(database, changeLog, changeSet);
       } else if (database instanceof PostgresDatabase) {
          final ViewExistsPrecondition precondition = new ViewExistsPrecondition();
+         precondition.setSchemaName("public");
          precondition.setViewName("geometry_columns");
          precondition.check(database, changeLog, changeSet);
       } else if (database instanceof OracleDatabase) {
