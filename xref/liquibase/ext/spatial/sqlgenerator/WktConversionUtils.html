@@ -22,7 +22,7 @@
 <a class="jxr_linenumber" name="12" href="#12">12</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String SRID_REGEX = <span class="jxr_string">"SRID[&#92;&#92;s]*=[&#92;&#92;s]*([0-9]+)[&#92;&#92;s]*;"</span>;
 <a class="jxr_linenumber" name="13" href="#13">13</a>  
 <a class="jxr_linenumber" name="14" href="#14">14</a>     <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The WKT regular expression. */</em>
-<a class="jxr_linenumber" name="15" href="#15">15</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String WKT_REGEX = <span class="jxr_string">"((((MULTI)?(POINT|LINESTRING|POLYGON)|GEOMETRYCOLLECTION)Z?M?)[(].*[)])"</span>;
+<a class="jxr_linenumber" name="15" href="#15">15</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String WKT_REGEX = <span class="jxr_string">"((((MULTI)?(POINT|LINESTRING|POLYGON)|GEOMETRYCOLLECTION)Z?M?)[&#92;&#92;s]*[(].*[)])"</span>;
 <a class="jxr_linenumber" name="16" href="#16">16</a>  
 <a class="jxr_linenumber" name="17" href="#17">17</a>     <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The PostGIS EWKT regular expression. */</em>
 <a class="jxr_linenumber" name="18" href="#18">18</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EWKT_REGEX = <span class="jxr_string">"("</span> + SRID_REGEX + <span class="jxr_string">"[&#92;&#92;s]*)?"</span> + WKT_REGEX;
