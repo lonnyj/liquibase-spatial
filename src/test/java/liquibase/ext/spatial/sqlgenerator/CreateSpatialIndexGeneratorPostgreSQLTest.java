@@ -47,9 +47,6 @@ public class CreateSpatialIndexGeneratorPostgreSQLTest {
       assertEquals(result.length, 1);
       final String sql = result[0].toSql();
       String pattern = "(?i)CREATE INDEX ";
-      if (statement.getTableSchemaName() != null) {
-         pattern += statement.getTableSchemaName() + '.';
-      }
       pattern += statement.getIndexName() + " ON ";
       if (statement.getTableSchemaName() != null) {
          pattern += statement.getTableSchemaName() + '.';

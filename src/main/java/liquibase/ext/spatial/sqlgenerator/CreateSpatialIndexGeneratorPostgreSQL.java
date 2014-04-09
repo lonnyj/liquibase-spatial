@@ -9,6 +9,7 @@ import liquibase.ext.spatial.statement.CreateSpatialIndexStatement;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
+import liquibase.structure.core.Index;
 
 /**
  * <code>CreateSpatialIndexGeneratorMySQL</code> generates the SQL for creating a spatial index in
@@ -25,9 +26,7 @@ public class CreateSpatialIndexGeneratorPostgreSQL extends AbstractCreateSpatial
          final SqlGeneratorChain sqlGeneratorChain) {
       final StringBuilder sql = new StringBuilder();
       sql.append("CREATE INDEX ");
-      final String indexSchema = statement.getTableSchemaName();
-      sql.append(database.escapeIndexName(statement.getTableCatalogName(), indexSchema,
-            statement.getIndexName()));
+      sql.append(database.escapeObjectName(statement.getIndexName(), Index.class));
       sql.append(" ON ");
       sql.append(database.escapeTableName(statement.getTableCatalogName(),
             statement.getTableSchemaName(), statement.getTableName()));
