@@ -11,13 +11,13 @@ import java.util.List;
 import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeSet;
+import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.logging.LogFactory;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
@@ -80,9 +80,7 @@ public abstract class LiquibaseIT {
    }
 
    @BeforeMethod
-   @AfterMethod
    public void cleanUpDatabase() throws SQLException {
-      System.out.println("Cleaning up the database");
       Connection connection = null;
       try {
          connection = getConnection();
@@ -147,7 +145,8 @@ public abstract class LiquibaseIT {
       final JdbcConnection jdbcConnection = new JdbcConnection(connection);
       try {
          final ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
-         final Liquibase liquibase = new Liquibase(changeLogFile, resourceAccessor, jdbcConnection);
+         final Liquibase liquibase = createLiquibase(changeLogFile, resourceAccessor,
+               jdbcConnection);
          liquibase.updateTestingRollback((Contexts) null);
          final List<ChangeSet> unrunChangeSets = liquibase.listUnrunChangeSets((Contexts) null);
          assertTrue(unrunChangeSets.isEmpty(), "All change sets should have run");
@@ -155,6 +154,25 @@ public abstract class LiquibaseIT {
          jdbcConnection.rollback();
          jdbcConnection.close();
       }
+   }
+
+   /**
+    * Creates the <code>Liquibase</code> instance.
+    * 
+    * @param changeLogFile
+    *           the database change log file name.
+    * @param resourceAccessor
+    *           the resource accessor.
+    * @param databaseConnection
+    *           the database connection.
+    * @return returns the new instance.
+    * @throws LiquibaseException
+    *            if unable to create the instance.
+    */
+   protected Liquibase createLiquibase(final String changeLogFile,
+         final ResourceAccessor resourceAccessor, final DatabaseConnection databaseConnection)
+         throws LiquibaseException {
+      return new Liquibase(changeLogFile, resourceAccessor, databaseConnection);
    }
 
    /**
