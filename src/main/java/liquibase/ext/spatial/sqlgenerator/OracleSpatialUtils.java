@@ -93,21 +93,19 @@ public class OracleSpatialUtils {
       final String oracleSrid;
       final JdbcConnection jdbcConnection = (JdbcConnection) database.getConnection();
       final Connection connection = jdbcConnection.getUnderlyingConnection();
-      Statement statement;
-      ResultSet resultSet;
+      Statement statement = null;
       try {
          statement = connection.createStatement();
-         resultSet = statement.executeQuery("SELECT " + EPSG_TO_ORACLE_FUNCTION + "(" + srid
-               + ") FROM dual");
+         final ResultSet resultSet = statement.executeQuery("SELECT " + EPSG_TO_ORACLE_FUNCTION
+               + "(" + srid + ") FROM dual");
          resultSet.next();
          oracleSrid = resultSet.getString(1);
-         statement.close();
       } catch (final SQLException e) {
          throw new UnexpectedLiquibaseException("Failed to find the Oracle SRID for EPSG:" + srid,
                e);
       } finally {
          try {
-            connection.close();
+            statement.close();
          } catch (final SQLException ignore) {
          }
       }
