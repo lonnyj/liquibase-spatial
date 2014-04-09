@@ -90,7 +90,8 @@ public class CreateSpatialIndexGeneratorOracle extends AbstractCreateSpatialInde
       if (srid == null) {
          sql.append(", NULL");
       } else {
-         sql.append(", SDO_CS.MAP_EPSG_TO_ORACLE(" + srid + ")");
+         sql.append(", ").append(OracleSpatialUtils.EPSG_TO_ORACLE_FUNCTION).append("(")
+               .append(srid).append(")");
       }
       sql.append(")");
       return sql.toString();
