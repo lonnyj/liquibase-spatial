@@ -4,6 +4,8 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
          http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial src/main/resources/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
+   <include file="properties.xml"/>
+
    <changeSet id="Spatialize DB" author="test">
       <sql dbms="derby">create procedure InitGeoDB ()
          language java
@@ -37,15 +39,14 @@
       </createTable>
    </changeSet>
 
-   <changeSet id="Verify geometry_columns inserted" author="test">
+   <changeSet id="Verify geometry_columns inserted" author="test" dbms="derby, h2, postgresql">
       <preConditions>
          <sqlCheck expectedResult="1">
             SELECT count(*)
             FROM geometry_columns
-            WHERE upper(f_table_schema) = upper('${database.liquibaseSchemaName}')
+            WHERE f_table_schema = ${current_schema_sql}
             AND upper(f_table_name) = 'TEST'
-            AND upper(f_geometry_column)
-            = 'GEOM'
+            AND upper(f_geometry_column) = 'GEOM'
          </sqlCheck>
       </preConditions>
    </changeSet>
@@ -55,7 +56,7 @@
          <tableExists tableName="TEST" />
          <not>
             <spatial:spatialIndexExists
-               tableName="TEST" />
+               tableName="TEST" columnNames="GEOM" />
          </not>
       </preConditions>
       <spatial:createSpatialIndex tableName="TEST"
@@ -67,7 +68,7 @@
    <changeSet id="Insert spatial data" author="test">
       <preConditions>
          <spatial:spatialIndexExists
-            tableName="TEST" />
+            tableName="TEST" columnNames="GEOM" />
       </preConditions>
       <loadData tableName="TEST" file="three_points.csv">
          <column name="ID" type="NUMERIC" />
@@ -91,7 +92,7 @@
          <rowCount tableName="TEST" expectedRows="3" />
          <sqlCheck expectedResult="POINT (0 0)">SELECT ST_AsText(t.geom) FROM
             TEST t INNER JOIN
-            table(HATBOX.MBR_INTERSECTS_ENV('${database.liquibaseSchemaName}',
+            table(HATBOX.MBR_INTERSECTS_ENV(${current_schema_sql},
             'TEST', -2, 2, -2, 2)) i on t.ID = i.HATBOX_JOIN_ID
          </sqlCheck>
       </preConditions>
@@ -102,8 +103,43 @@
          <rowCount tableName="TEST" expectedRows="3" />
          <sqlCheck expectedResult="POINT (0 0)">SELECT ST_AsText(geom) FROM
             TEST WHERE id IN (SELECT CAST(HATBOX_JOIN_ID AS INT) FROM
-            HATBOX_MBR_INTERSECTS_ENV('${database.liquibaseSchemaName}',
+            HATBOX_MBR_INTERSECTS_ENV(${current_schema_sql},
             'TEST', -2, 2, -2, 2))
+         </sqlCheck>
+      </preConditions>
+   </changeSet>
+
+   <changeSet id="Query spatial data" author="test" dbms="mysql">
+      <preConditions>
+         <rowCount tableName="TEST" expectedRows="3" />
+         <sqlCheck expectedResult="POINT(0 0)">SELECT AsText(geom) FROM TEST
+            WHERE
+            Intersects(geom, GeomFromText('POLYGON ((-2 -2, -2 2, 2 2, 2 -2,
+            -2 -2))', 4326))
+         </sqlCheck>
+      </preConditions>
+   </changeSet>
+
+   <changeSet id="Query spatial data" author="test" dbms="oracle">
+      <preConditions>
+         <rowCount tableName="TEST" expectedRows="3" />
+         <sqlCheck expectedResult="POINT (0 0)">SELECT t.geom.Get_WKT() FROM
+            TEST t WHERE
+            SDO_RELATE(t.geom, SDO_GEOMETRY('POLYGON ((-2
+            -2, -2 2, 2 2, 2 -2,
+            -2 -2))', 8307), 'mask = ANYINTERACT') =
+            'TRUE'
+         </sqlCheck>
+      </preConditions>
+   </changeSet>
+
+   <changeSet id="Query spatial data" author="test" dbms="postgresql">
+      <preConditions>
+         <rowCount tableName="TEST" expectedRows="3" />
+         <sqlCheck expectedResult="POINT (0 0)">SELECT ST_AsText(geom) FROM
+            TEST WHERE ST_Intersects(geom,
+            ST_GeomFromEWKT('SRID=4326;POLYGON ((-2 -2,
+            -2 2, 2 2, 2 -2, -2 -2))'))
          </sqlCheck>
       </preConditions>
    </changeSet>
@@ -111,9 +147,10 @@
    <changeSet id="Drop spatial index" author="test">
       <preConditions>
          <spatial:spatialIndexExists
-            tableName="TEST" />
+            tableName="TEST" columnNames="GEOM" />
       </preConditions>
-      <spatial:dropSpatialIndex tableName="TEST" indexName="TEST_GEOM_IDX" />
+      <spatial:dropSpatialIndex tableName="TEST"
+         indexName="TEST_GEOM_IDX" />
       <rollback />
    </changeSet>
 
@@ -121,7 +158,7 @@
       <preConditions>
          <not>
             <spatial:spatialIndexExists
-               tableName="TEST" />
+               tableName="TEST" columnNames="GEOM" />
          </not>
       </preConditions>
    </changeSet>
@@ -136,12 +173,12 @@
       <rollback changeSetId="Insert spatial data" changeSetAuthor="test" />
    </changeSet>
 
-   <changeSet id="Verify geometry_columns deleted" author="test">
+   <changeSet id="Verify geometry_columns deleted" author="test" dbms="derby, h2, postgresql">
       <preConditions>
          <sqlCheck expectedResult="0">
             SELECT count(*)
             FROM geometry_columns
-            WHERE upper(f_table_schema) = upper('${database.liquibaseSchemaName}')
+            WHERE f_table_schema = ${current_schema_sql}
             AND upper(f_table_name) = 'TEST'
             AND upper(f_geometry_column)
             = 'GEOM'

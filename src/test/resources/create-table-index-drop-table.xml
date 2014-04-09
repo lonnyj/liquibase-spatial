@@ -4,6 +4,8 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
          http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial src/main/resources/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
+   <include file="properties.xml"/>
+
    <changeSet id="Spatialize DB" author="test">
       <sql dbms="derby">create procedure InitGeoDB ()
          language java
@@ -37,15 +39,14 @@
       </createTable>
    </changeSet>
 
-   <changeSet id="Verify geometry_columns inserted" author="test">
+   <changeSet id="Verify geometry_columns inserted" author="test" dbms="derby, h2, postgresql">
       <preConditions>
          <sqlCheck expectedResult="1">
             SELECT count(*)
             FROM geometry_columns
-            WHERE upper(f_table_schema) = upper('${database.liquibaseSchemaName}')
+            WHERE f_table_schema = ${current_schema_sql}
             AND upper(f_table_name) = 'TEST'
-            AND upper(f_geometry_column)
-            = 'GEOM'
+            AND upper(f_geometry_column) = 'GEOM'
          </sqlCheck>
       </preConditions>
    </changeSet>
@@ -55,7 +56,7 @@
          <tableExists tableName="TEST" />
          <not>
             <spatial:spatialIndexExists
-               tableName="TEST" />
+               tableName="TEST" columnNames="GEOM" />
          </not>
       </preConditions>
       <spatial:createSpatialIndex tableName="TEST"
@@ -67,7 +68,7 @@
    <changeSet id="Insert spatial data" author="test">
       <preConditions>
          <spatial:spatialIndexExists
-            tableName="TEST" />
+            tableName="TEST" columnNames="GEOM" />
       </preConditions>
       <insert tableName="TEST">
          <column name="ID" valueNumeric="1" />
@@ -109,20 +110,19 @@
       <preConditions>
          <not>
             <spatial:spatialIndexExists
-               tableName="TEST" />
+               tableName="TEST" columnNames="GEOM" />
          </not>
       </preConditions>
    </changeSet>
 
-   <changeSet id="Verify geometry_columns deleted" author="test">
+   <changeSet id="Verify geometry_columns deleted" author="test" dbms="derby, h2, postgresql">
       <preConditions>
          <sqlCheck expectedResult="0">
             SELECT count(*)
             FROM geometry_columns
-            WHERE upper(f_table_schema) = upper('${database.liquibaseSchemaName}')
+            WHERE f_table_schema = ${current_schema_sql}
             AND upper(f_table_name) = 'TEST'
-            AND upper(f_geometry_column)
-            = 'GEOM'
+            AND upper(f_geometry_column) = 'GEOM'
          </sqlCheck>
       </preConditions>
    </changeSet>

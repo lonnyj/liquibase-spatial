@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+   <!-- The SQL that returns the current schema. -->
+   <property name="current_schema_sql" value="CURRENT SCHEMA"
+      dbms="derby" />
+   <property name="current_schema_sql" value="schema()" dbms="h2, mysql" />
+   <property name="current_schema_sql"
+      value="(SELECT sys_context('USERENV', 'CURRENT_SCHEMA') FROM dual)"
+      dbms="oracle" />
+   <property name="current_schema_sql" value="current_schema"
+      dbms="postgresql" />
+</databaseChangeLog>
