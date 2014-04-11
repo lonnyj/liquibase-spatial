@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial src/main/resources/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
    <include file="properties.xml"/>
 
-   <changeSet id="Spatialize DB" author="test">
+   <changeSet id="Spatialize DB" author="test" dbms="derby, h2">
       <sql dbms="derby">create procedure InitGeoDB ()
          language java
          external
@@ -15,8 +15,7 @@
          modifies
          sql data;
       </sql>
-      <sql dbms="h2">CREATE ALIAS InitGeoDB for "geodb.GeoDB.InitGeoDB"
-      </sql>
+      <sql dbms="h2">CREATE ALIAS InitGeoDB for "geodb.GeoDB.InitGeoDB"</sql>
       <sql dbms="derby, h2">CALL InitGeoDB()</sql>
       <rollback>
          <sql dbms="derby">DROP PROCEDURE InitGeoDB</sql>
@@ -27,8 +26,7 @@
    <changeSet id="Create table" author="test">
       <createTable tableName="TEST">
          <column name="ID" type="BIGINT">
-            <constraints nullable="false" primaryKey="true"
-               primaryKeyName="TEST_PK" />
+            <constraints nullable="false" primaryKey="true" primaryKeyName="TEST_PK" />
          </column>
       </createTable>
    </changeSet>
@@ -54,33 +52,32 @@
       </preConditions>
    </changeSet>
 
-   <changeSet id="Add not null constraint to geometry column"
-      author="test">
+   <changeSet id="Add not null constraint to geometry column" author="test">
       <preConditions>
          <columnExists tableName="TEST" columnName="GEOM" />
       </preConditions>
-      <addNotNullConstraint tableName="TEST"
-         columnName="GEOM" columnDataType="GEOMETRY(POINT,4326)" />
+      <addNotNullConstraint tableName="TEST" columnName="GEOM"
+         columnDataType="GEOMETRY(POINT,4326)" />
    </changeSet>
 
    <changeSet id="Create spatial index" author="test">
       <preConditions>
          <tableExists tableName="TEST" />
          <not>
-            <spatial:spatialIndexExists
-               tableName="TEST" columnNames="GEOM" />
+            <spatial:spatialIndexExists tableName="TEST"
+               columnNames="GEOM" />
          </not>
       </preConditions>
-      <spatial:createSpatialIndex tableName="TEST"
-         indexName="TEST_GEOM_IDX" srid="4326">
+      <spatial:createSpatialIndex tableName="TEST" indexName="TEST_GEOM_IDX"
+         srid="4326">
          <column name="GEOM" />
       </spatial:createSpatialIndex>
    </changeSet>
 
    <changeSet id="Insert spatial data" author="test">
       <preConditions>
-         <spatial:spatialIndexExists
-            tableName="TEST" columnNames="GEOM" />
+         <spatial:spatialIndexExists tableName="TEST"
+            columnNames="GEOM" />
       </preConditions>
       <insert tableName="TEST">
          <column name="ID" valueNumeric="1" />
@@ -95,8 +92,28 @@
          <column name="GEOM" value="SRID=4326;POINT(5 5)" />
       </insert>
       <rollback>
-         <delete tableName="TEST" />
+         <!-- Hatbox/Derby don't like deleting everything from the table in one statement. -->
+         <delete tableName="TEST">
+            <where>ID = 3</where>
+         </delete>
+         <delete tableName="TEST">
+            <where>ID = 2</where>
+         </delete>
+         <delete tableName="TEST">
+            <where>ID = 1</where>
+         </delete>
       </rollback>
+   </changeSet>
+
+   <changeSet id="Drop Spatial Index" author="test" dbms="oracle">
+      <preConditions>
+         <tableExists tableName="TEST" />
+         <spatial:spatialIndexExists tableName="TEST"
+            columnNames="GEOM" />
+      </preConditions>
+      <comment>Oracle requires that the domain index to be dropped before the column.</comment>
+      <spatial:dropSpatialIndex tableName="TEST" indexName="TEST_GEOM_IDX" />
+      <rollback />
    </changeSet>
 
    <changeSet id="Drop geometry column" author="test">
@@ -119,13 +136,19 @@
             <where>ID = 3</where>
          </update>
       </rollback>
+      <rollback changeSetId="Add not null constraint to geometry column"
+         changeSetAuthor="test" />
+      <rollback changeSetId="Create spatial index" changeSetAuthor="test" />
    </changeSet>
 
-   <changeSet id="Verify spatial index dropped" author="test">
+   <changeSet id="Verify column and spatial index dropped" author="test">
       <preConditions>
          <not>
-            <spatial:spatialIndexExists
-               tableName="TEST" columnNames="GEOM" />
+            <columnExists tableName="TEST" columnName="GEOM" />
+         </not>
+         <not>
+            <spatial:spatialIndexExists tableName="TEST"
+               columnNames="GEOM" />
          </not>
       </preConditions>
    </changeSet>
