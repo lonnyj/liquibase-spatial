@@ -399,11 +399,17 @@
             mysql.password=<password>
          -->
          <id>mysql</id>
+
          <activation>
             <property>
                <name>mysql.url</name>
             </property>
          </activation>
+
+         <properties>
+            <mysql.version>5.1.30</mysql.version>
+         </properties>
+
          <build>
             <plugins>
                <plugin>
@@ -430,7 +436,7 @@
             <dependency>
                <groupId>mysql</groupId>
                <artifactId>mysql-connector-java</artifactId>
-               <version>5.1.30</version>
+               <version>${mysql.version}</version>
             </dependency>
          </dependencies>
       </profile>
@@ -443,11 +449,19 @@
             oracle.password=<password>
          -->
          <id>oracle</id>
+
          <activation>
             <property>
                <name>oracle.url</name>
             </property>
          </activation>
+
+         <properties>
+         	<ojdbc6.groupId>com.oracle</ojdbc6.groupId>
+         	<ojdbc6.artifactId>ojdbc6</ojdbc6.artifactId>
+         	<ojdbc6.version>11.2.0.3.0</ojdbc6.version>
+         </properties>
+
          <build>
             <plugins>
                <plugin>
@@ -472,9 +486,9 @@
 
          <dependencies>
             <dependency>
-               <groupId>com.oracle</groupId>
-               <artifactId>ojdbc6</artifactId>
-               <version>11.2.0.3</version>
+               <groupId>${ojdbc6.groupId}</groupId>
+               <artifactId>${ojdbc6.artifactId}</artifactId>
+               <version>${ojdbc6.version}</version>
                <scope>test</scope>
             </dependency>
          </dependencies>
@@ -488,11 +502,17 @@
             postgresql.password=<password>
          -->
          <id>postgresql</id>
+
          <activation>
             <property>
                <name>postgresql.url</name>
             </property>
          </activation>
+
+         <properties>
+            <postgresql.version>9.3-1101-jdbc4</postgresql.version>
+         </properties>
+
          <build>
             <plugins>
                <plugin>
@@ -519,7 +539,7 @@
             <dependency>
                <groupId>org.postgresql</groupId>
                <artifactId>postgresql</artifactId>
-               <version>9.3-1101-jdbc4</version>
+               <version>${postgresql.version}</version>
             </dependency>
          </dependencies>
       </profile>
