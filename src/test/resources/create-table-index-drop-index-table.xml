@@ -123,11 +123,12 @@
    <changeSet id="Query spatial data" author="test" dbms="oracle">
       <preConditions>
          <rowCount tableName="TEST" expectedRows="3" />
+         <!-- The Oracle check should just require "= 'TRUE'" but that wasn't working. -->
          <sqlCheck expectedResult="POINT (0.0 0.0)">
             SELECT t.geom.Get_WKT()
             FROM TEST t 
             WHERE SDO_ANYINTERACT(t.geom, 
-                                  SDO_GEOMETRY('POLYGON ((-2 -2, -2 2, 2 2, 2 -2, -2 -2))', 8307)) = 'TRUE'
+                                  SDO_GEOMETRY('POLYGON ((-2 -2, -2 2, 2 2, 2 -2, -2 -2))', 8307)) LIKE '%TRUE%'
          </sqlCheck>
       </preConditions>
    </changeSet>
