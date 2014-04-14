@@ -117,12 +117,12 @@
       </dependency>
    </dependencies>
 
-   <repositories>
+   <!-- <repositories>
       <repository>
          <id>OpenGeo</id>
          <url>http://repo.opengeo.org/</url>
       </repository>
-   </repositories>
+   </repositories> -->
 
    <build>
       <pluginManagement>
