@@ -117,13 +117,6 @@
       </dependency>
    </dependencies>
 
-   <!-- <repositories>
-      <repository>
-         <id>OpenGeo</id>
-         <url>http://repo.opengeo.org/</url>
-      </repository>
-   </repositories> -->
-
    <build>
       <pluginManagement>
          <plugins>
@@ -444,6 +437,7 @@
                <groupId>mysql</groupId>
                <artifactId>mysql-connector-java</artifactId>
                <version>${mysql.version}</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
       </profile>
@@ -547,6 +541,7 @@
                <groupId>org.postgresql</groupId>
                <artifactId>postgresql</artifactId>
                <version>${postgresql.version}</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
       </profile>
