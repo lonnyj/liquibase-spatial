@@ -66,6 +66,7 @@
       <maven-changes-plugin.version>2.9</maven-changes-plugin.version>
       <maven-failsafe-plugin.version>${maven-surefire-plugin.version}</maven-failsafe-plugin.version>
       <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+      <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
       <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
       <versions-maven-plugin.version>2.1</versions-maven-plugin.version>
 
@@ -184,6 +185,19 @@
             </configuration>
          </plugin>
          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin.version}</version>
+            <executions>
+               <execution>
+                  <id>attach-javadocs</id>
+                  <phase>deploy</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <executions>
                <execution>
@@ -203,6 +217,19 @@
                         </resource>
                      </resources>
                   </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${maven-source-plugin.version}</version>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <phase>deploy</phase>
+                  <goals>
+                     <goal>jar-no-fork</goal>
+                  </goals>
                </execution>
             </executions>
          </plugin>
