@@ -130,6 +130,10 @@
                <version>${maven-failsafe-plugin.version}</version>
             </plugin>
             <plugin>
+               <artifactId>maven-gpg-plugin</artifactId>
+               <version>1.5</version>
+            </plugin>
+            <plugin>
                <artifactId>maven-release-plugin</artifactId>
                <version>2.5</version>
             </plugin>
@@ -619,6 +623,57 @@
                               </concat>
                            </target>
                         </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+
+      <profile>
+         <id>sign-artifacts</id>
+         <activation>
+            <property>
+               <name>gpg.passphrase</name>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+
+      <profile>
+         <id>release-sign-artifacts</id>
+         <activation>
+            <property>
+               <name>performRelease</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
                      </execution>
                   </executions>
                </plugin>
