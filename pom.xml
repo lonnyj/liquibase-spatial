@@ -41,7 +41,7 @@
       <connection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</connection>
       <developerConnection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</developerConnection>
       <tag>HEAD</tag>
-      <url>git@${repository.domain}:${repository.user}/${repository.name}.git</url>
+      <url>https://${repository.domain}/${repository.user}/${repository.name}</url>
    </scm>
 
    <issueManagement>
