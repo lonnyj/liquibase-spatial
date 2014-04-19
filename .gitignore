@@ -1,4 +1,5 @@
 # Package Files #
+/bin
 /target
 /.settings
 /.classpath
