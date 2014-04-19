@@ -10,7 +10,7 @@
 
    <groupId>com.github.lonnyj</groupId>
    <artifactId>liquibase-spatial</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
+   <version>1.0.0</version>
 
    <name>Liquibase Spatial</name>
    <description>Liquibase Spatial extends Liquibase to handle spatial types</description>
@@ -40,7 +40,7 @@
    <scm>
       <connection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</connection>
       <developerConnection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>liquibase-spatial-1.0.0</tag>
       <url>https://${repository.domain}/${repository.user}/${repository.name}</url>
    </scm>
 
