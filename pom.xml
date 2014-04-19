@@ -38,10 +38,10 @@
    </developers>
 
    <scm>
-      <connection>scm:git:https://${repository.domain}/${repository.user}/${repository.name}.git</connection>
-      <developerConnection>scm:git:https://${repository.domain}/${repository.user}/${repository.name}.git</developerConnection>
-      <tag>liquibase-spatial-1.0.0</tag>
-      <url>https://${repository.domain}/${repository.user}/${repository.name}</url>
+      <connection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</connection>
+      <developerConnection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</developerConnection>
+      <tag>HEAD</tag>
+      <url>git@${repository.domain}:${repository.user}/${repository.name}.git</url>
    </scm>
 
    <issueManagement>
