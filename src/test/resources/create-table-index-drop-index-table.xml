@@ -3,7 +3,7 @@
    xmlns:spatial="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
-         http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial src/main/resources/liquibase/ext/spatial/xml/liquibase-spatial.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial http://lonnyj.github.io/liquibase-spatial/liquibase-spatial.xsd">
    <include file="properties.xml"/>
 
    <changeSet id="Spatialize DB" author="test" dbms="derby, h2">
