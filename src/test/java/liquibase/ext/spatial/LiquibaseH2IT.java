@@ -12,17 +12,17 @@ import org.testng.annotations.BeforeMethod;
 public class LiquibaseH2IT extends LiquibaseIT {
    @Override
    protected String getUrl() {
-      return "jdbc:h2:target/" + getDatabaseName();
+      return "jdbc:h2:./target/" + getDatabaseName();
    }
 
    @BeforeMethod
    public void beforeMethod() throws SQLException {
-      DeleteDbFiles.execute("target", getDatabaseName(), true);
+      DeleteDbFiles.execute("./target", getDatabaseName(), true);
       getConnection().close();
    }
 
    @AfterMethod
    public void afterMethod() throws SQLException {
-      DeleteDbFiles.execute("target", getDatabaseName(), true);
+      DeleteDbFiles.execute("./target", getDatabaseName(), true);
    }
 }
