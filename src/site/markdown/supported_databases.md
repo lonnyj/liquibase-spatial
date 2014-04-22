@@ -18,7 +18,7 @@ The table below lists the supported databases and their specific requirements:
    </tr>
    <tr>
       <td>H2</td>
-      <td>all</td>
+      <td>1.2.135+</td>
       <td>Requires <a href="https://github.com/jdeolive/geodb">GeoDB</a>, 
       <a href="http://hatbox.sourceforge.net">Hatbox</a> and 
       <a href="http://tsusiatsoftware.net/jts/main.html">JTS</a> in the classpath</td>
