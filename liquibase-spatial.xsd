@@ -10,9 +10,10 @@
       schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd" />
    <xsd:attributeGroup name="indexName">
       <xsd:annotation>
-         <xsd:documentation>Index names are optional since GeoDB uses
-            Hatbox to manage the indexes and there is no control over
-            the index name.
+         <xsd:documentation>The index name attribute group is similar to
+            the Liquibase attribute group except that the index name is
+            optional. GeoDB doesn't use the index name as the index is
+            stored in a separate table that Hatbox names.
          </xsd:documentation>
       </xsd:annotation>
       <xsd:attribute name="indexName" type="xsd:string"
@@ -30,7 +31,16 @@
       <xsd:attributeGroup ref="lb:tableNameAttribute" />
       <xsd:attributeGroup ref="indexName" />
       <xsd:attribute name="tablespace" type="xsd:string" />
-      <xsd:attribute name="geometryType" type="xsd:string" />
+      <xsd:attribute name="geometryType" type="xsd:string">
+         <xsd:annotation>
+            <xsd:documentation>Specifies the geometry type of the
+               indexed data. The geometry should be one of GEOMETRY,
+               POINT, LINESTRING, POLYGON, MULTIPOINT, MULTILINESTRING,
+               MULTIPOLYGON or GEOMETRYCOLLECTION. Use GEOMETRY for
+               either unknown or varying geometry types.
+            </xsd:documentation>
+         </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="srid" type="xsd:integer" />
    </xsd:attributeGroup>
    <xsd:element name="spatialSupported" />
@@ -46,7 +56,8 @@
    <xsd:element name="createSpatialIndex">
       <xsd:complexType>
          <xsd:sequence>
-            <xsd:element ref="lb:column" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element ref="lb:column" minOccurs="0"
+               maxOccurs="unbounded" />
          </xsd:sequence>
          <xsd:attributeGroup ref="createSpatialIndex" />
       </xsd:complexType>
