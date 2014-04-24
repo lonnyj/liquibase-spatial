@@ -274,7 +274,7 @@
             <div class="section">
 <h2>Liquibase Spatial<a name="Liquibase_Spatial"></a></h2>
 <p>Liquibase Spatial is an extension to Liquibase to handle spatial indexing and types. It requires Liquibase 3.1.1 or newer.</p>
-<p>In order to use this extension, you must have <a class="externalLink" href="http://search.maven.org/#artifactdetails%7Ccom.github.lonnyj%7Cliquibase-spatial%7C1.0.0%7Cjar"><tt>liquibase-spatial-1.0.0.jar</tt></a> in your classpath. For XML change logs, define the <tt>spatial</tt> namespace.</p>
+<p>In order to use this extension, you must have <a class="externalLink" href="http://search.maven.org/#artifactdetails%7Ccom.github.lonnyj%7Cliquibase-spatial%7C1.0.0%7Cjar"><tt>liquibase-spatial-1.0.0.jar</tt></a> in your classpath. For XML change logs, define the <tt>spatial</tt> namespace as below:</p>
 
 <div class="source">
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
@@ -287,16 +287,16 @@
       http://lonnyj.github.com/liquibase-spatial/liquibase-spatial.xsd&quot;&gt;
 &lt;/databaseChangeLog&gt;
 </pre></div>
-<p>Using the preconditions or changes from this extension requires specifying the <tt>spatial</tt> namespace prefixing on those elements. Here is a quick example of how to use this extension:</p>
+<p>Using the XML elements defined by this extension requires specifying the <tt>spatial</tt> namespace prefix on those elements. Here is a quick example of how to create a table with a geometry column, create a spatial index on that column, and insert data into the table:</p>
 
 <div class="source">
 <pre>&lt;changeSet id=&quot;Create table&quot; author=&quot;bob&quot;&gt;
    &lt;preConditions&gt;
       &lt;spatial:spatialSupported /&gt;
    &lt;/preConditions&gt;
-   &lt;createTable tableName=&quot;TEST&quot;&gt;
+   &lt;createTable tableName=&quot;EXAMPLE&quot;&gt;
       &lt;column name=&quot;ID&quot; type=&quot;BIGINT&quot;&gt;
-         &lt;constraints nullable=&quot;false&quot; primaryKey=&quot;true&quot; primaryKeyName=&quot;TEST_PK&quot; /&gt;
+         &lt;constraints nullable=&quot;false&quot; primaryKey=&quot;true&quot; primaryKeyName=&quot;EXAMPLE_PK&quot; /&gt;
       &lt;/column&gt;
       &lt;column name=&quot;GEOM&quot; type=&quot;GEOMETRY(Point, 4326)&quot;&gt;
          &lt;constraints nullable=&quot;false&quot; /&gt;
@@ -307,24 +307,24 @@
 &lt;changeSet id=&quot;Create spatial index&quot; author=&quot;bob&quot;&gt;
    &lt;preConditions&gt;
       &lt;not&gt;
-         &lt;spatial:spatialIndexExists tableName=&quot;TEST&quot; columnNames=&quot;GEOM&quot; /&gt;
+         &lt;spatial:spatialIndexExists tableName=&quot;EXAMPLE&quot; columnNames=&quot;GEOM&quot; /&gt;
       &lt;/not&gt;
    &lt;/preConditions&gt;
-   &lt;spatial:createSpatialIndex tableName=&quot;TEST&quot; indexName=&quot;TEST_GEOM_IDX&quot; geometryType=&quot;Point&quot; srid=&quot;4326&quot;&gt;
+   &lt;spatial:createSpatialIndex tableName=&quot;EXAMPLE&quot; indexName=&quot;EXAMPLE_GEOM_IDX&quot; geometryType=&quot;Point&quot; srid=&quot;4326&quot;&gt;
       &lt;column name=&quot;GEOM&quot; /&gt;
    &lt;/spatial:createSpatialIndex&gt;
 &lt;/changeSet&gt;
 
 &lt;changeSet id=&quot;Insert spatial data&quot; author=&quot;bob&quot;&gt;
-   &lt;insert tableName=&quot;TEST&quot;&gt;
+   &lt;insert tableName=&quot;EXAMPLE&quot;&gt;
       &lt;column name=&quot;ID&quot; valueNumeric=&quot;1&quot; /&gt;
       &lt;column name=&quot;GEOM&quot; value=&quot;SRID=4326;POINT(-5 -5)&quot; /&gt;
    &lt;/insert&gt;
-   &lt;insert tableName=&quot;TEST&quot;&gt;
+   &lt;insert tableName=&quot;EXAMPLE&quot;&gt;
       &lt;column name=&quot;ID&quot; valueNumeric=&quot;2&quot; /&gt;
       &lt;column name=&quot;GEOM&quot; value=&quot;SRID=4326;POINT(0 0)&quot; /&gt;
    &lt;/insert&gt;
-   &lt;insert tableName=&quot;TEST&quot;&gt;
+   &lt;insert tableName=&quot;EXAMPLE&quot;&gt;
       &lt;column name=&quot;ID&quot; valueNumeric=&quot;3&quot; /&gt;
       &lt;column name=&quot;GEOM&quot; value=&quot;SRID=4326;POINT(5 5)&quot; /&gt;
    &lt;/insert&gt;
