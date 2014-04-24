@@ -327,7 +327,7 @@
 <p>Total number of changed sets: 1</p>
 <div class="section">
 <h3>Changes between 2014-03-24 and 2014-04-24<a name="Changes_between_2014-03-24_and_2014-04-24"></a></h3>
-<p>Total commits: 76<br />Total number of files changed: 69</p>
+<p>Total commits: 71<br />Total number of files changed: 68</p>
 <table border="0" class="table table-striped">
 <tr class="a">
 <th>Timestamp</th>
@@ -616,27 +616,7 @@
 <tr class="b">
 <td>2014-03-25 06:47:38</td>
 <td>Lonny &lt;gmljacobson@gmail.com&gt;</td>
-<td><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/SpatialInsertGeneratorOracle.java">src/main/java/liquibase/ext/spatial/sqlgenerator/<b>SpatialInsertGeneratorOracle.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/SpatialInsertGeneratorOracle.java?rev=89dd63c7e384d94224859a5b884799d6a46329bc&amp;content-type=text/vnd.viewcvs-markup">v 89dd63c7e384d94224859a5b884799d6a46329bc</a><br /><br />Queried the database to convert the EPSG SRID to the Oracle SRID and<br />cached the value to improve performance.  Removed the method call that<br />required the SRID in calling SDO_GEOMETRY.</td></tr>
-<tr class="a">
-<td>2014-03-24 22:24:29</td>
-<td>Lonny &lt;gmljacobson@gmail.com&gt;</td>
-<td><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/test/java/liquibase/ext/spatial/sqlgenerator/DropSpatialTableGeneratorOracleTest.java">src/test/java/liquibase/ext/spatial/sqlgenerator/<b>DropSpatialTableGeneratorOracleTest.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/test/java/liquibase/ext/spatial/sqlgenerator/DropSpatialTableGeneratorOracleTest.java?rev=7433a5758876316f745fa2f22536d66251aa2b56&amp;content-type=text/vnd.viewcvs-markup">v 7433a5758876316f745fa2f22536d66251aa2b56</a><br /><br />Finished and enabled the unit test.</td></tr>
-<tr class="b">
-<td>2014-03-24 22:21:12</td>
-<td>Lonny &lt;gmljacobson@gmail.com&gt;</td>
-<td><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/DropSpatialTableGeneratorOracle.java">src/main/java/liquibase/ext/spatial/sqlgenerator/<b>DropSpatialTableGeneratorOracle.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/DropSpatialTableGeneratorOracle.java?rev=1f5a7f0d51b9c10b4af88b005529a396b101b8e5&amp;content-type=text/vnd.viewcvs-markup">v 1f5a7f0d51b9c10b4af88b005529a396b101b8e5</a><br /><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/test/java/liquibase/ext/spatial/sqlgenerator/DropSpatialTableGeneratorOracleTest.java">src/test/java/liquibase/ext/spatial/sqlgenerator/<b>DropSpatialTableGeneratorOracleTest.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/test/java/liquibase/ext/spatial/sqlgenerator/DropSpatialTableGeneratorOracleTest.java?rev=1f5a7f0d51b9c10b4af88b005529a396b101b8e5&amp;content-type=text/vnd.viewcvs-markup">v 1f5a7f0d51b9c10b4af88b005529a396b101b8e5</a><br /><br />Created a drop spatial table generator for Oracle to clean up the<br />USER_SDO_GEOM_METADATA view.</td></tr>
-<tr class="a">
-<td>2014-03-24 22:20:34</td>
-<td>Lonny &lt;gmljacobson@gmail.com&gt;</td>
-<td><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/change/DropSpatialIndexChange.java">src/main/java/liquibase/ext/spatial/change/<b>DropSpatialIndexChange.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/change/DropSpatialIndexChange.java?rev=e638417429c855f0425740e2faeb3a7271bc5f21&amp;content-type=text/vnd.viewcvs-markup">v e638417429c855f0425740e2faeb3a7271bc5f21</a><br /><br />Enhanced the drop spatial index change to issue the normal<br />DropIndexStatement under some circumstances.</td></tr>
-<tr class="b">
-<td>2014-03-24 22:19:27</td>
-<td>Lonny &lt;gmljacobson@gmail.com&gt;</td>
-<td><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/DropSpatialIndexGeneratorOracle.java">src/main/java/liquibase/ext/spatial/sqlgenerator/<b>DropSpatialIndexGeneratorOracle.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/DropSpatialIndexGeneratorOracle.java?rev=cdb82c1801a9587f7e2ee482a121a961c7584241&amp;content-type=text/vnd.viewcvs-markup">v cdb82c1801a9587f7e2ee482a121a961c7584241</a><br /><br />Created a drop spatial index generator for Oracle.</td></tr>
-<tr class="a">
-<td>2014-03-24 22:18:58</td>
-<td>Lonny &lt;gmljacobson@gmail.com&gt;</td>
-<td><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/test/java/liquibase/ext/spatial/sqlgenerator/CreateSpatialIndexGeneratorOracleTest.java">src/test/java/liquibase/ext/spatial/sqlgenerator/<b>CreateSpatialIndexGeneratorOracleTest.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/test/java/liquibase/ext/spatial/sqlgenerator/CreateSpatialIndexGeneratorOracleTest.java?rev=41b78f7292043cb23c5ee5931027268e8fdf922e&amp;content-type=text/vnd.viewcvs-markup">v 41b78f7292043cb23c5ee5931027268e8fdf922e</a><br /><br />Fixed a bug in the unit test.</td></tr></table></div></div>
+<td><a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/SpatialInsertGeneratorOracle.java">src/main/java/liquibase/ext/spatial/sqlgenerator/<b>SpatialInsertGeneratorOracle.java</b></a> <a class="externalLink" href="https://github.com/lonnyj/liquibase-spatial/src/main/java/liquibase/ext/spatial/sqlgenerator/SpatialInsertGeneratorOracle.java?rev=89dd63c7e384d94224859a5b884799d6a46329bc&amp;content-type=text/vnd.viewcvs-markup">v 89dd63c7e384d94224859a5b884799d6a46329bc</a><br /><br />Queried the database to convert the EPSG SRID to the Oracle SRID and<br />cached the value to improve performance.  Removed the method call that<br />required the SRID in calling SDO_GEOMETRY.</td></tr></table></div></div>
                   </div>
             </div>
           </div>
