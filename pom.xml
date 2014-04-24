@@ -13,7 +13,7 @@
    <version>1.0.1-SNAPSHOT</version>
 
    <name>Liquibase Spatial</name>
-   <description>Liquibase Spatial extends Liquibase to handle spatial types</description>
+   <description>Liquibase Spatial extends Liquibase to handle spatial indexing and geometry types</description>
    <url>http://lonnyj.github.com/liquibase-spatial</url>
    <inceptionYear>2014</inceptionYear>
 
