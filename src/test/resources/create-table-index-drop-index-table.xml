@@ -53,12 +53,10 @@
       <preConditions>
          <tableExists tableName="TEST" />
          <not>
-            <spatial:spatialIndexExists tableName="TEST"
-               columnNames="GEOM" />
+            <spatial:spatialIndexExists tableName="TEST" columnNames="GEOM" />
          </not>
       </preConditions>
-      <spatial:createSpatialIndex tableName="TEST" indexName="TEST_GEOM_IDX"
-         srid="4326">
+      <spatial:createSpatialIndex tableName="TEST" indexName="TEST_GEOM_IDX" srid="4326">
          <column name="GEOM" />
       </spatial:createSpatialIndex>
    </changeSet>
@@ -157,8 +155,7 @@
    <changeSet id="Verify spatial index dropped" author="test">
       <preConditions>
          <not>
-            <spatial:spatialIndexExists tableName="TEST"
-               columnNames="GEOM" />
+            <spatial:spatialIndexExists tableName="TEST" columnNames="GEOM" />
          </not>
       </preConditions>
    </changeSet>
