@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import liquibase.database.Database;
 import liquibase.database.core.DerbyDatabase;
@@ -12,10 +13,11 @@ import liquibase.datatype.LiquibaseDataType;
 import liquibase.exception.ValidationErrors;
 import liquibase.ext.spatial.datatype.GeometryType;
 import liquibase.sql.Sql;
-import liquibase.sql.UnparsedSql;
+import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.sqlgenerator.core.CreateTableGenerator;
+import liquibase.statement.core.AddColumnStatement;
 import liquibase.statement.core.CreateTableStatement;
 
 /**
@@ -44,7 +46,17 @@ public class CreateSpatialTableGeneratorGeoDB extends AbstractSqlGenerator<Creat
    @Override
    public ValidationErrors validate(final CreateTableStatement statement, final Database database,
          final SqlGeneratorChain sqlGeneratorChain) {
-      return sqlGeneratorChain.validate(statement, database);
+      final ValidationErrors validationErrors = new ValidationErrors();
+      for (final Entry<String, LiquibaseDataType> entry : statement.getColumnTypes().entrySet()) {
+         if (entry.getValue() instanceof GeometryType) {
+            final GeometryType geometryType = (GeometryType) entry.getValue();
+            if (geometryType.getSRID() == null) {
+               validationErrors.addError("The SRID parameter is required on the geometry type");
+            }
+         }
+      }
+      validationErrors.addAll(sqlGeneratorChain.validate(statement, database));
+      return validationErrors;
    }
 
    @Override
@@ -54,21 +66,17 @@ public class CreateSpatialTableGeneratorGeoDB extends AbstractSqlGenerator<Creat
             statement, database)));
       for (final Entry<String, LiquibaseDataType> entry : statement.getColumnTypes().entrySet()) {
          if (entry.getValue() instanceof GeometryType) {
-            final String schemaName = statement.getSchemaName();
-            final String escapedSchemaName = schemaName == null ? "NULL" : "'"
-                  + database.escapeStringForDatabase(schemaName) + "'";
-            final String tableName = statement.getTableName();
             final String columnName = entry.getKey();
-
             final GeometryType geometryType = (GeometryType) entry.getValue();
-            final Integer srid = geometryType.getSRID() == null ? 4326 : geometryType.getSRID();
-            final String geomType = geometryType.getGeometryType() == null ? "'Geometry'" : "'"
-                  + database.escapeStringForDatabase(geometryType.getGeometryType()) + "'";
-
-            final String sql = "CALL AddGeometryColumn(" + escapedSchemaName + ", '" + tableName
-                  + "', '" + columnName + "', " + srid + ", " + geomType + ", 2)";
-            final Sql addGeometryColumn = new UnparsedSql(sql);
-            list.add(addGeometryColumn);
+            final AddGeometryColumnGeneratorGeoDB generator = new AddGeometryColumnGeneratorGeoDB();
+            final AddColumnStatement addColumnStatement = new AddColumnStatement(
+                  statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(),
+                  columnName, geometryType.toString(), null);
+            @SuppressWarnings("rawtypes")
+            final SqlGeneratorChain emptyChain = new SqlGeneratorChain(new TreeSet<SqlGenerator>());
+            final Sql[] addGeometryColumnSql = generator.generateSql(addColumnStatement, database,
+                  emptyChain);
+            list.addAll(Arrays.asList(addGeometryColumnSql));
          }
       }
       return list.toArray(new Sql[list.size()]);
