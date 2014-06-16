@@ -16,7 +16,7 @@
          <item name="Geometry" href="geometry_data_type.html"/>
       </menu>
       <menu name="Extended Changes">
-         <item name="Added Column" href="add_column.html"/>
+         <item name="Add Column" href="add_column.html"/>
          <item name="Create Table" href="create_table.html"/>
          <item name="Insert" href="insert.html"/>
          <item name="Load Data" href="load_data.html"/>

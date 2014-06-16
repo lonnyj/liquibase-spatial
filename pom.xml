@@ -8,12 +8,12 @@
       <version>9</version>
    </parent>
 
-   <groupId>org.liquibase.ext</groupId>
+   <groupId>com.github.lonnyj</groupId>
    <artifactId>liquibase-spatial</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
+   <version>1.0.1-SNAPSHOT</version>
 
    <name>Liquibase Spatial</name>
-   <description>Liquibase Spatial extends Liquibase to handle spatial types</description>
+   <description>Liquibase Spatial extends Liquibase to handle spatial indexing and geometry types</description>
    <url>http://lonnyj.github.com/liquibase-spatial</url>
    <inceptionYear>2014</inceptionYear>
 
@@ -38,8 +38,8 @@
    </developers>
 
    <scm>
-      <connection>scm:git:https://${repository.domain}/${repository.user}/${repository.name}.git</connection>
-      <developerConnection>scm:git:https://${repository.domain}/${repository.user}/${repository.name}.git</developerConnection>
+      <connection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</connection>
+      <developerConnection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</developerConnection>
       <tag>HEAD</tag>
       <url>https://${repository.domain}/${repository.user}/${repository.name}</url>
    </scm>
@@ -66,11 +66,15 @@
       <maven-changes-plugin.version>2.9</maven-changes-plugin.version>
       <maven-failsafe-plugin.version>${maven-surefire-plugin.version}</maven-failsafe-plugin.version>
       <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+      <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
       <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
       <versions-maven-plugin.version>2.1</versions-maven-plugin.version>
 
       <!-- Dependency Versions -->
       <geodb.version>0.8</geodb.version>
+      <hatbox.version>1.0.b9</hatbox.version>
+      <h2.version>1.4.177</h2.version>
+      <jts.version>1.13</jts.version>
       <liquibase.version>3.1.1</liquibase.version>
    </properties>
 
@@ -78,7 +82,7 @@
       <dependency>
          <groupId>com.vividsolutions</groupId>
          <artifactId>jts</artifactId>
-         <version>1.13</version>
+         <version>${jts.version}</version>
       </dependency>
       <dependency>
          <groupId>org.liquibase</groupId>
@@ -88,13 +92,13 @@
       <dependency>
          <groupId>com.h2database</groupId>
          <artifactId>h2</artifactId>
-         <version>1.3.176</version>
+         <version>${h2.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>net.sourceforge.hatbox</groupId>
          <artifactId>hatbox</artifactId>
-         <version>1.0.b9</version>
+         <version>${hatbox.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
@@ -117,23 +121,28 @@
       </dependency>
    </dependencies>
 
-   <repositories>
-      <repository>
-         <id>OpenGeo</id>
-         <url>http://repo.opengeo.org/</url>
-      </repository>
-   </repositories>
-
    <build>
       <pluginManagement>
          <plugins>
+            <plugin>
+               <artifactId>maven-antrun-plugin</artifactId>
+               <version>1.7</version>
+            </plugin>
             <plugin>
                <artifactId>maven-failsafe-plugin</artifactId>
                <version>${maven-failsafe-plugin.version}</version>
             </plugin>
             <plugin>
+               <artifactId>maven-gpg-plugin</artifactId>
+               <version>1.5</version>
+            </plugin>
+            <plugin>
                <artifactId>maven-release-plugin</artifactId>
                <version>2.5</version>
+            </plugin>
+            <plugin>
+               <artifactId>maven-resources-plugin</artifactId>
+               <version>2.6</version>
             </plugin>
             <plugin>
                <artifactId>maven-surefire-plugin</artifactId>
@@ -161,7 +170,7 @@
                   </goals>
                   <configuration>
                      <includes>
-                        <include>**/*H2IT*</include>
+                        <include>**/*H2*IT*</include>
                      </includes>
                   </configuration>
                </execution>
@@ -183,8 +192,20 @@
             </configuration>
          </plugin>
          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin.version}</version>
+            <executions>
+               <execution>
+                  <id>attach-javadocs</id>
+                  <phase>deploy</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
             <artifactId>maven-resources-plugin</artifactId>
-            <version>2.6</version>
             <executions>
                <execution>
                   <id>Copy the XSD</id>
@@ -203,6 +224,34 @@
                         </resource>
                      </resources>
                   </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${maven-source-plugin.version}</version>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <phase>deploy</phase>
+                  <goals>
+                     <goal>jar-no-fork</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <!-- Explicitly define maven-deploy-plugin after javadoc and source to
+               force the execution order. -->
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>2.8.1</version>
+            <executions>
+               <execution>
+                  <id>deploy</id>
+                  <phase>deploy</phase>
+                  <goals>
+                     <goal>deploy</goal>
+                  </goals>
                </execution>
             </executions>
          </plugin>
@@ -326,6 +375,7 @@
          </build>
 
          <properties>
+            <derby.version>10.8.2.2</derby.version>
             <geodb.version>0.9-SNAPSHOT</geodb.version>
          </properties>
 
@@ -333,7 +383,7 @@
             <dependency>
                <groupId>org.apache.derby</groupId>
                <artifactId>derby</artifactId>
-               <version>10.8.2.2</version>
+               <version>${derby.version}</version>
                <scope>test</scope>
             </dependency>
          </dependencies>
@@ -399,11 +449,13 @@
             mysql.password=<password>
          -->
          <id>mysql</id>
+
          <activation>
             <property>
                <name>mysql.url</name>
             </property>
          </activation>
+
          <build>
             <plugins>
                <plugin>
@@ -426,11 +478,16 @@
             </plugins>
          </build>
 
+         <properties>
+            <mysql.version>5.1.30</mysql.version>
+         </properties>
+
          <dependencies>
             <dependency>
                <groupId>mysql</groupId>
                <artifactId>mysql-connector-java</artifactId>
-               <version>5.1.30</version>
+               <version>${mysql.version}</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
       </profile>
@@ -443,11 +500,13 @@
             oracle.password=<password>
          -->
          <id>oracle</id>
+
          <activation>
             <property>
                <name>oracle.url</name>
             </property>
          </activation>
+
          <build>
             <plugins>
                <plugin>
@@ -470,11 +529,17 @@
             </plugins>
          </build>
 
+         <properties>
+            <ojdbc6.groupId>com.oracle</ojdbc6.groupId>
+            <ojdbc6.artifactId>ojdbc6</ojdbc6.artifactId>
+            <ojdbc6.version>11.2.0.3.0</ojdbc6.version>
+         </properties>
+
          <dependencies>
             <dependency>
-               <groupId>com.oracle</groupId>
-               <artifactId>ojdbc6</artifactId>
-               <version>11.2.0.3</version>
+               <groupId>${ojdbc6.groupId}</groupId>
+               <artifactId>${ojdbc6.artifactId}</artifactId>
+               <version>${ojdbc6.version}</version>
                <scope>test</scope>
             </dependency>
          </dependencies>
@@ -488,11 +553,13 @@
             postgresql.password=<password>
          -->
          <id>postgresql</id>
+
          <activation>
             <property>
                <name>postgresql.url</name>
             </property>
          </activation>
+
          <build>
             <plugins>
                <plugin>
@@ -515,13 +582,122 @@
             </plugins>
          </build>
 
+         <properties>
+            <postgresql.version>9.3-1101-jdbc4</postgresql.version>
+         </properties>
+
          <dependencies>
             <dependency>
                <groupId>org.postgresql</groupId>
                <artifactId>postgresql</artifactId>
-               <version>9.3-1101-jdbc4</version>
+               <version>${postgresql.version}</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
+      </profile>
+
+      <profile>
+         <id>update-readme</id>
+
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-resources-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>Filter index.md.vm</id>
+                        <phase>site</phase>
+                        <goals>
+                           <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                           <outputDirectory>${project.build.directory}</outputDirectory>
+                           <resources>
+                              <resource>
+                                 <filtering>true</filtering>
+                                 <directory>${basedir}/src/site/markdown</directory>
+                                 <includes>
+                                    <include>index.md.vm</include>
+                                 </includes>
+                              </resource>
+                           </resources>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>Generate README.md</id>
+                        <phase>site</phase>
+                        <goals>
+                           <goal>run</goal>
+                        </goals>
+                        <configuration>
+                           <target>
+                              <concat destfile="${basedir}/README.md">
+                                 <path path="${project.build.directory}/index.md.vm"></path>
+                                 <footer>Refer to the [documentation](${project.url}) for further information.</footer>
+                              </concat>
+                           </target>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+
+      <profile>
+         <id>sign-artifacts</id>
+         <activation>
+            <property>
+               <name>gpg.passphrase</name>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+
+      <profile>
+         <id>release-sign-artifacts</id>
+         <activation>
+            <property>
+               <name>performRelease</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
       </profile>
    </profiles>
 </project>

@@ -73,9 +73,9 @@ public class CreateSpatialIndexChange extends AbstractChange implements
    }
 
    /**
-    * Returns the geometryType.
+    * Returns the geometry type.
     * 
-    * @return the geometryType.
+    * @return the geometry type.
     */
    @DatabaseChangeProperty(description = "The Well-Known Text geometry type", exampleValue = "POINT")
    public String getGeometryType() {
@@ -83,10 +83,10 @@ public class CreateSpatialIndexChange extends AbstractChange implements
    }
 
    /**
-    * Sets the geometryType.
+    * Sets the geometry type.
     * 
     * @param geometryType
-    *           the geometryType.
+    *           the geometry type.
     */
    public void setGeometryType(final String geometryType) {
       this.geometryType = geometryType;
