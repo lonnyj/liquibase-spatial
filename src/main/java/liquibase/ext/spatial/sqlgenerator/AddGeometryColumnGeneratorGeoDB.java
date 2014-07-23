@@ -20,20 +20,24 @@ import liquibase.statement.core.AddColumnStatement;
 import liquibase.util.StringUtils;
 
 /**
- * <code>AddGeometryColumnGeneratorGeoDB</code> is a SQL generator that specializes in GeoDB.
- * Regardless of the column type, the next SQL generator in the chain is invoked to handle the
- * normal column addition. If the column to be added has a geometry type, the
- * <code>AddGeometryColumn</code> stored procedure is invoked to ensure that the necessary metadata
- * is created in the database.
+ * <code>AddGeometryColumnGeneratorGeoDB</code> is a SQL generator that
+ * specializes in GeoDB. Regardless of the column type, the next SQL generator
+ * in the chain is invoked to handle the normal column addition. If the column
+ * to be added has a geometry type, the <code>AddGeometryColumn</code> stored
+ * procedure is invoked to ensure that the necessary metadata is created in the
+ * database.
  */
-public class AddGeometryColumnGeneratorGeoDB extends AbstractSqlGenerator<AddColumnStatement> {
+public class AddGeometryColumnGeneratorGeoDB extends
+      AbstractSqlGenerator<AddColumnStatement> {
    /**
     * @see liquibase.sqlgenerator.core.AbstractSqlGenerator#supports(liquibase.statement.SqlStatement,
     *      liquibase.database.Database)
     */
    @Override
-   public boolean supports(final AddColumnStatement statement, final Database database) {
-      return database instanceof DerbyDatabase || database instanceof H2Database;
+   public boolean supports(final AddColumnStatement statement,
+         final Database database) {
+      return database instanceof DerbyDatabase
+            || database instanceof H2Database;
    }
 
    /**
@@ -45,11 +49,11 @@ public class AddGeometryColumnGeneratorGeoDB extends AbstractSqlGenerator<AddCol
    }
 
    @Override
-   public ValidationErrors validate(final AddColumnStatement statement, final Database database,
-         final SqlGeneratorChain sqlGeneratorChain) {
+   public ValidationErrors validate(final AddColumnStatement statement,
+         final Database database, final SqlGeneratorChain sqlGeneratorChain) {
       final ValidationErrors errors = new ValidationErrors();
-      final LiquibaseDataType dataType = DataTypeFactory.getInstance().fromDescription(
-            statement.getColumnType());
+      final LiquibaseDataType dataType = DataTypeFactory.getInstance()
+            .fromDescription(statement.getColumnType(), database);
 
       // Ensure that the SRID parameter is provided.
       if (dataType instanceof GeometryType) {
@@ -58,7 +62,8 @@ public class AddGeometryColumnGeneratorGeoDB extends AbstractSqlGenerator<AddCol
             errors.addError("The SRID parameter is required on the geometry type");
          }
       }
-      final ValidationErrors chainErrors = sqlGeneratorChain.validate(statement, database);
+      final ValidationErrors chainErrors = sqlGeneratorChain.validate(
+            statement, database);
       if (chainErrors != null) {
          errors.addAll(chainErrors);
       }
@@ -66,23 +71,26 @@ public class AddGeometryColumnGeneratorGeoDB extends AbstractSqlGenerator<AddCol
    }
 
    @Override
-   public Sql[] generateSql(final AddColumnStatement statement, final Database database,
-         final SqlGeneratorChain sqlGeneratorChain) {
+   public Sql[] generateSql(final AddColumnStatement statement,
+         final Database database, final SqlGeneratorChain sqlGeneratorChain) {
 
       GeometryType geometryType = null;
-      final LiquibaseDataType dataType = DataTypeFactory.getInstance().fromDescription(
-            statement.getColumnType());
+      final LiquibaseDataType dataType = DataTypeFactory.getInstance()
+            .fromDescription(statement.getColumnType(), database);
       if (dataType instanceof GeometryType) {
          geometryType = (GeometryType) dataType;
       }
 
       final boolean isGeometryColumn = geometryType != null;
 
-      // The AddGeometryColumn procedure handles the column already being present, so let a
-      // downstream SQL generator handle the typical column addition logic (e.g. placement in the
+      // The AddGeometryColumn procedure handles the column already being
+      // present, so let a
+      // downstream SQL generator handle the typical column addition logic (e.g.
+      // placement in the
       // table) then invoke the procedure.
       final List<Sql> list = new ArrayList<Sql>();
-      list.addAll(Arrays.asList(sqlGeneratorChain.generateSql(statement, database)));
+      list.addAll(Arrays.asList(sqlGeneratorChain.generateSql(statement,
+            database)));
       if (isGeometryColumn) {
          String schemaName = statement.getSchemaName();
          if (schemaName == null) {
@@ -92,10 +100,13 @@ public class AddGeometryColumnGeneratorGeoDB extends AbstractSqlGenerator<AddCol
          final String columnName = statement.getColumnName();
 
          final int srid = geometryType.getSRID();
-         final String geomType = StringUtils.trimToNull(geometryType.getGeometryType()) == null ? "'Geometry'"
-               : "'" + database.escapeStringForDatabase(geometryType.getGeometryType()) + "'";
-         final String sql = "CALL AddGeometryColumn('" + schemaName + "', '" + tableName + "', '"
-               + columnName + "', " + srid + ", " + geomType + ", 2)";
+         final String geomType = StringUtils.trimToNull(geometryType
+               .getGeometryType()) == null ? "'Geometry'" : "'"
+               + database.escapeStringForDatabase(geometryType
+                     .getGeometryType()) + "'";
+         final String sql = "CALL AddGeometryColumn('" + schemaName + "', '"
+               + tableName + "', '" + columnName + "', " + srid + ", "
+               + geomType + ", 2)";
          final Sql addGeometryColumn = new UnparsedSql(sql);
          list.add(addGeometryColumn);
       }
