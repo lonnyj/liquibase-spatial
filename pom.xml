@@ -75,7 +75,7 @@
       <hatbox.version>1.0.b9</hatbox.version>
       <h2.version>1.4.177</h2.version>
       <jts.version>1.13</jts.version>
-      <liquibase.version>3.1.1</liquibase.version>
+      <liquibase.version>3.2.0</liquibase.version>
    </properties>
 
    <dependencies>
