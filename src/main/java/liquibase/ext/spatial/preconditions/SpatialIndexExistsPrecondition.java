@@ -29,8 +29,8 @@ import liquibase.structure.core.Table;
 import liquibase.util.StringUtils;
 
 /**
- * <code>SpatialIndexExistsPrecondition</code> determines if a spatial index
- * exists on a specified table.
+ * <code>SpatialIndexExistsPrecondition</code> determines if a spatial index exists on a specified
+ * table.
  */
 public class SpatialIndexExistsPrecondition implements Precondition {
    private String catalogName;
@@ -96,8 +96,8 @@ public class SpatialIndexExistsPrecondition implements Precondition {
       if ((database instanceof DerbyDatabase || database instanceof H2Database)
             && getTableName() == null) {
          validationErrors = new ValidationErrors();
-         validationErrors.addError("tableName is required for "
-               + database.getDatabaseProductName());
+         validationErrors
+               .addError("tableName is required for " + database.getDatabaseProductName());
       } else {
          final IndexExistsPrecondition precondition = new IndexExistsPrecondition();
          precondition.setCatalogName(getCatalogName());
@@ -111,9 +111,8 @@ public class SpatialIndexExistsPrecondition implements Precondition {
    }
 
    @Override
-   public void check(final Database database,
-         final DatabaseChangeLog changeLog, final ChangeSet changeSet)
-         throws PreconditionFailedException, PreconditionErrorException {
+   public void check(final Database database, final DatabaseChangeLog changeLog,
+         final ChangeSet changeSet) throws PreconditionFailedException, PreconditionErrorException {
       Precondition delegatedPrecondition;
       if (database instanceof DerbyDatabase || database instanceof H2Database) {
          final TableExistsPrecondition precondition = new TableExistsPrecondition();
@@ -158,15 +157,14 @@ public class SpatialIndexExistsPrecondition implements Precondition {
     *           the table name of the index.
     * @return the database object example.
     */
-   public DatabaseObject getExample(final Database database,
-         final String tableName) {
+   public DatabaseObject getExample(final Database database, final String tableName) {
       final Schema schema = new Schema(getCatalogName(), getSchemaName());
       final DatabaseObject example;
 
       // For GeoDB, the index is another table.
       if (database instanceof DerbyDatabase || database instanceof H2Database) {
-         final String correctedTableName = database.correctObjectName(
-               getHatboxTableName(), Table.class);
+         final String correctedTableName = database.correctObjectName(getHatboxTableName(),
+               Table.class);
          example = new Table().setName(correctedTableName).setSchema(schema);
       } else {
          example = getIndexExample(database, schema, tableName);
@@ -175,8 +173,7 @@ public class SpatialIndexExistsPrecondition implements Precondition {
    }
 
    /**
-    * Generates the {@link Index} example (taken from
-    * {@link IndexExistsPrecondition}).
+    * Generates the {@link Index} example (taken from {@link IndexExistsPrecondition}).
     * 
     * @param database
     *           the database instance.
@@ -186,19 +183,17 @@ public class SpatialIndexExistsPrecondition implements Precondition {
     *           the table name of the index.
     * @return the index example.
     */
-   protected Index getIndexExample(final Database database,
-         final Schema schema, final String tableName) {
+   protected Index getIndexExample(final Database database, final Schema schema,
+         final String tableName) {
       final Index example = new Index();
       if (tableName != null) {
          example.setTable((Table) new Table().setName(
-               database.correctObjectName(getTableName(), Table.class))
-               .setSchema(schema));
+               database.correctObjectName(getTableName(), Table.class)).setSchema(schema));
       }
       example.setName(database.correctObjectName(getIndexName(), Index.class));
       if (StringUtils.trimToNull(getColumnNames()) != null) {
          for (final String column : getColumnNames().split("\\s*,\\s*")) {
-            example.getColumns().add(
-                  database.correctObjectName(column, Column.class));
+            example.getColumns().add(database.correctObjectName(column, Column.class));
          }
       }
       return example;
@@ -217,15 +212,15 @@ public class SpatialIndexExistsPrecondition implements Precondition {
     */
    @Override
    public Set<String> getSerializableFields() {
-      return new LinkedHashSet<String>(Arrays.asList("catalogName",
-            "schemaName", "tableName", "columnNames", "indexName"));
+      return new LinkedHashSet<String>(Arrays.asList("catalogName", "schemaName", "tableName",
+            "columnNames", "indexName"));
    }
 
    /**
     * @see liquibase.serializer.LiquibaseSerializable#getSerializableFieldValue(java.lang.String)
     */
    @Override
-   public Object getSerializableFieldValue(String field) {
+   public Object getSerializableFieldValue(final String field) {
       final Object value;
       if ("catalogName".equals(field)) {
          value = getCatalogName();
@@ -248,7 +243,7 @@ public class SpatialIndexExistsPrecondition implements Precondition {
     * @see liquibase.serializer.LiquibaseSerializable#getSerializableFieldType(java.lang.String)
     */
    @Override
-   public SerializationType getSerializableFieldType(String field) {
+   public SerializationType getSerializableFieldType(final String field) {
       return SerializationType.NAMED_FIELD;
    }
 
@@ -266,9 +261,9 @@ public class SpatialIndexExistsPrecondition implements Precondition {
    @Override
    public ParsedNode serialize() throws ParsedNodeException {
       final String namespace = getSerializedObjectNamespace();
-      ParsedNode node = new ParsedNode(namespace, getSerializedObjectName());
-      for (String field : getSerializableFields()) {
-         Object value = getSerializableFieldValue(field);
+      final ParsedNode node = new ParsedNode(namespace, getSerializedObjectName());
+      for (final String field : getSerializableFields()) {
+         final Object value = getSerializableFieldValue(field);
          node.addChild(namespace, field, value);
       }
       return node;
@@ -279,18 +274,13 @@ public class SpatialIndexExistsPrecondition implements Precondition {
     *      liquibase.resource.ResourceAccessor)
     */
    @Override
-   public void load(ParsedNode parsedNode, ResourceAccessor resourceAccessor)
+   public void load(final ParsedNode parsedNode, final ResourceAccessor resourceAccessor)
          throws ParsedNodeException {
-      final String namespace = getSerializedObjectNamespace();
-      catalogName = parsedNode.getChildValue(namespace, "catalogName",
-            String.class);
-      schemaName = parsedNode.getChildValue(namespace, "schemaName",
-            String.class);
-      tableName = parsedNode
-            .getChildValue(namespace, "tableName", String.class);
-      columnNames = parsedNode.getChildValue(namespace, "columnNames",
-            String.class);
-      indexName = parsedNode
-            .getChildValue(namespace, "indexName", String.class);
+      final String namespace = null;
+      this.catalogName = parsedNode.getChildValue(namespace, "catalogName", String.class);
+      this.schemaName = parsedNode.getChildValue(namespace, "schemaName", String.class);
+      this.tableName = parsedNode.getChildValue(namespace, "tableName", String.class);
+      this.columnNames = parsedNode.getChildValue(namespace, "columnNames", String.class);
+      this.indexName = parsedNode.getChildValue(namespace, "indexName", String.class);
    }
 }
