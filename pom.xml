@@ -10,7 +10,7 @@
 
    <groupId>com.github.lonnyj</groupId>
    <artifactId>liquibase-spatial</artifactId>
-   <version>1.0.1-SNAPSHOT</version>
+   <version>1.1.0-SNAPSHOT</version>
 
    <name>Liquibase Spatial</name>
    <description>Liquibase Spatial extends Liquibase to handle spatial indexing and geometry types</description>
@@ -75,7 +75,7 @@
       <hatbox.version>1.0.b9</hatbox.version>
       <h2.version>1.4.177</h2.version>
       <jts.version>1.13</jts.version>
-      <liquibase.version>3.2.0</liquibase.version>
+      <liquibase.version>3.2.2</liquibase.version>
    </properties>
 
    <dependencies>
