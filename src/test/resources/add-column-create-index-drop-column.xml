@@ -4,6 +4,15 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
          http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial http://lonnyj.github.io/liquibase-spatial/liquibase-spatial.xsd">
+   <!-- TODO: Delete these properties when CORE-1981 is fixed. -->
+   <property name="current_schema_sql" value="CURRENT SCHEMA"
+      dbms="derby" />
+   <property name="current_schema_sql" value="schema()" dbms="h2, mysql" />
+   <property name="current_schema_sql"
+      value="(SELECT sys_context('USERENV', 'CURRENT_SCHEMA') FROM dual)"
+      dbms="oracle" />
+   <property name="current_schema_sql" value="current_schema"
+      dbms="postgresql" />
    <include file="properties.xml"/>
 
    <changeSet id="Spatialize DB" author="test" dbms="derby, h2">
