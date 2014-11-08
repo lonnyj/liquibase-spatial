@@ -3,9 +3,27 @@ Liquibase Spatial
 Liquibase Spatial is an extension to Liquibase to handle spatial indexing and geometry types.  It 
 requires Liquibase 3.1.1 or newer.
 
-In order to use this extension, you must have 
-[<code>liquibase-spatial-1.1.0.jar</code>](http://search.maven.org/#artifactdetails%7C${project.groupId}%7C${project.artifactId}%7C1.1.0%7Cjar)
-in your classpath. For XML change logs, define the <code>spatial</code> namespace as below:
+<table>
+   <tr>
+      <th>Liquibase Version</th>
+      <th>Liquibase Spatial Version</th>
+   </tr>
+   <tr>
+      <td>Liquibase 3.1.1</td>
+      <td>Liquibase Spatial 1.0.x</td>
+   </tr>
+   <tr>
+      <td>Liquibase 3.2.x</td>
+      <td>Liquibase Spatial 1.1.x</td>
+   </tr>
+   <tr>
+      <td>Liquibase 3.3.x</td>
+      <td>Liquibase Spatial 1.2.x</td>
+   </tr>
+</table>
+
+In order to use this extension, you must have the [<code>liquibase-spatial</code>](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.github.lonnyj%22%20AND%20a%3A%22liquibase-spatial%22)
+jar in your classpath. For XML change logs, define the <code>spatial</code> namespace as below:
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
