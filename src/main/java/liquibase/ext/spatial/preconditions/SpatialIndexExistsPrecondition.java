@@ -17,6 +17,7 @@ import liquibase.exception.Warnings;
 import liquibase.ext.spatial.xml.XmlConstants;
 import liquibase.parser.core.ParsedNode;
 import liquibase.parser.core.ParsedNodeException;
+import liquibase.precondition.AbstractPrecondition;
 import liquibase.precondition.Precondition;
 import liquibase.precondition.core.IndexExistsPrecondition;
 import liquibase.precondition.core.TableExistsPrecondition;
@@ -32,7 +33,7 @@ import liquibase.util.StringUtils;
  * <code>SpatialIndexExistsPrecondition</code> determines if a spatial index exists on a specified
  * table.
  */
-public class SpatialIndexExistsPrecondition implements Precondition {
+public class SpatialIndexExistsPrecondition extends AbstractPrecondition {
    private String catalogName;
    private String schemaName;
    private String tableName;
@@ -135,7 +136,7 @@ public class SpatialIndexExistsPrecondition implements Precondition {
 
    /**
     * Generates the table name containing the Hatbox index.
-    * 
+    *
     * @return the Hatbox table name.
     */
    protected String getHatboxTableName() {
@@ -150,7 +151,7 @@ public class SpatialIndexExistsPrecondition implements Precondition {
 
    /**
     * Creates an example of the database object for which to check.
-    * 
+    *
     * @param database
     *           the database instance.
     * @param tableName
@@ -174,7 +175,7 @@ public class SpatialIndexExistsPrecondition implements Precondition {
 
    /**
     * Generates the {@link Index} example (taken from {@link IndexExistsPrecondition}).
-    * 
+    *
     * @param database
     *           the database instance.
     * @param schema
@@ -192,8 +193,9 @@ public class SpatialIndexExistsPrecondition implements Precondition {
       }
       example.setName(database.correctObjectName(getIndexName(), Index.class));
       if (StringUtils.trimToNull(getColumnNames()) != null) {
-         for (final String column : getColumnNames().split("\\s*,\\s*")) {
-            example.getColumns().add(database.correctObjectName(column, Column.class));
+         for (final String columnName : getColumnNames().split("\\s*,\\s*")) {
+            final Column column = new Column(database.correctObjectName(columnName, Column.class));
+            example.getColumns().add(column);
          }
       }
       return example;

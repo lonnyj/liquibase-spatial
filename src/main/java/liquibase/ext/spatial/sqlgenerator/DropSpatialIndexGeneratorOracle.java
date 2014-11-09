@@ -20,7 +20,7 @@ import liquibase.structure.core.View;
  * Oracle.
  */
 public class DropSpatialIndexGeneratorOracle extends
-      AbstractSqlGenerator<DropSpatialIndexStatement> {
+AbstractSqlGenerator<DropSpatialIndexStatement> {
    @Override
    public boolean supports(final DropSpatialIndexStatement statement, final Database database) {
       return database instanceof OracleDatabase;
@@ -55,13 +55,13 @@ public class DropSpatialIndexGeneratorOracle extends
       }
 
       final String tableName = index.getTable().getName();
-      final String columnName = index.getColumns().get(0);
+      final Column column = index.getColumns().get(0);
 
       final StringBuilder sql = new StringBuilder();
       sql.append("DELETE FROM user_sdo_geom_metadata ");
       sql.append("WHERE table_name = '").append(database.correctObjectName(tableName, Table.class));
       sql.append("' AND column_name = '").append(
-            database.correctObjectName(columnName, Column.class));
+            database.correctObjectName(column.getName(), Column.class));
       sql.append("'");
       final UnparsedSql deleteMetadata = new UnparsedSql(sql.toString(),
             new View().setName("user_sdo_geom_metadata"));

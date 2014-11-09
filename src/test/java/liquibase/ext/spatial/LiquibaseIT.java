@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 public abstract class LiquibaseIT {
    /**
     * Returns the database name.
-    * 
+    *
     * @return the database name.
     */
    protected String getDatabaseName() {
@@ -39,14 +39,14 @@ public abstract class LiquibaseIT {
 
    /**
     * Returns the database connection URL.
-    * 
+    *
     * @return the connection URL.
     */
    protected abstract String getUrl();
 
    /**
     * Returns the login user name.
-    * 
+    *
     * @return the user name.
     */
    protected String getUserName() {
@@ -55,7 +55,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Returns the login password.
-    * 
+    *
     * @return the password.
     */
    protected String getPassword() {
@@ -64,7 +64,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Returns the database connection to the current database.
-    * 
+    *
     * @return the database connection.
     * @throws SQLException
     *            if unable to get the current database connection.
@@ -130,7 +130,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Tests Liquibase updating and rolling back the database.
-    * 
+    *
     * @param changeLogFile
     *           the database change log to use in the {@link Liquibase#update(Contexts) update}.
     * @throws LiquibaseException
@@ -147,7 +147,7 @@ public abstract class LiquibaseIT {
          final ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
          final Liquibase liquibase = createLiquibase(changeLogFile, resourceAccessor,
                jdbcConnection);
-         liquibase.updateTestingRollback((Contexts) null);
+         liquibase.updateTestingRollback(null);
          final List<ChangeSet> unrunChangeSets = liquibase.listUnrunChangeSets((Contexts) null);
          assertTrue(unrunChangeSets.isEmpty(), "All change sets should have run");
       } finally {
@@ -158,7 +158,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Creates the <code>Liquibase</code> instance.
-    * 
+    *
     * @param changeLogFile
     *           the database change log file name.
     * @param resourceAccessor
@@ -177,7 +177,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Provides the test data for {@link #testLiquibase(String)}.
-    * 
+    *
     * @return the test data.
     */
    @DataProvider

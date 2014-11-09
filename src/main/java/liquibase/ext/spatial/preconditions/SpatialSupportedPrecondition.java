@@ -20,19 +20,19 @@ import liquibase.exception.Warnings;
 import liquibase.ext.spatial.xml.XmlConstants;
 import liquibase.parser.core.ParsedNode;
 import liquibase.parser.core.ParsedNodeException;
+import liquibase.precondition.AbstractPrecondition;
 import liquibase.precondition.ErrorPrecondition;
-import liquibase.precondition.Precondition;
 import liquibase.precondition.core.TableExistsPrecondition;
 import liquibase.precondition.core.ViewExistsPrecondition;
 import liquibase.resource.ResourceAccessor;
 
 /**
- * <code>SpatialSupportedPrecondition</code> checks the state of the database
- * and determines if it has spatial support.
- * 
+ * <code>SpatialSupportedPrecondition</code> checks the state of the database and determines if it
+ * has spatial support.
+ *
  * @author Lonny Jacobson
  */
-public class SpatialSupportedPrecondition implements Precondition {
+public class SpatialSupportedPrecondition extends AbstractPrecondition {
    @Override
    public String getName() {
       return "spatialSupported";
@@ -42,8 +42,7 @@ public class SpatialSupportedPrecondition implements Precondition {
    public Warnings warn(final Database database) {
       final Warnings warnings = new Warnings();
       if (!(database instanceof DerbyDatabase || database instanceof H2Database
-            || database instanceof MySQLDatabase
-            || database instanceof OracleDatabase || database instanceof PostgresDatabase)) {
+            || database instanceof MySQLDatabase || database instanceof OracleDatabase || database instanceof PostgresDatabase)) {
          warnings.addWarning(database.getDatabaseProductName()
                + " is not supported by this extension");
       }
@@ -54,18 +53,15 @@ public class SpatialSupportedPrecondition implements Precondition {
    public ValidationErrors validate(final Database database) {
       final ValidationErrors errors = new ValidationErrors();
       if (!(database instanceof DerbyDatabase || database instanceof H2Database
-            || database instanceof MySQLDatabase
-            || database instanceof OracleDatabase || database instanceof PostgresDatabase)) {
-         errors.addError(database.getDatabaseProductName()
-               + " is not supported by this extension");
+            || database instanceof MySQLDatabase || database instanceof OracleDatabase || database instanceof PostgresDatabase)) {
+         errors.addError(database.getDatabaseProductName() + " is not supported by this extension");
       }
       return errors;
    }
 
    @Override
-   public void check(final Database database,
-         final DatabaseChangeLog changeLog, final ChangeSet changeSet)
-         throws PreconditionFailedException, PreconditionErrorException {
+   public void check(final Database database, final DatabaseChangeLog changeLog,
+         final ChangeSet changeSet) throws PreconditionFailedException, PreconditionErrorException {
       if (database instanceof DerbyDatabase || database instanceof H2Database) {
          final TableExistsPrecondition precondition = new TableExistsPrecondition();
          precondition.setTableName("geometry_columns");
@@ -81,11 +77,10 @@ public class SpatialSupportedPrecondition implements Precondition {
          precondition.setViewName("user_sdo_geom_metadata");
          precondition.check(database, changeLog, changeSet);
       } else if (!(database instanceof MySQLDatabase)) {
-         final Throwable exception = new LiquibaseException(
-               database.getDatabaseProductName()
-                     + " is not supported by this extension");
-         final ErrorPrecondition errorPrecondition = new ErrorPrecondition(
-               exception, changeLog, this);
+         final Throwable exception = new LiquibaseException(database.getDatabaseProductName()
+               + " is not supported by this extension");
+         final ErrorPrecondition errorPrecondition = new ErrorPrecondition(exception, changeLog,
+               this);
          throw new PreconditionErrorException(errorPrecondition);
       }
    }
@@ -110,7 +105,7 @@ public class SpatialSupportedPrecondition implements Precondition {
     * @see liquibase.serializer.LiquibaseSerializable#getSerializableFieldValue(java.lang.String)
     */
    @Override
-   public Object getSerializableFieldValue(String field) {
+   public Object getSerializableFieldValue(final String field) {
       throw new UnexpectedLiquibaseException("Unexpected field request on "
             + getSerializedObjectName() + ": " + field);
    }
@@ -119,7 +114,7 @@ public class SpatialSupportedPrecondition implements Precondition {
     * @see liquibase.serializer.LiquibaseSerializable#getSerializableFieldType(java.lang.String)
     */
    @Override
-   public SerializationType getSerializableFieldType(String field) {
+   public SerializationType getSerializableFieldType(final String field) {
       return SerializationType.NAMED_FIELD;
    }
 
@@ -136,8 +131,7 @@ public class SpatialSupportedPrecondition implements Precondition {
     */
    @Override
    public ParsedNode serialize() throws ParsedNodeException {
-      return new ParsedNode(getSerializedObjectNamespace(),
-            getSerializedObjectName());
+      return new ParsedNode(getSerializedObjectNamespace(), getSerializedObjectName());
    }
 
    /**
@@ -145,7 +139,7 @@ public class SpatialSupportedPrecondition implements Precondition {
     *      liquibase.resource.ResourceAccessor)
     */
    @Override
-   public void load(ParsedNode parsedNode, ResourceAccessor resourceAccessor)
+   public void load(final ParsedNode parsedNode, final ResourceAccessor resourceAccessor)
          throws ParsedNodeException {
    }
 }

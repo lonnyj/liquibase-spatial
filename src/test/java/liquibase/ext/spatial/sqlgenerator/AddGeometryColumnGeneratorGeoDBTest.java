@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 public class AddGeometryColumnGeneratorGeoDBTest {
    /**
     * Tests {@link AddGeometryColumnGeneratorGeoDB#supports(AddColumnStatement, Database)}.
-    * 
+    *
     * @param statement
     *           the add column statement.
     * @param database
@@ -38,13 +38,13 @@ public class AddGeometryColumnGeneratorGeoDBTest {
 
    /**
     * Provides test data to {@link #testSupports(AddColumnStatement, Database, boolean)}.
-    * 
+    *
     * @return the test data.
     */
    @DataProvider
    public Object[][] supportsTestData() {
-      final AddColumnStatement statement = new AddColumnStatement(null, null, null, null, null,
-            null);
+      final AddColumnStatement statement = new AddColumnStatement((String) null, null, null, null,
+            null, null);
       return new Object[][] { new Object[] { statement, new DerbyDatabase(), true },
             new Object[] { statement, new H2Database(), true },
             new Object[] { statement, new OracleDatabase(), false }, };
