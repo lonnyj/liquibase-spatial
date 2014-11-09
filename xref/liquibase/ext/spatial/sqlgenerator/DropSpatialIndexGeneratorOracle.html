@@ -30,7 +30,7 @@
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment"> * Oracle.</em>
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../liquibase/ext/spatial/sqlgenerator/DropSpatialIndexGeneratorOracle.html">DropSpatialIndexGeneratorOracle</a> <strong class="jxr_keyword">extends</strong>
-<a class="jxr_linenumber" name="23" href="#23">23</a>        AbstractSqlGenerator&lt;DropSpatialIndexStatement&gt; {
+<a class="jxr_linenumber" name="23" href="#23">23</a>  AbstractSqlGenerator&lt;DropSpatialIndexStatement&gt; {
 <a class="jxr_linenumber" name="24" href="#24">24</a>     @Override
 <a class="jxr_linenumber" name="25" href="#25">25</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> supports(<strong class="jxr_keyword">final</strong> <a href="../../../../liquibase/ext/spatial/statement/DropSpatialIndexStatement.html">DropSpatialIndexStatement</a> statement, <strong class="jxr_keyword">final</strong> Database database) {
 <a class="jxr_linenumber" name="26" href="#26">26</a>        <strong class="jxr_keyword">return</strong> database instanceof OracleDatabase;
@@ -65,13 +65,13 @@
 <a class="jxr_linenumber" name="55" href="#55">55</a>        }
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
 <a class="jxr_linenumber" name="57" href="#57">57</a>        <strong class="jxr_keyword">final</strong> String tableName = index.getTable().getName();
-<a class="jxr_linenumber" name="58" href="#58">58</a>        <strong class="jxr_keyword">final</strong> String columnName = index.getColumns().get(0);
+<a class="jxr_linenumber" name="58" href="#58">58</a>        <strong class="jxr_keyword">final</strong> Column column = index.getColumns().get(0);
 <a class="jxr_linenumber" name="59" href="#59">59</a>  
 <a class="jxr_linenumber" name="60" href="#60">60</a>        <strong class="jxr_keyword">final</strong> StringBuilder sql = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="61" href="#61">61</a>        sql.append(<span class="jxr_string">"DELETE FROM user_sdo_geom_metadata "</span>);
 <a class="jxr_linenumber" name="62" href="#62">62</a>        sql.append(<span class="jxr_string">"WHERE table_name = '"</span>).append(database.correctObjectName(tableName, Table.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="63" href="#63">63</a>        sql.append(<span class="jxr_string">"' AND column_name = '"</span>).append(
-<a class="jxr_linenumber" name="64" href="#64">64</a>              database.correctObjectName(columnName, Column.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="64" href="#64">64</a>              database.correctObjectName(column.getName(), Column.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="65" href="#65">65</a>        sql.append(<span class="jxr_string">"'"</span>);
 <a class="jxr_linenumber" name="66" href="#66">66</a>        <strong class="jxr_keyword">final</strong> UnparsedSql deleteMetadata = <strong class="jxr_keyword">new</strong> UnparsedSql(sql.toString(),
 <a class="jxr_linenumber" name="67" href="#67">67</a>              <strong class="jxr_keyword">new</strong> View().setName(<span class="jxr_string">"user_sdo_geom_metadata"</span>));
