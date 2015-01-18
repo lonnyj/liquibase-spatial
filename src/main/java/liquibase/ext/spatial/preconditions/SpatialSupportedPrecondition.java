@@ -11,12 +11,14 @@ import liquibase.database.core.H2Database;
 import liquibase.database.core.MySQLDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.database.core.PostgresDatabase;
+import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.exception.PreconditionErrorException;
 import liquibase.exception.PreconditionFailedException;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
 import liquibase.exception.Warnings;
+import liquibase.executor.ExecutorService;
 import liquibase.ext.spatial.xml.XmlConstants;
 import liquibase.parser.core.ParsedNode;
 import liquibase.parser.core.ParsedNodeException;
@@ -25,6 +27,7 @@ import liquibase.precondition.ErrorPrecondition;
 import liquibase.precondition.core.TableExistsPrecondition;
 import liquibase.precondition.core.ViewExistsPrecondition;
 import liquibase.resource.ResourceAccessor;
+import liquibase.statement.core.RawSqlStatement;
 
 /**
  * <code>SpatialSupportedPrecondition</code> checks the state of the database and determines if it
@@ -72,11 +75,20 @@ public class SpatialSupportedPrecondition extends AbstractPrecondition {
          precondition.setViewName("geometry_columns");
          precondition.check(database, changeLog, changeSet);
       } else if (database instanceof OracleDatabase) {
-         final ViewExistsPrecondition precondition = new ViewExistsPrecondition();
-         precondition.setCatalogName("mdsys");
-         precondition.setSchemaName("mdsys");
-         precondition.setViewName("user_sdo_geom_metadata");
-         precondition.check(database, changeLog, changeSet);
+         // Explicitly query the database due to CORE-2198.
+         final RawSqlStatement sql = new RawSqlStatement(
+               "SELECT count(*) FROM ALL_VIEWS WHERE upper(VIEW_NAME)='USER_SDO_GEOM_METADATA' AND OWNER='MDSYS'");
+         try {
+            final Integer result = ExecutorService.getInstance().getExecutor(database)
+                  .queryForObject(sql, Integer.class);
+            if (result == null || result.intValue() == 0) {
+               throw new PreconditionFailedException(
+                     "The view MDSYS.USER_SDO_GEOM_METADATA does not exist. This database is not spatially enabled",
+                     changeLog, this);
+            }
+         } catch (final DatabaseException e) {
+            throw new PreconditionErrorException(e, changeLog, this);
+         }
       } else if (!(database instanceof MySQLDatabase)) {
          final Throwable exception = new LiquibaseException(database.getDatabaseProductName()
                + " is not supported by this extension");
