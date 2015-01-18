@@ -39,12 +39,15 @@
             <constraints nullable="false" primaryKey="true" primaryKeyName="TEST_PK" />
          </column>
       </createTable>
+      <modifySql dbms="mysql">
+         <append value=" ENGINE=MyISAM"/>
+      </modifySql>
    </changeSet>
 
    <changeSet id="Add geometry column" author="test">
-      <preConditions>
+      <!-- <preConditions>
          <spatial:spatialSupported />
-      </preConditions>
+      </preConditions> -->
       <addColumn tableName="TEST">
          <column name="GEOM" type="GEOMETRY(POINT,${srid})" />
       </addColumn>

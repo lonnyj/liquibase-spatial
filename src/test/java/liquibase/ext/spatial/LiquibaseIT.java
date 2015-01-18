@@ -15,6 +15,7 @@ import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.logging.LogFactory;
+import liquibase.logging.LogLevel;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 
@@ -30,7 +31,7 @@ import org.testng.annotations.Test;
 public abstract class LiquibaseIT {
    /**
     * Returns the database name.
-    * 
+    *
     * @return the database name.
     */
    protected String getDatabaseName() {
@@ -39,14 +40,14 @@ public abstract class LiquibaseIT {
 
    /**
     * Returns the database connection URL.
-    * 
+    *
     * @return the connection URL.
     */
    protected abstract String getUrl();
 
    /**
     * Returns the login user name.
-    * 
+    *
     * @return the user name.
     */
    protected String getUserName() {
@@ -55,7 +56,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Returns the login password.
-    * 
+    *
     * @return the password.
     */
    protected String getPassword() {
@@ -64,7 +65,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Returns the database connection to the current database.
-    * 
+    *
     * @return the database connection.
     * @throws SQLException
     *            if unable to get the current database connection.
@@ -130,7 +131,7 @@ public abstract class LiquibaseIT {
 
    /**
     * Tests Liquibase updating and rolling back the database.
-    * 
+    *
     * @param changeLogFile
     *           the database change log to use in the {@link Liquibase#update(Contexts) update}.
     * @throws LiquibaseException
@@ -138,7 +139,7 @@ public abstract class LiquibaseIT {
     * @throws SQLException
     *            if unable to get the database connection.
     */
-   @Test(dataProvider = "databaseUrlProvider")
+   @Test(dataProvider = "databaseUrlProvider", enabled = false)
    public void testLiquibaseUpdateTestingRollback(final String changeLogFile)
          throws LiquibaseException, SQLException {
       final Connection connection = getConnection();
@@ -157,8 +158,37 @@ public abstract class LiquibaseIT {
    }
 
    /**
+    * Tests Liquibase updating the database.
+    *
+    * @param changeLogFile
+    *           the database change log to use in the {@link Liquibase#update(Contexts) update}.
+    * @throws LiquibaseException
+    *            if Liquibase fails to initialize or run the update.
+    * @throws SQLException
+    *            if unable to get the database connection.
+    */
+   @Test(dataProvider = "databaseUrlProvider")
+   public void testLiquibaseUpdate(final String changeLogFile) throws LiquibaseException,
+         SQLException {
+      final Connection connection = getConnection();
+      final JdbcConnection jdbcConnection = new JdbcConnection(connection);
+      try {
+         final ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
+         final Liquibase liquibase = createLiquibase(changeLogFile, resourceAccessor,
+               jdbcConnection);
+         final Contexts contexts = null;
+         liquibase.update(contexts);
+         final List<ChangeSet> unrunChangeSets = liquibase.listUnrunChangeSets(contexts);
+         assertTrue(unrunChangeSets.isEmpty(), "All change sets should have run");
+      } finally {
+         jdbcConnection.rollback();
+         jdbcConnection.close();
+      }
+   }
+
+   /**
     * Creates the <code>Liquibase</code> instance.
-    * 
+    *
     * @param changeLogFile
     *           the database change log file name.
     * @param resourceAccessor
@@ -172,12 +202,14 @@ public abstract class LiquibaseIT {
    protected Liquibase createLiquibase(final String changeLogFile,
          final ResourceAccessor resourceAccessor, final DatabaseConnection databaseConnection)
          throws LiquibaseException {
-      return new Liquibase(changeLogFile, resourceAccessor, databaseConnection);
+      final Liquibase liquibase = new Liquibase(changeLogFile, resourceAccessor, databaseConnection);
+      liquibase.getLog().setLogLevel(LogLevel.DEBUG);
+      return liquibase;
    }
 
    /**
     * Provides the test data for {@link #testLiquibase(String)}.
-    * 
+    *
     * @return the test data.
     */
    @DataProvider

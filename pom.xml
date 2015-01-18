@@ -531,7 +531,7 @@
       <profile>
          <!--
             To enable the Oracle integration test, set the following system properties:
-            oracle.url=jdbc:oracle:this:@//<host>:1521/<service>
+            oracle.url=jdbc:oracle:thin:@//<host>:1521/<service>
             oracle.username=<username>
             oracle.password=<password>
          -->
