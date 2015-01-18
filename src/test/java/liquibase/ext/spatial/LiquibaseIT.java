@@ -9,12 +9,14 @@ import java.sql.Statement;
 import java.util.List;
 
 import liquibase.Contexts;
+import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeSet;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.logging.LogFactory;
+import liquibase.logging.LogLevel;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 
@@ -138,7 +140,7 @@ public abstract class LiquibaseIT {
     * @throws SQLException
     *            if unable to get the database connection.
     */
-   @Test(dataProvider = "databaseUrlProvider")
+   @Test(dataProvider = "databaseUrlProvider", enabled = false)
    public void testLiquibaseUpdateTestingRollback(final String changeLogFile)
          throws LiquibaseException, SQLException {
       final Connection connection = getConnection();
@@ -147,8 +149,39 @@ public abstract class LiquibaseIT {
          final ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
          final Liquibase liquibase = createLiquibase(changeLogFile, resourceAccessor,
                jdbcConnection);
-         liquibase.updateTestingRollback(null);
-         final List<ChangeSet> unrunChangeSets = liquibase.listUnrunChangeSets((Contexts) null);
+         final Contexts contexts = null;
+         final LabelExpression labels = new LabelExpression();
+         liquibase.updateTestingRollback(contexts, labels);
+         final List<ChangeSet> unrunChangeSets = liquibase.listUnrunChangeSets(contexts, labels);
+         assertTrue(unrunChangeSets.isEmpty(), "All change sets should have run");
+      } finally {
+         jdbcConnection.rollback();
+         jdbcConnection.close();
+      }
+   }
+
+   /**
+    * Tests Liquibase updating the database.
+    *
+    * @param changeLogFile
+    *           the database change log to use in the {@link Liquibase#update(Contexts) update}.
+    * @throws LiquibaseException
+    *            if Liquibase fails to initialize or run the update.
+    * @throws SQLException
+    *            if unable to get the database connection.
+    */
+   @Test(dataProvider = "databaseUrlProvider")
+   public void testLiquibaseUpdate(final String changeLogFile) throws LiquibaseException,
+   SQLException {
+      final Connection connection = getConnection();
+      final JdbcConnection jdbcConnection = new JdbcConnection(connection);
+      try {
+         final ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
+         final Liquibase liquibase = createLiquibase(changeLogFile, resourceAccessor,
+               jdbcConnection);
+         final Contexts contexts = null;
+         liquibase.update(contexts);
+         final List<ChangeSet> unrunChangeSets = liquibase.listUnrunChangeSets(contexts);
          assertTrue(unrunChangeSets.isEmpty(), "All change sets should have run");
       } finally {
          jdbcConnection.rollback();
@@ -171,8 +204,10 @@ public abstract class LiquibaseIT {
     */
    protected Liquibase createLiquibase(final String changeLogFile,
          final ResourceAccessor resourceAccessor, final DatabaseConnection databaseConnection)
-         throws LiquibaseException {
-      return new Liquibase(changeLogFile, resourceAccessor, databaseConnection);
+               throws LiquibaseException {
+      final Liquibase liquibase = new Liquibase(changeLogFile, resourceAccessor, databaseConnection);
+      liquibase.getLog().setLogLevel(LogLevel.DEBUG);
+      return liquibase;
    }
 
    /**

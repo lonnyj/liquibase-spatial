@@ -73,6 +73,7 @@ public class SpatialSupportedPrecondition extends AbstractPrecondition {
          precondition.check(database, changeLog, changeSet);
       } else if (database instanceof OracleDatabase) {
          final ViewExistsPrecondition precondition = new ViewExistsPrecondition();
+         precondition.setCatalogName("mdsys");
          precondition.setSchemaName("mdsys");
          precondition.setViewName("user_sdo_geom_metadata");
          precondition.check(database, changeLog, changeSet);
