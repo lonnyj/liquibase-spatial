@@ -45,9 +45,9 @@
    </changeSet>
 
    <changeSet id="Add geometry column" author="test">
-      <!-- <preConditions>
+      <preConditions>
          <spatial:spatialSupported />
-      </preConditions> -->
+      </preConditions>
       <addColumn tableName="TEST">
          <column name="GEOM" type="GEOMETRY(POINT,${srid})" />
       </addColumn>
