@@ -1,3 +1,4 @@
 liquibase.ext.spatial
+liquibase.ext.spatial.change
 liquibase.ext.spatial.sqlgenerator
 liquibase.ext.spatial.utils
