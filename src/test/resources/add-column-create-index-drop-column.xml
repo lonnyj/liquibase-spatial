@@ -4,6 +4,7 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd 
          http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial http://lonnyj.github.io/liquibase-spatial/liquibase-spatial.xsd">
+   <property name="srid" value="4326"/>
    <include file="properties.xml"/>
 
    <changeSet id="Spatialize DB" author="test" dbms="derby, h2">
@@ -39,7 +40,7 @@
          <spatial:spatialSupported />
       </preConditions>
       <addColumn tableName="TEST">
-         <column name="GEOM" type="GEOMETRY(POINT,4326)" />
+         <column name="GEOM" type="GEOMETRY(POINT,${srid})" />
       </addColumn>
    </changeSet>
 
@@ -60,7 +61,7 @@
          <columnExists tableName="TEST" columnName="GEOM" />
       </preConditions>
       <addNotNullConstraint tableName="TEST" columnName="GEOM"
-         columnDataType="GEOMETRY(POINT,4326)" />
+         columnDataType="GEOMETRY(POINT,${srid})" />
    </changeSet>
 
    <changeSet id="Create spatial index" author="test">
@@ -72,7 +73,7 @@
          </not>
       </preConditions>
       <spatial:createSpatialIndex tableName="TEST" indexName="TEST_GEOM_IDX"
-         srid="4326">
+         srid="${srid}">
          <column name="GEOM" />
       </spatial:createSpatialIndex>
    </changeSet>
@@ -84,15 +85,15 @@
       </preConditions>
       <insert tableName="TEST">
          <column name="ID" valueNumeric="1" />
-         <column name="GEOM" value="SRID=4326;POINT(-5 -5)" />
+         <column name="GEOM" value="SRID=${srid};POINT(-5 -5)" />
       </insert>
       <insert tableName="TEST">
          <column name="ID" valueNumeric="2" />
-         <column name="GEOM" value="SRID=4326;POINT(0 0)" />
+         <column name="GEOM" value="SRID=${srid};POINT(0 0)" />
       </insert>
       <insert tableName="TEST">
          <column name="ID" valueNumeric="3" />
-         <column name="GEOM" value="SRID=4326;POINT(5 5)" />
+         <column name="GEOM" value="SRID=${srid};POINT(5 5)" />
       </insert>
       <rollback>
          <!-- Hatbox/Derby don't like deleting everything from the table in one statement. -->
@@ -127,15 +128,15 @@
       <rollback changeSetId="Add geometry column" changeSetAuthor="test" />
       <rollback>
          <update tableName="TEST">
-            <column name="GEOM" value="SRID=4326;POINT(-5 -5)" />
+            <column name="GEOM" value="SRID=${srid};POINT(-5 -5)" />
             <where>ID = 1</where>
          </update>
          <update tableName="TEST">
-            <column name="GEOM" value="SRID=4326;POINT(0 0)" />
+            <column name="GEOM" value="SRID=${srid};POINT(0 0)" />
             <where>ID = 2</where>
          </update>
          <update tableName="TEST">
-            <column name="GEOM" value="SRID=4326;POINT(5 5)" />
+            <column name="GEOM" value="SRID=${srid};POINT(5 5)" />
             <where>ID = 3</where>
          </update>
       </rollback>
