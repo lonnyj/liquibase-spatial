@@ -41,7 +41,14 @@
             </xsd:documentation>
          </xsd:annotation>
       </xsd:attribute>
-      <xsd:attribute name="srid" type="xsd:integer" />
+      <xsd:attribute name="srid" type="xsd:string">
+         <xsd:annotation>
+            <xsd:documentation>Specifies the Spatial Reference System 
+               Identifier for the index. The value is treated as the
+               numeric code in EPSG SRIDs such as "4326" from EPSG:4326.
+            </xsd:documentation>
+         </xsd:annotation>
+      </xsd:attribute>
    </xsd:attributeGroup>
    <xsd:element name="spatialSupported" />
    <xsd:element name="spatialIndexExists">
