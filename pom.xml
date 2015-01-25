@@ -169,6 +169,8 @@
                <version>${versions-maven-plugin.version}</version>
                <configuration>
                   <allowMajorUpdates>false</allowMajorUpdates>
+                  <allowMinorUpdates>false</allowMinorUpdates>
+                  <includeProperties>hatbox.version,jts.version,mysql.version</includeProperties>
                </configuration>
             </plugin>
          </plugins>
