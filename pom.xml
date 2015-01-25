@@ -4,7 +4,7 @@
 
    <groupId>com.github.lonnyj</groupId>
    <artifactId>liquibase-spatial</artifactId>
-   <version>1.0.2</version>
+   <version>1.0.3-SNAPSHOT</version>
 
    <name>Liquibase Spatial</name>
    <description>Liquibase Spatial extends Liquibase to handle spatial indexing and geometry types</description>
@@ -34,7 +34,7 @@
    <scm>
       <connection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</connection>
       <developerConnection>scm:git:git@${repository.domain}:${repository.user}/${repository.name}.git</developerConnection>
-      <tag>liquibase-spatial-1.0.2</tag>
+      <tag>HEAD</tag>
       <url>https://${repository.domain}/${repository.user}/${repository.name}</url>
    </scm>
 
@@ -295,7 +295,7 @@
             <configuration>
                <keepBlankLines>true</keepBlankLines>
                <nrOfIndentSpace>3</nrOfIndentSpace>
-               <sortDependencies></sortDependencies>
+               <sortDependencies />
                <sortDependencies>scope,groupId,artifactId</sortDependencies>
             </configuration>
          </plugin>
@@ -690,7 +690,7 @@
                         <configuration>
                            <target>
                               <concat destfile="${basedir}/README.md">
-                                 <path path="${project.build.directory}/index.md.vm"></path>
+                                 <path path="${project.build.directory}/index.md.vm" />
                                  <footer>Refer to the [documentation](${project.url}) for further information.</footer>
                               </concat>
                            </target>
