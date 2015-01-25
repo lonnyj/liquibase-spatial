@@ -65,7 +65,7 @@
       <!-- Plugin Versions -->
       <build-helper-maven-plugin.version>1.8</build-helper-maven-plugin.version>
       <maven-changelog-plugin.version>2.3</maven-changelog-plugin.version>
-      <maven-changes-plugin.version>2.9</maven-changes-plugin.version>
+      <maven-changes-plugin.version>2.11</maven-changes-plugin.version>
       <maven-dependency-plugin.version>2.9</maven-dependency-plugin.version>
       <maven-failsafe-plugin.version>${maven-surefire-plugin.version}</maven-failsafe-plugin.version>
       <maven-javadoc-plugin.version>2.10</maven-javadoc-plugin.version>
@@ -619,7 +619,7 @@
          </build>
 
          <properties>
-            <postgresql.version>9.3-1101-jdbc4</postgresql.version>
+            <postgresql.version>9.3-1102-jdbc4</postgresql.version>
          </properties>
 
          <dependencies>
