@@ -11,6 +11,7 @@ import liquibase.change.ColumnConfig;
 import liquibase.change.DatabaseChange;
 import liquibase.change.DatabaseChangeProperty;
 import liquibase.database.Database;
+import liquibase.exception.ValidationErrors;
 import liquibase.ext.spatial.statement.CreateSpatialIndexStatement;
 import liquibase.ext.spatial.xml.XmlConstants;
 import liquibase.statement.SqlStatement;
@@ -21,7 +22,7 @@ import liquibase.util.StringUtils;
  */
 @DatabaseChange(name = "createSpatialIndex", description = "Creates a spatial index on an existing column or set of columns.", priority = ChangeMetaData.PRIORITY_DEFAULT, appliesTo = "index")
 public class CreateSpatialIndexChange extends AbstractChange implements
-      ChangeWithColumns<ColumnConfig> {
+ChangeWithColumns<ColumnConfig> {
    private String catalogName;
    private String schemaName;
    private String tableName;
@@ -29,11 +30,11 @@ public class CreateSpatialIndexChange extends AbstractChange implements
    private String tablespace;
    private List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
    private String geometryType;
-   private Integer srid;
+   private String srid;
 
    /**
     * Sets the database catalog name.
-    * 
+    *
     * @param catalogName
     */
    public void setCatalogName(final String catalogName) {
@@ -74,7 +75,7 @@ public class CreateSpatialIndexChange extends AbstractChange implements
 
    /**
     * Returns the geometry type.
-    * 
+    *
     * @return the geometry type.
     */
    @DatabaseChangeProperty(description = "The Well-Known Text geometry type", exampleValue = "POINT")
@@ -84,7 +85,7 @@ public class CreateSpatialIndexChange extends AbstractChange implements
 
    /**
     * Sets the geometry type.
-    * 
+    *
     * @param geometryType
     *           the geometry type.
     */
@@ -94,21 +95,21 @@ public class CreateSpatialIndexChange extends AbstractChange implements
 
    /**
     * Returns the srid.
-    * 
+    *
     * @return the srid.
     */
    @DatabaseChangeProperty(description = "The Spatial Reference ID of the indexed data.  An EPSG SRID is assumed.", exampleValue = "4326", requiredForDatabase = "derby, h2")
-   public Integer getSrid() {
+   public String getSrid() {
       return this.srid;
    }
 
    /**
     * Sets the srid.
-    * 
+    *
     * @param srid
     *           the srid.
     */
-   public void setSrid(final Integer srid) {
+   public void setSrid(final String srid) {
       this.srid = srid;
    }
 
@@ -140,6 +141,25 @@ public class CreateSpatialIndexChange extends AbstractChange implements
       this.tablespace = tablespace;
    }
 
+   /**
+    * @see liquibase.change.AbstractChange#validate(liquibase.database.Database)
+    */
+   @Override
+   public ValidationErrors validate(final Database database) {
+      final ValidationErrors validationErrors = new ValidationErrors();
+      if (this.srid != null) {
+         if (!this.srid.matches("[0-9]+")) {
+            validationErrors.addError("The SRID must be numeric");
+         }
+      }
+
+      if (!validationErrors.hasErrors()) {
+         validationErrors.addAll(super.validate(database));
+      }
+
+      return validationErrors;
+   }
+
    @Override
    public String getConfirmationMessage() {
       final StringBuilder message = new StringBuilder("Spatial index");
@@ -160,9 +180,16 @@ public class CreateSpatialIndexChange extends AbstractChange implements
       for (final ColumnConfig columnConfig : this.columns) {
          columns[ii++] = columnConfig.getName();
       }
+
+      // Parse the string SRID into an integer.
+      Integer srid = null;
+      if (getSrid() != null) {
+         srid = Integer.valueOf(getSrid());
+      }
+
       final CreateSpatialIndexStatement statement = new CreateSpatialIndexStatement(getIndexName(),
             getCatalogName(), getSchemaName(), getTableName(), columns, getTablespace(),
-            getGeometryType(), getSrid());
+            getGeometryType(), srid);
       return new SqlStatement[] { statement };
    }
 
