@@ -76,6 +76,11 @@ public class CreateSpatialIndexGeneratorOracle extends AbstractCreateSpatialInde
     */
    protected String generateInsertMetadataSql(final CreateSpatialIndexStatement statement,
          final Database database) {
+      final Integer srid = statement.getSrid();
+      final String ogcGeometryType = statement.getGeometryType();
+      final boolean hasZ = WktConversionUtils.hasZGeometryType(ogcGeometryType);
+      final boolean hasM = WktConversionUtils.hasMGeometryType(ogcGeometryType);
+
       final StringBuilder sql = new StringBuilder();
       sql.append("INSERT INTO user_sdo_geom_metadata ");
       sql.append("(table_name, column_name, diminfo, srid) ");
@@ -83,18 +88,58 @@ public class CreateSpatialIndexGeneratorOracle extends AbstractCreateSpatialInde
       sql.append("VALUES ('").append(database.correctObjectName(tableName, Table.class));
       final String columnName = statement.getColumns()[0].trim();
       sql.append("', '").append(database.correctObjectName(columnName, Column.class));
-      sql.append("', SDO_DIM_ARRAY(");
-      sql.append("SDO_DIM_ELEMENT('Longitude', -180, 180, 0.005), ");
-      sql.append("SDO_DIM_ELEMENT('Latitude', -90, 90, 0.005))");
-      final Integer srid = statement.getSrid();
+      sql.append("', ");
       if (srid == null) {
-         sql.append(", NULL");
+         // Use standard (not projected) dimension array (handling Z and M)
+         appendSDO_DIM_ARRAY(false,hasZ, hasM, sql);
+              sql.append(", NULL");
       } else {
-         sql.append(", ").append(OracleSpatialUtils.EPSG_TO_ORACLE_FUNCTION).append("(")
-               .append(srid).append(")");
+         // Include CASE expression to generate dimension array depending on
+         // Oracle SRID is PROJECTED or not (handling Z and M)
+         sql.append("CASE (SELECT COORD_REF_SYS_KIND from SDO_COORD_REF_SYSTEM where srid = ")
+         .append(OracleSpatialUtils.getOracleSRIDExpression(srid)).append(")");
+         sql.append(" WHEN 'PROJECTED' THEN ");
+         appendSDO_DIM_ARRAY(true, hasZ, hasM, sql);
+         sql.append(" ELSE ");
+         appendSDO_DIM_ARRAY(false, hasZ, hasM, sql);
+         sql.append(" END ");
+         sql.append(", ").append(OracleSpatialUtils.getOracleSRIDExpression(srid));
       }
       sql.append(")");
       return sql.toString();
+   }
+
+   /**
+    * Append to a StringBuilde the SDO_DIM_ARRAY expression based on parameters
+    * 
+    * @param projected 
+    *           coordinates projected or not: 
+    *           false appends lat/long coordinates definition
+    *           true appends x/y coordinates definition
+    * @param hasZ include Z value
+    * @param hasM include M value
+    * @param sql StringBuilder instance to append expression
+    */
+   private void appendSDO_DIM_ARRAY(final boolean projected, final boolean hasZ, final boolean hasM,
+         final StringBuilder sql) {
+      sql.append("SDO_DIM_ARRAY(");
+      if (projected) {
+         // Based on MAX UTM values
+         sql.append("SDO_DIM_ELEMENT('X', 0.0, 41000000.0, 0.5), ");
+         sql.append("SDO_DIM_ELEMENT('Y', 0.0, 9300000.0, 0.5)"); 
+      } else {
+         sql.append("SDO_DIM_ELEMENT('Longitude', -180, 180, 0.005), ");
+         sql.append("SDO_DIM_ELEMENT('Latitude', -90, 90, 0.005)");
+      }
+      if (hasZ) {
+         // use generic value for Z dimension
+         sql.append(",SDO_DIM_ELEMENT('Z', -10000000, 10000000, 0.5)");
+      }
+      if (hasM) {
+         // use generic value for M dimension
+         sql.append(",SDO_DIM_ELEMENT('M', -10000000, 10000000, 0.5)");
+      }
+      sql.append(")");
    }
 
    /**
@@ -157,29 +202,45 @@ public class CreateSpatialIndexGeneratorOracle extends AbstractCreateSpatialInde
    /**
     * Converts the OGC geometry type to Oracle's <code>SDO_GTYPE</code>.
     * 
-    * @param ogcGeometryType
-    *           the OGC geometry type.
+    * @param ogcGeometryType the OGC geometry type.
     * @return the corresponding Oracle <code>SDO_GTYPE</code>.
     */
    protected String getGtype(final String ogcGeometryType) {
       final String gType;
-      if (ogcGeometryType == null) {
+      if (StringUtils.trimToNull(ogcGeometryType) == null) {
          gType = null;
-      } else if ("LineString".equalsIgnoreCase(ogcGeometryType)) {
-         gType = "LINE";
-      } else if ("MultiLineString".equalsIgnoreCase(ogcGeometryType)) {
-         gType = "MULTILINE";
-      } else if ("Triangle".equalsIgnoreCase(ogcGeometryType)) {
-         gType = "POLYGON";
-      } else if ("Point".equalsIgnoreCase(ogcGeometryType)
-            || "MultiPoint".equalsIgnoreCase(ogcGeometryType)
-            || "Curve".equalsIgnoreCase(ogcGeometryType)
-            || "MultiCurve".equalsIgnoreCase(ogcGeometryType)
-            || "Polygon".equalsIgnoreCase(ogcGeometryType)
-            || "MultiPolygon".equalsIgnoreCase(ogcGeometryType)) {
-         gType = ogcGeometryType.toUpperCase();
-      } else {
-         gType = "COLLECTION";
+      }
+      else {
+         // Check and Remove tailing M and Z chars
+         String ogcGeometryTypeTmp = ogcGeometryType.trim().toUpperCase();
+         if (ogcGeometryTypeTmp.endsWith("M")) {
+            ogcGeometryTypeTmp = ogcGeometryTypeTmp.substring(0,
+                  ogcGeometryTypeTmp.length() - 1);
+         }
+         if (ogcGeometryTypeTmp.endsWith("Z")) {
+            ogcGeometryTypeTmp = ogcGeometryTypeTmp.substring(0,
+                  ogcGeometryTypeTmp.length() - 1);
+         }
+         if ("LineString".equalsIgnoreCase(ogcGeometryTypeTmp)) {
+            gType = "LINE";
+         }
+         else if ("MultiLineString".equalsIgnoreCase(ogcGeometryTypeTmp)) {
+            gType = "MULTILINE";
+         }
+         else if ("Triangle".equalsIgnoreCase(ogcGeometryTypeTmp)) {
+            gType = "POLYGON";
+         }
+         else if ("Point".equalsIgnoreCase(ogcGeometryTypeTmp)
+               || "MultiPoint".equalsIgnoreCase(ogcGeometryTypeTmp)
+               || "Curve".equalsIgnoreCase(ogcGeometryTypeTmp)
+               || "MultiCurve".equalsIgnoreCase(ogcGeometryTypeTmp)
+               || "Polygon".equalsIgnoreCase(ogcGeometryTypeTmp)
+               || "MultiPolygon".equalsIgnoreCase(ogcGeometryTypeTmp)) {
+            gType = ogcGeometryTypeTmp;
+         }
+         else {
+            gType = "COLLECTION";
+         }
       }
       return gType;
    }
