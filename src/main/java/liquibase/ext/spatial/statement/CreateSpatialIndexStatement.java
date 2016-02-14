@@ -3,8 +3,8 @@ package liquibase.ext.spatial.statement;
 import liquibase.statement.AbstractSqlStatement;
 
 /**
- * <code>CreateSpatialIndexStatement</code> represents a <code>CREATE SPATIAL INDEX</code>
- * statement.
+ * <code>CreateSpatialIndexStatement</code> represents a
+ * <code>CREATE SPATIAL INDEX</code> statement.
  */
 public class CreateSpatialIndexStatement extends AbstractSqlStatement {
 
@@ -22,9 +22,14 @@ public class CreateSpatialIndexStatement extends AbstractSqlStatement {
    private Integer srid;
 
    /**
+    * Constructs a new instance with the given parameters.
+    * 
     * @param indexName
+    *           the name of the index to create.
     * @param tableCatalogName
+    *           the optional table's catalog name.
     * @param tableSchemaName
+    *           the optional table's schema name.
     * @param tableName
     *           the table name.
     * @param columns
@@ -36,9 +41,10 @@ public class CreateSpatialIndexStatement extends AbstractSqlStatement {
     * @param srid
     *           the optional Spatial Reference ID.
     */
-   public CreateSpatialIndexStatement(final String indexName, final String tableCatalogName,
-         final String tableSchemaName, final String tableName, final String[] columns,
-         final String tablespace, final String geometryType, final Integer srid) {
+   public CreateSpatialIndexStatement(final String indexName,
+         final String tableCatalogName, final String tableSchemaName,
+         final String tableName, final String[] columns, final String tablespace,
+         final String geometryType, final Integer srid) {
       this.indexName = indexName;
       this.tableCatalogName = tableCatalogName;
       this.tableSchemaName = tableSchemaName;

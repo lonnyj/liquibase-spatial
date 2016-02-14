@@ -3,7 +3,8 @@ package liquibase.ext.spatial.statement;
 import liquibase.statement.AbstractSqlStatement;
 
 /**
- * <code>DropSpatialIndexStatement</code> represents a <code>DROP SPATIAL INDEX</code> statement.
+ * <code>DropSpatialIndexStatement</code> represents a
+ * <code>DROP SPATIAL INDEX</code> statement.
  */
 public class DropSpatialIndexStatement extends AbstractSqlStatement {
    /** The index name. */
@@ -19,10 +20,16 @@ public class DropSpatialIndexStatement extends AbstractSqlStatement {
    private final String tableName;
 
    /**
+    * Creates a new instance with the given parameters.
+    * 
     * @param indexName
+    *           the index name.
     * @param tableCatalogName
+    *           the optional table's catalog name.
     * @param tableSchemaName
+    *           the optional table's schema name.
     * @param tableName
+    *           the table name.
     */
    public DropSpatialIndexStatement(final String indexName, final String tableCatalogName,
          final String tableSchemaName, final String tableName) {

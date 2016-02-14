@@ -18,11 +18,15 @@ import liquibase.statement.SqlStatement;
 import liquibase.util.StringUtils;
 
 /**
- * The <code>CreateSpatialIndexChange</code>....
+ * The <code>CreateSpatialIndexChange</code> represents a database change to
+ * create a spatial index.
  */
-@DatabaseChange(name = "createSpatialIndex", description = "Creates a spatial index on an existing column or set of columns.", priority = ChangeMetaData.PRIORITY_DEFAULT, appliesTo = "index")
-public class CreateSpatialIndexChange extends AbstractChange implements
-ChangeWithColumns<ColumnConfig> {
+@DatabaseChange(name = "createSpatialIndex",
+      description = "Creates a spatial index on an existing column or set of columns.",
+      priority = ChangeMetaData.PRIORITY_DEFAULT,
+      appliesTo = "index")
+public class CreateSpatialIndexChange extends AbstractChange
+      implements ChangeWithColumns<ColumnConfig> {
    private String catalogName;
    private String schemaName;
    private String tableName;
@@ -35,7 +39,7 @@ ChangeWithColumns<ColumnConfig> {
    /**
     * Sets the database catalog name.
     *
-    * @param catalogName
+    * @param catalogName the catalog name.
     */
    public void setCatalogName(final String catalogName) {
       this.catalogName = catalogName;
@@ -46,7 +50,9 @@ ChangeWithColumns<ColumnConfig> {
       return this.catalogName;
    }
 
-   @DatabaseChangeProperty(mustEqualExisting = "index", description = "Name of the index to create", requiredForDatabase = "mysql, oracle, postgresql")
+   @DatabaseChangeProperty(mustEqualExisting = "index",
+         description = "Name of the index to create",
+         requiredForDatabase = "mysql, oracle, postgresql")
    public String getIndexName() {
       return this.indexName;
    }
@@ -64,7 +70,10 @@ ChangeWithColumns<ColumnConfig> {
       this.schemaName = schemaName;
    }
 
-   @DatabaseChangeProperty(mustEqualExisting = "index.table", description = "Name of the table to add the index to", exampleValue = "person", requiredForDatabase = "all")
+   @DatabaseChangeProperty(mustEqualExisting = "index.table",
+         description = "Name of the table to add the index to",
+         exampleValue = "person",
+         requiredForDatabase = "all")
    public String getTableName() {
       return this.tableName;
    }
@@ -78,7 +87,8 @@ ChangeWithColumns<ColumnConfig> {
     *
     * @return the geometry type.
     */
-   @DatabaseChangeProperty(description = "The Well-Known Text geometry type", exampleValue = "POINT")
+   @DatabaseChangeProperty(description = "The Well-Known Text geometry type",
+         exampleValue = "POINT")
    public String getGeometryType() {
       return this.geometryType;
    }
@@ -98,7 +108,10 @@ ChangeWithColumns<ColumnConfig> {
     *
     * @return the srid.
     */
-   @DatabaseChangeProperty(description = "The Spatial Reference ID of the indexed data.  An EPSG SRID is assumed.", exampleValue = "4326", requiredForDatabase = "derby, h2")
+   @DatabaseChangeProperty(
+         description = "The Spatial Reference ID of the indexed data.  An EPSG SRID is assumed.",
+         exampleValue = "4326",
+         requiredForDatabase = "derby, h2")
    public String getSrid() {
       return this.srid;
    }
@@ -114,7 +127,9 @@ ChangeWithColumns<ColumnConfig> {
    }
 
    @Override
-   @DatabaseChangeProperty(mustEqualExisting = "index.column", description = "Column(s) to add to the index", requiredForDatabase = "all")
+   @DatabaseChangeProperty(mustEqualExisting = "index.column",
+         description = "Column(s) to add to the index",
+         requiredForDatabase = "all")
    public List<ColumnConfig> getColumns() {
       if (this.columns == null) {
          return new ArrayList<ColumnConfig>();
@@ -187,9 +202,9 @@ ChangeWithColumns<ColumnConfig> {
          srid = Integer.valueOf(getSrid());
       }
 
-      final CreateSpatialIndexStatement statement = new CreateSpatialIndexStatement(getIndexName(),
-            getCatalogName(), getSchemaName(), getTableName(), columns, getTablespace(),
-            getGeometryType(), srid);
+      final CreateSpatialIndexStatement statement = new CreateSpatialIndexStatement(
+            getIndexName(), getCatalogName(), getSchemaName(), getTableName(), columns,
+            getTablespace(), getGeometryType(), srid);
       return new SqlStatement[] { statement };
    }
 

@@ -2,14 +2,19 @@ package liquibase.ext.spatial.sqlgenerator;
 
 import liquibase.database.Database;
 
+/**
+ * <code>WktInsertOrUpdateGenerator</code> defines operators for SQL generators
+ * that insert or update Well-Known Text.
+ */
 public interface WktInsertOrUpdateGenerator {
 
    /**
-    * Converts the given Well-Known Text and SRID to the appropriate function call for the database.
+    * Converts the given Well-Known Text and SRID to the appropriate function
+    * call for the database.
     * 
     * @param wkt
     *           the Well-Known Text string.
-    * @param srid
+    * @param sridString
     *           the SRID string which may be an empty string.
     * @param database
     *           the database instance.
@@ -18,8 +23,8 @@ public interface WktInsertOrUpdateGenerator {
    String convertToFunction(String wkt, String sridString, Database database);
 
    /**
-    * Returns the name of the function that converts Well-Known Text to a database-specific
-    * geometry.
+    * Returns the name of the function that converts Well-Known Text to a
+    * database-specific geometry.
     * 
     * @return the name of the function that converts WKT to a geometry.
     */
@@ -32,7 +37,8 @@ public interface WktInsertOrUpdateGenerator {
     * @param database
     *           the database instance.
     * 
-    * @return <code>true</code> if the SRID parameter is required in order to invoke the function.
+    * @return <code>true</code> if the SRID parameter is required in order to
+    *         invoke the function.
     */
    boolean isSridRequiredInFunction(Database database);
 }

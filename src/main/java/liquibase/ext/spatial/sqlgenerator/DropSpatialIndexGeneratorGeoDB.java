@@ -18,14 +18,16 @@ import liquibase.structure.core.Table;
 /**
  * <code>DropSpatialIndexGeneratorGeoDB</code> ...
  */
-public class DropSpatialIndexGeneratorGeoDB extends AbstractSqlGenerator<DropSpatialIndexStatement> {
+public class DropSpatialIndexGeneratorGeoDB
+      extends AbstractSqlGenerator<DropSpatialIndexStatement> {
 
    /**
     * @see liquibase.sqlgenerator.core.AbstractSqlGenerator#supports(liquibase.statement.SqlStatement,
     *      liquibase.database.Database)
     */
    @Override
-   public boolean supports(final DropSpatialIndexStatement statement, final Database database) {
+   public boolean supports(final DropSpatialIndexStatement statement,
+         final Database database) {
       return database instanceof DerbyDatabase || database instanceof H2Database;
    }
 
@@ -41,8 +43,8 @@ public class DropSpatialIndexGeneratorGeoDB extends AbstractSqlGenerator<DropSpa
    }
 
    @Override
-   public Sql[] generateSql(final DropSpatialIndexStatement statement, final Database database,
-         final SqlGeneratorChain sqlGeneratorChain) {
+   public Sql[] generateSql(final DropSpatialIndexStatement statement,
+         final Database database, final SqlGeneratorChain sqlGeneratorChain) {
       final String catalogName = statement.getTableCatalogName();
       String schemaName = statement.getTableSchemaName();
       if (schemaName == null) {
@@ -74,8 +76,7 @@ public class DropSpatialIndexGeneratorGeoDB extends AbstractSqlGenerator<DropSpa
     *           the drop spatial index statement.
     * @param database
     *           the database.
-    * @param list
-    *           the list of SQL statements to execute.
+    * @return the drop spatial index statement, if the index exists.
     */
    public Sql[] generateSqlIfExists(final DropSpatialIndexStatement statement,
          final Database database) {
