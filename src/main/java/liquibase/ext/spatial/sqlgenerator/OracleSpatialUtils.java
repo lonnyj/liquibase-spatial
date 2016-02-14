@@ -23,7 +23,7 @@ public class OracleSpatialUtils {
 
    /** The mapping of EPSG SRID to Oracle SRID. */
    private final static Map<String, String> EPSG_TO_ORACLE_MAP = Collections
-      .synchronizedMap(new HashMap<String, String>());
+         .synchronizedMap(new HashMap<String, String>());
 
    /** Hide the default constructor. */
    private OracleSpatialUtils() {
@@ -35,8 +35,8 @@ public class OracleSpatialUtils {
     * to a CLOB. The CLOB handling assumes that the result will be wrapped in single quotes so it
     * wraps the result in "<code>' || TO_CLOB(...) || '</code>".
     *
-    * @param wkt the Well-Known Text string to convert.
-    *
+    * @param wkt
+    *           the Well-Known Text string to convert.
     * @return the original WKT or a <code>TO_CLOB</code> concatenation of the WKT.
     */
    public static String getOracleWkt(final String wkt) {
@@ -53,15 +53,15 @@ public class OracleSpatialUtils {
    /**
     * Generates the SQL to convert the given string to a CLOB.
     *
-    * @param varchar the value to convert.
-    *
+    * @param varchar
+    *           the value to convert.
     * @return the SQL to convert the string to a CLOB.
     */
    public static String convertToClob(final String varchar) {
       int startIndex = 0;
       int endIndex = Math.min(startIndex + 4000, varchar.length());
-      final StringBuilder clobs = new StringBuilder("TO_CLOB('").append(varchar.
-         substring(startIndex, endIndex)).append("')");
+      final StringBuilder clobs = new StringBuilder("TO_CLOB('").append(
+            varchar.substring(startIndex, endIndex)).append("')");
       while (endIndex < varchar.length()) {
          startIndex = endIndex;
          endIndex = Math.min(startIndex + 4000, varchar.length());
@@ -73,9 +73,10 @@ public class OracleSpatialUtils {
    /**
     * Converts the given EPSG SRID to the corresponding Oracle SRID.
     *
-    * @param srid     the EPSG SRID.
-    * @param database the database instance.
-    *
+    * @param srid
+    *           the EPSG SRID.
+    * @param database
+    *           the database instance.
     * @return the corresponding Oracle SRID.
     */
    public static String getOracleSrid(final String srid, final Database database) {
@@ -94,9 +95,10 @@ public class OracleSpatialUtils {
    /**
     * Queries to the database to convert the given EPSG SRID to the corresponding Oracle SRID.
     *
-    * @param srid     the EPSG SRID.
-    * @param database the database instance.
-    *
+    * @param srid
+    *           the EPSG SRID.
+    * @param database
+    *           the database instance.
     * @return the corresponding Oracle SRID.
     */
    public static String loadOracleSrid(final String srid, final Database database) {
@@ -107,12 +109,12 @@ public class OracleSpatialUtils {
       try {
          statement = connection.createStatement();
          final ResultSet resultSet = statement.executeQuery("SELECT " + EPSG_TO_ORACLE_FUNCTION
-                                                            + "(" + srid + ") FROM dual");
+               + "(" + srid + ") FROM dual");
          resultSet.next();
          oracleSrid = resultSet.getString(1);
       } catch (final SQLException e) {
          throw new UnexpectedLiquibaseException("Failed to find the Oracle SRID for EPSG:" + srid,
-                                                e);
+               e);
       } finally {
          try {
             statement.close();
