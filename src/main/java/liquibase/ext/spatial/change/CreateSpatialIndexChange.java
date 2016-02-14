@@ -39,7 +39,8 @@ public class CreateSpatialIndexChange extends AbstractChange
    /**
     * Sets the database catalog name.
     *
-    * @param catalogName the catalog name.
+    * @param catalogName
+    *           the catalog name.
     */
    public void setCatalogName(final String catalogName) {
       this.catalogName = catalogName;
