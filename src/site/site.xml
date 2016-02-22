@@ -7,6 +7,7 @@
          <item name="Introduction" href="index.html" />
          <item name="Supported Databases" href="supported_databases.html" />
          <item name="XSD" href="liquibase-spatial.xsd" />
+         <item name="Compiling" href="compiling.html" />
       </menu>
       <menu name="Preconditions">
          <item name="Spatial Index Exists" href="spatial_index_exists.html"/>
