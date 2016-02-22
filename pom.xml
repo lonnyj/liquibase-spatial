@@ -494,6 +494,11 @@
                            <includes>
                               <include>**/*MySQLIT*</include>
                            </includes>
+                           <systemPropertyVariables>
+                              <mysql.url>${mysql.url}</mysql.url>
+                              <mysql.username>${mysql.username}</mysql.username>
+                              <mysql.password>${mysql.password}</mysql.password>
+                           </systemPropertyVariables>
                         </configuration>
                      </execution>
                   </executions>
@@ -545,6 +550,11 @@
                            <includes>
                               <include>**/*OracleIT*</include>
                            </includes>
+                           <systemPropertyVariables>
+                              <oracle.url>${oracle.url}</oracle.url>
+                              <oracle.username>${oracle.username}</oracle.username>
+                              <oracle.password>${oracle.password}</oracle.password>
+                           </systemPropertyVariables>
                         </configuration>
                      </execution>
                   </executions>
@@ -553,16 +563,16 @@
          </build>
 
          <properties>
-            <ojdbc6.groupId>com.oracle</ojdbc6.groupId>
-            <ojdbc6.artifactId>ojdbc6</ojdbc6.artifactId>
-            <ojdbc6.version>11.2.0.3.0</ojdbc6.version>
+            <ojdbc.groupId>com.oracle</ojdbc.groupId>
+            <ojdbc.artifactId>ojdbc7</ojdbc.artifactId>
+            <ojdbc.version>12.1.0.1</ojdbc.version>
          </properties>
 
          <dependencies>
             <dependency>
-               <groupId>${ojdbc6.groupId}</groupId>
-               <artifactId>${ojdbc6.artifactId}</artifactId>
-               <version>${ojdbc6.version}</version>
+               <groupId>${ojdbc.groupId}</groupId>
+               <artifactId>${ojdbc.artifactId}</artifactId>
+               <version>${ojdbc.version}</version>
                <scope>test</scope>
             </dependency>
          </dependencies>
@@ -598,6 +608,11 @@
                            <includes>
                               <include>**/*PostgreSQLIT*</include>
                            </includes>
+                           <systemPropertyVariables>
+                              <postgresql.url>${postgresql.url}</postgresql.url>
+                              <postgresql.username>${postgresql.username}</postgresql.username>
+                              <postgresql.password>${postgresql.password}</postgresql.password>
+                           </systemPropertyVariables>
                         </configuration>
                      </execution>
                   </executions>
