@@ -24,7 +24,15 @@
       </rollback>
    </changeSet>
 
-   <changeSet id="Create table" author="test">
+   <changeSet id="Drop test table" author="test">
+      <preConditions onFail="MARK_RAN">
+         <tableExists tableName="TEST" />
+      </preConditions>
+      <dropTable tableName="TEST" />
+      <rollback />
+   </changeSet>
+
+   <changeSet id="Create test table" author="test">
       <createTable tableName="TEST">
          <column name="ID" type="BIGINT">
             <constraints nullable="false" primaryKey="true" primaryKeyName="TEST_PK" />

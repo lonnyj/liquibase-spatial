@@ -8,6 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -19,11 +24,6 @@ import liquibase.logging.LogFactory;
 import liquibase.logging.LogLevel;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 /**
  * Performs a full integration test of all preconditions, changes, statements and SQL generators
@@ -87,17 +87,8 @@ public abstract class LiquibaseIT {
       try {
          connection = getConnection();
 
-         // Drop the TEST table.
-         Statement statement = connection.createStatement();
-         try {
-            statement.execute("DROP TABLE TEST");
-         } catch (final Exception ignore) {
-         } finally {
-            statement.close();
-         }
-
          // Drop the DATABASECHANGELOG table.
-         statement = connection.createStatement();
+         Statement statement = connection.createStatement();
          try {
             statement.execute("DROP TABLE DATABASECHANGELOG");
          } catch (final Exception ignore) {

@@ -23,7 +23,15 @@
       </rollback>
    </changeSet>
 
-   <changeSet id="Create table" author="test">
+   <changeSet id="Drop test table" author="test">
+      <preConditions onFail="MARK_RAN">
+         <tableExists tableName="TEST" />
+      </preConditions>
+      <dropTable tableName="TEST" />
+      <rollback />
+   </changeSet>
+
+   <changeSet id="Create test table" author="test">
       <preConditions>
          <spatial:spatialSupported />
       </preConditions>
