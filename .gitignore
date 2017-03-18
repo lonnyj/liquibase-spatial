@@ -7,3 +7,6 @@
 /test-output
 /derby.log
 /pom.xml.bak
+.idea
+*.iml
+
