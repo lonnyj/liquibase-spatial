@@ -3,7 +3,7 @@ package liquibase.ext.spatial.sqlgenerator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import liquibase.database.Database;
 
@@ -28,7 +28,7 @@ public class WktConversionUtils {
    /**
     * If the old value is a geometry or a Well-Known Text, convert it to the
     * appropriate new value. Otherwise, this method returns the old value.
-    * 
+    *
     * @param oldValue
     *           the old value.
     * @param database
@@ -65,7 +65,7 @@ public class WktConversionUtils {
    /**
     * Converts the given Well-Known Text and SRID to the appropriate function
     * call for the database.
-    * 
+    *
     * @param wkt
     *           the Well-Known Text string.
     * @param srid
