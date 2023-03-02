@@ -11,9 +11,9 @@ import liquibase.datatype.LiquibaseDataType;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.statement.DatabaseFunction;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 /**
  * The <code>GeometryType</code> assists in defining database-specific geometry types and converting
@@ -23,7 +23,7 @@ import com.vividsolutions.jts.io.WKTReader;
 public class GeometryType extends LiquibaseDataType {
    /**
     * Returns the value geometry type parameter.
-    * 
+    *
     * @return the geometry type or <code>null</code> if not present.
     */
    public String getGeometryType() {
@@ -36,7 +36,7 @@ public class GeometryType extends LiquibaseDataType {
 
    /**
     * Returns the value SRID parameter.
-    * 
+    *
     * @return the SRID or <code>null</code> if not present.
     */
    public Integer getSRID() {

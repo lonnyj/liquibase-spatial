@@ -77,14 +77,14 @@
       <geodb.version>0.8</geodb.version>
       <hatbox.version>1.0.b8</hatbox.version>
       <h2.version>1.4.177</h2.version>
-      <jts.version>1.13</jts.version>
+      <jts.version>1.19.0</jts.version>
       <liquibase.version>3.3.0</liquibase.version>
    </properties>
 
    <dependencies>
       <dependency>
-         <groupId>com.vividsolutions</groupId>
-         <artifactId>jts</artifactId>
+         <groupId>org.locationtech.jts</groupId>
+         <artifactId>jts-core</artifactId>
          <version>${jts.version}</version>
       </dependency>
       <dependency>
@@ -180,8 +180,8 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.2</version>
             <configuration>
-               <source>1.6</source>
-               <target>1.6</target>
+               <source>1.7</source>
+               <target>1.7</target>
             </configuration>
          </plugin>
          <plugin>
