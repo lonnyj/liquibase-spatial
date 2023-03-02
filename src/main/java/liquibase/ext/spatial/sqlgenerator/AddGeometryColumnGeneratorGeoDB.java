@@ -52,14 +52,16 @@ public class AddGeometryColumnGeneratorGeoDB extends
    public ValidationErrors validate(final AddColumnStatement statement,
          final Database database, final SqlGeneratorChain sqlGeneratorChain) {
       final ValidationErrors errors = new ValidationErrors();
-      final LiquibaseDataType dataType = DataTypeFactory.getInstance()
-            .fromDescription(statement.getColumnType(), database);
+      if (statement != null && statement.getColumnType() != null) {
+         final LiquibaseDataType dataType = DataTypeFactory.getInstance()
+                 .fromDescription(statement.getColumnType(), database);
 
-      // Ensure that the SRID parameter is provided.
-      if (dataType instanceof GeometryType) {
-         final GeometryType geometryType = (GeometryType) dataType;
-         if (geometryType.getSRID() == null) {
-            errors.addError("The SRID parameter is required on the geometry type");
+         // Ensure that the SRID parameter is provided.
+         if (dataType instanceof GeometryType) {
+            final GeometryType geometryType = (GeometryType) dataType;
+            if (geometryType.getSRID() == null) {
+               errors.addError("The SRID parameter is required on the geometry type");
+            }
          }
       }
       final ValidationErrors chainErrors = sqlGeneratorChain.validate(
@@ -75,10 +77,12 @@ public class AddGeometryColumnGeneratorGeoDB extends
          final Database database, final SqlGeneratorChain sqlGeneratorChain) {
 
       GeometryType geometryType = null;
-      final LiquibaseDataType dataType = DataTypeFactory.getInstance()
-            .fromDescription(statement.getColumnType(), database);
-      if (dataType instanceof GeometryType) {
-         geometryType = (GeometryType) dataType;
+      if (statement != null && statement.getColumnType() != null) {
+         final LiquibaseDataType dataType = DataTypeFactory.getInstance()
+                 .fromDescription(statement.getColumnType(), database);
+         if (dataType instanceof GeometryType) {
+            geometryType = (GeometryType) dataType;
+         }
       }
 
       final boolean isGeometryColumn = geometryType != null;
