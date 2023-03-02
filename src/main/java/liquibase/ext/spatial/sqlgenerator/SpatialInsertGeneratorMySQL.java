@@ -22,6 +22,6 @@ public class SpatialInsertGeneratorMySQL extends AbstractSpatialInsertGenerator 
     */
    @Override
    public String getGeomFromWktFunction() {
-      return "GeomFromText";
+      return "ST_GeomFromText";
    }
 }
